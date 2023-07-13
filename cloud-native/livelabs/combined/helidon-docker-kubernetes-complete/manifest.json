@@ -1,0 +1,140 @@
+{
+  "workshoptitle": "Migration of Monolith to Cloud Native - Extended",
+  "help": "livelabs-help-oci_us@oracle.com",
+	"tutorials": [
+        {
+          "title": "Labs introduction",
+          "filename":"combined-helidon-docker-kubernetes-complete.md"
+        },
+        {
+            "title": "Oracle Cloud Free Tier",
+            "description": "Use your Always Free resources as long as you want with no time constraints—subject only to the capacity limits noted. When your 30-day trial period for the expanded set of services ends, you can continue using Always Free services with no interruption.",
+            "filename": "https://oracle-livelabs.github.io/common/labs/cloud-login/pre-register-free-tier-account.md"
+        },
+        {
+          "title": "Setting up the core OCI environment using scripts",
+          "filename":"../../../scripted-setup/script-driven-oci-setup-core-environment.md"
+        },
+        {
+          "title": "Setting up your Development VM core",
+          "filename":"../../../scripted-setup/helidon-vm-setup.md"
+        },
+        {
+          "title": "Configure your Developer VM for the Helidon Labs",
+          "filename":"../../../helidon/setup/setup.md"
+        },
+        {
+          "title": "Helidon - Part 1: Core Helidon ",
+          "filename": "../../../helidon/helidon-core/helidon-core.md"
+        },
+		    {
+          "title": "Helidon - Part 2: Database and Helidon",
+          "filename": "../../../helidon/helidon-data/helidon-data.md"
+        },
+		    {
+          "title": "Helidon - Optional Part 2a: Accessing the request context",
+          "filename": "../../../helidon/helidon-data/accessing-the-context.md"
+        },
+		    {
+          "title": "Helidon - Part 3: Communicating between microservices with Helidon",
+          "filename": "../../../helidon/helidon-to-other-microservices/helidon-to-other-microservices.md"
+        },
+		    {
+          "title": "Helidon - Optional Part 3a: Communicating from non Helidon clients",
+          "filename": "../../../helidon/helidon-to-other-microservices/non-helidon-rest-clients.md"
+        },
+        {
+          "title": "Helidon - Part 4: Operations support with Helidon",
+          "filename": "../../../helidon/helidon-operations/helidon-operations.md"
+        },
+        {
+          "title": "Helidon - Part 5: Cloud Native support in Helidon",
+          "filename": "../../../helidon/helidon-cloud-native/helidon-cloud-native.md"
+        },
+        {
+          "title": "Helidon - Optional Labs",
+          "filename": "../../spacer-manifest-entry.md"
+        },
+        {
+          "title": "Helidon - Optional lab 1: Self documenting API support in Helidon",
+          "filename": "../../../helidon/helidon-open-api/helidon-open-api.md"
+        },
+        {
+          "title": "Docker - Docker labs",
+          "filename": "../../../docker/docker-labs.md"
+        },
+        {
+          "title": "Setup your kubernetes cluster using scripts",
+          "filename":"../../../scripted-setup/script-driven-oci-setup-kubernetes-environment.md"
+        },
+        {
+          "title": "Setup your container images using scripts",
+          "filename":"../../../scripted-setup/script-driven-oci-setup-container-images.md"
+        },
+        {
+          "title": "Kubernetes - Part 1: Setting up the cluster and getting your services running in Kubernetes",
+          "filename": "../../../kubernetes/base-kubernetes/kubernetes-base-labs.md"
+        },
+		{
+          "title": "Kubernetes - Part 2: Cloud native availability with Kubernetes",
+          "filename": "../../../kubernetes/cloud-native-labs/health-readiness-liveness/health-liveness-readiness.md"
+        },
+		{
+          "title": "Kubernetes - Part 3a: Horizontal Scaling",
+          "filename": "../../../kubernetes/cloud-native-labs/horizontal-scaling/horizontal-scaling.md"
+        },
+		{
+          "title": "Kubernetes - Part 3b: Auto Scaling",
+          "filename": "../../../kubernetes/cloud-native-labs/horizontal-scaling/auto-scaling.md"
+        },
+        {
+          "title": "Kubernetes - Part 4: Rolling Updates",
+          "filename": "../../../kubernetes/cloud-native-labs/rolling-updates/rolling-updates.md"
+        },
+        {
+          "title": "Kubernetes - Optional 1a: Prometheus for metrics capture",
+          "filename": "../../../kubernetes/monitoring-kubernetes/monitoring-with-prometheus-lab.md"
+        },
+		{
+          "title": "Kubernetes - Optional 1b: Visualizing metrics with Grafana",
+          "filename": "../../../kubernetes/monitoring-kubernetes/visualizing-with-grafana-lab.md"
+        },
+		{
+          "title": "Kubernetes - Optional 2a: Capturing log data for processing",
+          "filename": "../../../kubernetes/management/logging/log-capture-for-processing.md"
+        },
+        {
+          "title": "Kubernetes - Optional 2b: Capturing log data for archive",
+          "filename": "../../../kubernetes/management/logging/log-capture-for-archive.md"
+        },
+		{
+          "title": "Kubernetes - Optional 3a: Installing the Linkerd service mesh",
+          "filename": "../../../kubernetes/service-mesh/linkerd-install.md"
+        },
+        {
+          "title": "Kubernetes - Optional 3b: Traffic monitoring with a Linkerd service mesh",
+          "filename": "../../../kubernetes/service-mesh/linkerd-monitoring-traffic-flows.md"
+        },
+		{
+          "title": "Kubernetes - Optional 3c: Using the Linkerd service mesh for troubleshooting",
+          "filename": "../../../kubernetes/service-mesh/linkerd-using-to-troubleshoot-problems.md"
+        },
+        {
+          "title": "Kubernetes - Optional 3d: Traffic splits with the Linkerd service mesh (Canary deployments, and chaos engineering)",
+          "filename": "../../../kubernetes/service-mesh/linkerd-exploring-traffic-splits.md"
+        },
+		{
+          "title": "Kubernetes - Optional 3e: Uninstalling the Linkerd service mesh",
+          "filename": "../../../kubernetes/service-mesh/linkerd-uninstall.md"
+        },
+        {
+          "title": "Further Information on Kubernetes",
+          "filename": "../../../kubernetes/further-information/further-information.md"
+        },
+        {
+          "title": "Need Help?",
+          "description": "Solutions to Common Problems and Directions for Receiving Live Help",
+          "filename": "https://raw.githubusercontent.com/oracle/learning-library/master/oci-library/need-help/need-help-livelabs.md"
+        }
+    ]
+}

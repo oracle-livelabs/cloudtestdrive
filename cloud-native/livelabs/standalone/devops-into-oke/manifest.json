@@ -1,0 +1,84 @@
+{
+  "workshoptitle": "Using Oracle DevOps CI/CD pipelines to deploy to Oracle Kubernetes Environment",
+  "help": "livelabs-help-oci_us@oracle.com",
+	"tutorials": [
+        {
+          "title": "Labs introduction",
+          "filename":"devops-into-oke.md"
+        },
+        {
+            "title": "Oracle Cloud Free Tier",
+            "description": "Use your Always Free resources as long as you want with no time constraints—subject only to the capacity limits noted. When your 30-day trial period for the expanded set of services ends, you can continue using Always Free services with no interruption.",
+            "filename": "https://oracle-livelabs.github.io/common/labs/cloud-login/pre-register-free-tier-account.md"
+        },
+        {
+          "title": "Setup using the all-in-one script",
+          "filename":"../../../scripted-setup/lab-specific-scripts/script-driven-devops-setup.md"
+        },
+        {
+          "title": "Setup your core tenancy using scripts",
+          "filename":"../../../scripted-setup/script-driven-oci-setup-core-environment.md"
+        },
+        {
+          "title": "Setup your kubernetes cluster using scripts",
+          "filename":"../../../scripted-setup/script-driven-oci-setup-kubernetes-environment.md"
+        },
+        {
+          "title": "Setup your container images using scripts",
+          "filename":"../../../scripted-setup/script-driven-oci-setup-container-images.md"
+        },
+        {
+          "title": "Setup Installing the initial Kubernetes services using scripts",
+          "filename":"../../../scripted-setup/installing-basic-kubernetes-lab-services.md"
+        },
+        {
+          "title": "Setup : Devops setup - introduction ",
+          "filename": "../../../dev-ops/general/setup-introduction-incl-vault.md"
+        },
+		{
+          "title": "Setup Devops setup - setting up your vault",
+          "filename": "../../../scripted-setup/script-driven-vault-setup.md"
+        },
+		{
+          "title": "Setup Devops setup - configuring ssh access to OCI API's, defining groups and policies",
+          "filename": "../../../dev-ops/general/environment-setup/configuring-for-devops.md"
+        },
+		{
+          "title": "Part 1: Devops - Creating your DevOps project",
+          "filename": "../../../dev-ops/general/creating-the-devops-project.md"
+        },
+		{
+          "title": "Part 2: Devops - Getting the sample code and uploading to a OCI repository",
+          "filename": "../../../dev-ops/oke-labs/uploading-code-to-the-repo-and-examining-it.md"
+        },
+		{
+          "title": "Part 3: Devops - Examining and updating the build_spec.yaml file",
+          "filename": "../../../dev-ops/oke-labs/examining-and-updating-the-build-spec.md"
+        },
+		{
+          "title": "Part 4: Devops - Creating your DevOps build pipeline",
+          "filename": "../../../dev-ops/oke-labs/creating-the-first-pipeline.md"
+        },
+		{
+          "title": "Part 5: Devops - Updating your build pipeline to output artifacts",
+          "filename": "../../../dev-ops/oke-labs/updating-the-pipeline-to-output-the-artifacts.md"
+        },
+		{
+          "title": "Part 6: Devops - Creating the deployment pipeline",
+          "filename": "../../../dev-ops/oke-labs/creating-the-oke-deployment-pipeline.md"
+        },
+		{
+          "title": "Part 7: Devops - Testing the CICD process and automatic triggers",
+          "filename": "../../../dev-ops/oke-labs/running-the-deployment-and-triggering-the-build.md"
+        },
+        {
+          "title": "Resetting your tenancy",
+          "filename":"../../../scripted-setup/lab-specific-scripts/script-driven-devops-destroy.md"
+        },
+        {
+          "title": "Need Help?",
+          "description": "Solutions to Common Problems and Directions for Receiving Live Help",
+          "filename": "https://raw.githubusercontent.com/oracle/learning-library/master/oci-library/need-help/need-help-livelabs.md"
+        }
+    ]
+}

@@ -1,0 +1,100 @@
+{
+  "workshoptitle": "Deploy Microservices in Kubernetes and OCI Supporting Features",
+  "help": "livelabs-help-oci_us@oracle.com",
+	"tutorials": [
+        {
+          "title": "Labs introduction",
+          "filename":"kubernetes-complete.md"
+        },
+        {
+            "title": "Oracle Cloud Free Tier",
+            "description": "Use your Always Free resources as long as you want with no time constraints—subject only to the capacity limits noted. When your 30-day trial period for the expanded set of services ends, you can continue using Always Free services with no interruption.",
+            "filename": "https://oracle-livelabs.github.io/common/labs/cloud-login/pre-register-free-tier-account.md"
+        },
+        {
+          "title": "Setup your environment with the all-in-one script",
+          "filename":"../../../../scripted-setup/lab-specific-scripts/script-driven-oke-core-and-complete-setup.md"
+        },
+        {
+          "title": "Setup your core tenancy using scripts",
+          "filename":"../../../../scripted-setup/script-driven-oci-setup-core-environment.md"
+        },
+        {
+          "title": "Setup your kubernetes cluster using scripts",
+          "filename":"../../../../scripted-setup/script-driven-oci-setup-kubernetes-environment.md"
+        },
+        {
+          "title": "Setup your container images using scripts",
+          "filename":"../../../../scripted-setup/script-driven-oci-setup-container-images.md"
+       },
+        {
+          "title": "Part 1: Setting up the cluster and getting your services running in Kubernetes",
+          "filename": "../../../../kubernetes/base-kubernetes/kubernetes-base-labs.md"
+        },
+		{
+          "title": "Part 2: Cloud native availability with Kubernetes",
+          "filename": "../../../../kubernetes/cloud-native-labs/health-readiness-liveness/health-liveness-readiness.md"
+        },
+		{
+          "title": "Part 3a: Horizontal Scaling",
+          "filename": "../../../../kubernetes/cloud-native-labs/horizontal-scaling/horizontal-scaling.md"
+        },
+		{
+          "title": "Part 3b: Auto Scaling",
+          "filename": "../../../../kubernetes/cloud-native-labs/horizontal-scaling/auto-scaling.md"
+        },
+        {
+          "title": "Part 4: Rolling Updates",
+          "filename": "../../../../kubernetes/cloud-native-labs/rolling-updates/rolling-updates.md"
+        },
+        {
+          "title": "Optional 1a: Prometheus for metrics capture",
+          "filename": "../../../../kubernetes/monitoring-kubernetes/monitoring-with-prometheus-lab.md"
+        },
+		{
+          "title": "Optional 1b: Visualizing metrics with Grafana",
+          "filename": "../../../../kubernetes/monitoring-kubernetes/visualizing-with-grafana-lab.md"
+        },
+		{
+          "title": "Optional 2a: Capturing log data for processing",
+          "filename": "../../../../kubernetes/management/logging/log-capture-for-processing.md"
+        },
+        {
+          "title": "Optional 2b: Capturing log data for archive",
+          "filename": "../../../../kubernetes/management/logging/log-capture-for-archive.md"
+        },
+		{
+          "title": "Optional 3a: Installing the Linkerd service mesh",
+          "filename": "../../../../kubernetes/service-mesh/linkerd-install.md"
+        },
+        {
+          "title": "Optional 3b: Traffic monitoring with a Linkerd service mesh",
+          "filename": "../../../../kubernetes/service-mesh/linkerd-monitoring-traffic-flows.md"
+        },
+		{
+          "title": "Optional 3c: Using the Linkerd service mesh for troubleshooting",
+          "filename": "../../../../kubernetes/service-mesh/linkerd-using-to-troubleshoot-problems.md"
+        },
+        {
+          "title": "Optional 3d: Traffic splits with the Linkerd service mesh (Canary deployments, and chaos engineering)",
+          "filename": "../../../../kubernetes/service-mesh/linkerd-exploring-traffic-splits.md"
+        },
+		{
+          "title": "Optional 3e: Uninstalling the Linkerd service mesh",
+          "filename": "../../../../kubernetes/service-mesh/linkerd-uninstall.md"
+        },
+        {
+          "title": "Resetting your tenancy",
+          "filename":"../../../../scripted-setup/lab-specific-scripts/script-driven-oke-core-and-complete-destroy.md"
+        },
+        {
+          "title": "Further Information on Kubernetes",
+          "filename": "../../../../kubernetes/further-information/further-information.md"
+        },
+        {
+          "title": "Need Help?",
+          "description": "Solutions to Common Problems and Directions for Receiving Live Help",
+          "filename": "https://raw.githubusercontent.com/oracle/learning-library/master/oci-library/need-help/need-help-livelabs.md"
+        }
+    ]
+}
