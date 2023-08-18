@@ -1,6 +1,6 @@
-![](../../../common/images/customer.logo2.png)
+![](../../images/customer.logo2.png)
 
-# Reseting your environment after the OKE labs using scripts for free trial accounts
+# Reset your environment after the OKE labs using scripts for free trial accounts
 
 Firstly congratulations on completing your lab, we hope that you have found it informative and useful.
 
