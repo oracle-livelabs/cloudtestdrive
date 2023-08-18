@@ -1,7 +1,10 @@
-![Title image](../../../../common/images/customer.logo2.png)
+![Title image](../../../images/customer.logo2.png)
 
 # Install and setup a Service mesh
 
+## Introduction
+
+This is one of the optional sets of Kubernetes labs
 
 <details><summary><b>Self guided student - video introduction</b></summary>
 
@@ -13,11 +16,6 @@ This video is an introduction to the Service mesh basics lab. Depending on your 
 ---
 
 </details>
-
-
-## Introduction
-
-This is one of the optional sets of Kubernetes labs
 
 **Estimated module duration** 20 mins.
 
@@ -81,162 +79,169 @@ These instructions are based on the [Getting started](https://linkerd.io/2.11/ge
 
 It's worth noting that Linkerd can also be installed using its [helm chart](https://linkerd.io/2/tasks/install-helm/) but today we're going to do it manually step by step.
 
-### Task 4a: Installing the linkerd CLI
+### Task 4A: Installing the linkerd CLI
 
 As linkerd is not a core Kubernetes component it's not included in the Oracle OCI Shell, so we need to do that first.
 
-  1. In the OCI Cloud Shell type the follwing
+1.  In the OCI Cloud Shell type the follwing
   
-  ```bash
-  <copy>curl -sL https://run.linkerd.io/install | sh</copy>
-  ```
+    ```bash
+    <copy>curl -sL https://run.linkerd.io/install | sh</copy>
+    ```
+    
+    Example Output
   
-  ```
-Downloading linkerd2-cli-stable-2.10.0-linux...
-  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
-                                 Dload  Upload   Total   Spent    Left  Speed
-100   644  100   644    0     0   1556      0 --:--:-- --:--:-- --:--:--  1559
-100 37.0M  100 37.0M    0     0  13.5M      0  0:00:02  0:00:02 --:--:-- 21.1M
-Download complete!
+    ```text
+    Downloading linkerd2-cli-stable-2.10.0-linux...
+      % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                     Dload  Upload   Total   Spent    Left  Speed
+    100   644  100   644    0     0   1556      0 --:--:-- --:--:-- --:--:--  1559
+    100 37.0M  100 37.0M    0     0  13.5M      0  0:00:02  0:00:02 --:--:-- 21.1M
+    Download complete!
 
-Validating checksum...
-Checksum valid.
+    Validating checksum...
+    Checksum valid.
 
-Linkerd stable-2.11.0 was successfully installed 🎉
+    Linkerd stable-2.11.0 was successfully installed 🎉
 
 
-Add the linkerd CLI to your path with:
+    Add the linkerd CLI to your path with:
 
-  export PATH=$PATH:/home/tim_graves/.linkerd2/bin
+      export PATH=$PATH:/home/tim_graves/.linkerd2/bin
 
-Now run:
+    Now run:
 
-  linkerd check --pre                     # validate that Linkerd can be installed
-  linkerd install | kubectl apply -f -    # install the control plane into the 'linkerd' namespace
-  linkerd check                           # validate everything worked!
-  linkerd dashboard                       # launch the dashboard
+      linkerd check --pre                     # validate that Linkerd can be installed
+      linkerd install | kubectl apply -f -    # install the control plane into the 'linkerd' namespace
+      linkerd check                           # validate everything worked!
+      linkerd dashboard                       # launch the dashboard
 
-Looking for more? Visit https://linkerd.io/2.11/next-steps
-```
+    Looking for more? Visit https://linkerd.io/2.11/next-steps
+    ```
   
-Warning, this may take a while to run, in my case it usually takes around 30 seconds, but sometimes has taken as long as 20 mins if for some reason the download was not fast.
+    Warning, this may take a while to run, in my case it usually takes around 30 seconds, but sometimes has taken as long as 20 mins if for some reason the download was not fast.
   
-  2. Now we need to add the linkerd command to our path. In the OCI Cloud Shell type 
+2.  Now we need to add the linkerd command to our path. In the OCI Cloud Shell type 
   
-  ```bash
-  <copy>export PATH=$PATH:$HOME/.linkerd2/bin</copy>
-  ```
+    ```bash
+    <copy>export PATH=$PATH:$HOME/.linkerd2/bin</copy>
+    ```
   
-This is only a temporary change, that applies to the current OCI Cloud shell session. To make it permanent we need to edit the $HOME/.bashrc file
+    This is only a temporary change, that applies to the current OCI Cloud shell session. To make it permanent we need to edit the $HOME/.bashrc file
 
-  3. Use your preferred editor (vi, vim, nano etc.) edit $HOME/.bashrc
+3.  Use your preferred editor (vi, vim, nano etc.) edit $HOME/.bashrc
 
-  4. At the end of the file add and new line containing 
+4.  At the end of the file add and new line containing 
 
-  ```bash
-  <copy>export PATH=$PATH:$HOME/.linkerd2/bin</copy>
-  ```
-
-  5. Lastly let's check the status of the linkerd installation. In the OCI Cloud Shell type
+    ```bash
+    <copy>export PATH=$PATH:$HOME/.linkerd2/bin</copy>
+    ```
+5.  Lastly let's check the status of the linkerd installation. In the OCI Cloud Shell type
   
-  ```bash
-  <copy>linkerd version</copy>
-  ```
+    ```bash
+    <copy>linkerd version</copy>
+    ```
+    
+    Example Output
 
-  ```
-Client version: stable-2.11.0
-Server version: unavailable
-```
+    ```text
+    Client version: stable-2.11.0
+    Server version: unavailable
+    ```
 
-The server is unavailable because we haven't installed it yet. The version numbers will of course change over time, but these are the ones when this lab module was written.
+    The server is unavailable because we haven't installed it yet. The version numbers will of course change over time, but these are the ones when this lab module was written.
 
 
-### Task 4b: Installing linkerd into your Kubernetes cluster
+### Task 4B: Installing linkerd into your Kubernetes cluster
 
 Though we have the linkerd client application we still need to install the linkerd control plan in our cluster (The control plane will handle deploying the proxies in the data plane)
 
 Firstly let's make sure that the cluster meets the requirements to deploy linkerd
 
-  1. In the OCI Cloud shell type :
+1.  In the OCI Cloud shell type :
   
-  ```bash
-  <copy>linkerd check --pre</copy>
-  ```
+    ```bash
+    <copy>linkerd check --pre</copy>
+    ```
+    
+    Example Output
+   
+    ```text
+    kubernetes-api
+    --------------
+    √ can initialize the client
+    √ can query the Kubernetes API
+
+    kubernetes-version
+    ------------------
+    √ is running the minimum Kubernetes API version
+    √ is running the minimum kubectl version
+
+    pre-kubernetes-setup
+    --------------------
+    √ control plane namespace does not already exist
+    √ can create non-namespaced resources
+    √ can create ServiceAccounts
+    √ can create Services
+    √ can create Deployments
+    √ can create CronJobs
+    √ can create ConfigMaps
+    √ can create Secrets
+    √ can read Secrets
+    √ can read extension-apiserver-authentication configmap
+    √ no clock skew detected
+
+    pre-kubernetes-capability
+    -------------------------
+    ‼ has NET_ADMIN capability
+        found 2 PodSecurityPolicies, but none provide NET_ADMIN, proxy injection will fail if the PSP admission controller is running
+        see https://linkerd.io/checks/#pre-k8s-cluster-net-admin for hints
+    ‼ has NET_RAW capability
+        found 2 PodSecurityPolicies, but none provide NET_RAW, proxy injection will fail if the PSP admission controller is running
+        see https://linkerd.io/checks/#pre-k8s-cluster-net-raw for hints
+
+    linkerd-version
+    ---------------
+    √ can determine the latest version
+    √ cli is up-to-date
+
+    Status check results are √
+    ```
+
+    The pre-install check that the Kubernetes cluster (and the configuration of kubectl) is able to install linkerd. All the checks have passed (the tick by each line) so we're good to install the linkerd control plane.
+
+    The linkerd control plan process used the linkerd command to generate the configuration yaml, which is then processed by kubectl. 
+
+2.  In the OCI Cloud Shell type
   
-  ```
-kubernetes-api
---------------
-√ can initialize the client
-√ can query the Kubernetes API
-
-kubernetes-version
-------------------
-√ is running the minimum Kubernetes API version
-√ is running the minimum kubectl version
-
-pre-kubernetes-setup
---------------------
-√ control plane namespace does not already exist
-√ can create non-namespaced resources
-√ can create ServiceAccounts
-√ can create Services
-√ can create Deployments
-√ can create CronJobs
-√ can create ConfigMaps
-√ can create Secrets
-√ can read Secrets
-√ can read extension-apiserver-authentication configmap
-√ no clock skew detected
-
-pre-kubernetes-capability
--------------------------
-‼ has NET_ADMIN capability
-    found 2 PodSecurityPolicies, but none provide NET_ADMIN, proxy injection will fail if the PSP admission controller is running
-    see https://linkerd.io/checks/#pre-k8s-cluster-net-admin for hints
-‼ has NET_RAW capability
-    found 2 PodSecurityPolicies, but none provide NET_RAW, proxy injection will fail if the PSP admission controller is running
-    see https://linkerd.io/checks/#pre-k8s-cluster-net-raw for hints
-
-linkerd-version
----------------
-√ can determine the latest version
-√ cli is up-to-date
-
-Status check results are √
-```
-
-The pre-install check that the Kubernetes cluster (and the configuration of kubectl) is able to install linkerd. All the checks have passed (the tick by each line) so we're good to install the linkerd control plane.
-
-The linkerd control plan process used the linkerd command to generate the configuration yaml, which is then processed by kubectl. 
-
-  2.  In the OCI Cloud Shell type
+    ```bash
+    <copy>linkerd install | kubectl apply -f -</copy>
+    ```
+    
+    Example Output
   
-  ```bash
-  <copy>linkerd install | kubectl apply -f -</copy>
-  ```
-  
-```
-namespace/linkerd created
-clusterrole.rbac.authorization.k8s.io/linkerd-linkerd-identity created
-clusterrolebinding.rbac.authorization.k8s.io/linkerd-linkerd-identity created
-serviceaccount/linkerd-identity created
-clusterrole.rbac.authorization.k8s.io/linkerd-linkerd-controller created
-clusterrolebinding.rbac.authorization.k8s.io/linkerd-linkerd-controller created
-serviceaccount/linkerd-controller created
-clusterrole.rbac.authorization.k8s.io/linkerd-linkerd-destination created
-clusterrolebinding.rbac.authorization.k8s.io/linkerd-linkerd-destination created
+    ```text
+    namespace/linkerd created
+    clusterrole.rbac.authorization.k8s.io/linkerd-linkerd-identity created
+    clusterrolebinding.rbac.authorization.k8s.io/linkerd-linkerd-identity created
+    serviceaccount/linkerd-identity created
+    clusterrole.rbac.authorization.k8s.io/linkerd-linkerd-controller created
+    clusterrolebinding.rbac.authorization.k8s.io/linkerd-linkerd-controller created
+    serviceaccount/linkerd-controller created
+    clusterrole.rbac.authorization.k8s.io/linkerd-linkerd-destination created
+    clusterrolebinding.rbac.authorization.k8s.io/linkerd-linkerd-destination created
 
-...
+    ...
 
-Lots of messages about resources being created
-...
-deployment.apps/linkerd-tap created
-configmap/linkerd-config-addons created
-serviceaccount/linkerd-grafana created
-configmap/linkerd-grafana-config created
-service/linkerd-grafana created
-deployment.apps/linkerd-grafana created
-```
+    Lots of messages about resources being created
+    ...
+    deployment.apps/linkerd-tap created
+    configmap/linkerd-config-addons created
+    serviceaccount/linkerd-grafana created
+    configmap/linkerd-grafana-config created
+    service/linkerd-grafana created
+    deployment.apps/linkerd-grafana created
+    ```
   
 <details><summary><b>If you want to see exactly what is being done</b></summary>
 
@@ -296,17 +301,18 @@ There is a lot of output here, we've only seen the beginning of it above
 </details>
 
 Let's check that the linkerd command can talk to the control plane
-
-  3. After a few mins delay for the linkerd control plane to startup, In the OCI Cloud Shell type
+3.  After a few mins delay for the linkerd control plane to startup, In the OCI Cloud Shell type
   
-  ```bash
-  <copy>linkerd version</copy>
-  ```
+    ```bash
+    <copy>linkerd version</copy>
+    ```
+    
+    Example Output
 
-```
-Client version: stable-2.11.0
-Server version: stable-2.11.0
-```
+    ```text
+    Client version: stable-2.11.0
+    Server version: stable-2.11.0
+    ```
 
 Expect a short delay while the linkerd command contacts the control plane servers.
 
@@ -1479,12 +1485,8 @@ In this case it's showing `May 20,2020,12:00:00 to May 22,2020 11:59:59` but it 
 
 We can see that there are three namespaces being monitored and 14 deployments. You may need to play around a bit with the time range in the UI to get the proper details.
 
-## End of the module, What's next ?
-
-You can chose from the remaining `Linkerd service mesh` modules or switch to one of the other Kubernetes optional module sets.
-
 ## Acknowledgements
 
 * **Author** - Tim Graves, Cloud Native Solutions Architect, Oracle EMEA Cloud Native Applications Development specialists team
 * **Contributor** - Charles Pretzer, Bouyant, Inc for reviewing and sanity checking parts of this document.
-* **Last Updated By** - Tim Graves, May 2023
+* **Last Updated By** - Tim Graves, August 2023

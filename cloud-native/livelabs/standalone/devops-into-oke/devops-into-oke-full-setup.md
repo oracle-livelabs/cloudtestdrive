@@ -1,6 +1,16 @@
-![Title image](../../../images/customer.logo2.png)
+# Using the OCI DevOps service to update and re-deploy an example microservice into the Oracle Kubernetes Environment.
 
-# Using the OCI DevOps service to build and deploy an example microservice into the Oracle Kubernetes Environment.
+## About this workshop
+
+### Prerequisites
+
+These labs can be run in many different ways, but in all cases you will need access to a Oracle Cloud Tenancy and be signed in to it.
+
+Please look at the instructions in the **Oracle Cloud Free Tier** section for details of how to sign up for a free trial tenancy and how to log into it. If you already have access to a tenancy (you may be in an instructor led lab, or have a pre-existing tenancy) then go direct to Prerequisites Step 2 which covers how to login to the tenancy.
+
+
+
+### Introduction
 
 **Lab conventions**
 
@@ -31,20 +41,46 @@ If you feel you are already pretty familiar with a specific concept, you can jus
 
 </details>
 
-## Prerequisites
+### What you are about to create
 
-These labs can be run in many different ways, but in all cases you will need access to a Oracle Cloud Tenancy and be signed in to it.
+This lab shows you how to use the OCI Devops Serive to build a container image for a Kubernetes services from the source code (held in a git repo). Then upload the container and associated YAML files to the repositories. Next you will see how to create a deployment pipeline to apply these updates artifacts to an Oracle Kubernetes Environment cluster. Finally you will see how to connect these two stages and have them automatically triggered by a code update in the git repo.
 
-Please look at the instructions in the **Oracle Cloud Free Tier** section for details of how to sign up for a free trial tenancy and how to log into it. If you already have access to a tenancy (you may be in an instructor led lab, or have a pre-existing tenancy) then go direct to Prerequisites Step 2 which covers how to login to the tenancy.
+### Lab conventions
 
-## Getting Help
+We have used a few layout tricks to make the reading of this tutorial more intuitive : 
 
-If you are in an instructor led lab then clearly just ask your instructor, if you are working through this self guided then each module has a section at the end for getting help. 
+- If you see a "Bullet" sign, this means **you** need to perform some sort of **action**.  For example opening a window and navigating to some point in a file system
+  
+In some cases you will need to executing some command on the command line of a terminal window. If this is a command you can just copy directly from the lab is will be in a box with a **Copy** button. For example
+  
+  ```bash
+  <copy>ls -al</copy>
+  ```
+  
+  However in some cases the command can't just be copied and will need to be entered with some modifications. We have **deliberately** chosen not to allow these to be directly copied as we found that some people didn't make the modifications and then of course the command did not work. In those cases the command will be in a box as below, but without a copy button, you will need to enter the command and in this case replace the pod id, the instructions will make it clear the changes that need to be made. For example the following example kubectl command will get the details of a pod, but the actual pod id will need to be replaced with one from your environment :
+  
+  ```bash
+  kubectl describe pod 234kj3g-c6e43-j3h4
+  ```
+
+As we cover quite some theoretical concepts, we included pretty verbose explanations.  To make the lab easier to grasp, we placed the longer parts in *Collapsibles*:
+
+<details><summary><b>Click this title to expand!</b></summary>
 
 
-## Getting your tenancy
+If you feel you are already pretty familiar with a specific concept, you can just skip it, or read quickly through the text, then re-collapse the text section by re-clicking on the title. 
 
-You will need to sign up for the OCI free trial. For this lab on 2nd December 2021 **only** please use [this free tier sign-up link](https://bit.ly/free_tier_2dec)
+---
+
+</details>
+
+### Objectives of each of the labs
+
+### Lab 1:  Setup using the all-in-one script
+
+This module shows you how to use the "all-in-one" scripts to setup the environment for your lab in one go. If you are running in a free trial, or have full admin rights to your tenancy **and** are running in your home region this is the preferred approach, just follow the instructions in this module then once completed jump directly to module **Part 1** skipping the remaining setup modules.
+
+If however you are not in a free trial, do not have full admin rights, not in your home region, or need to modify the default choices for some reason then please use the remaining setup modules instead.
 
 ## Setup your core tenancy using scripts
 
@@ -60,7 +96,7 @@ Please follow the tasks in the **Setup your kubernetes environment using scripts
 
 ## Setup your container images using scripts
 
-This module takes you through the process of using the scripts we have provided to build the container images you will be using in your Kubernetes c luster and to push them into the Oracle Container Image Registry (OCIR) If you have already created these in a previous lab you can skip this module
+This module takes you through the process of using the scripts we have provided to build the container images you will be using in your Kubernetes cluster and to push them into the Oracle Container Image Registry (OCIR) If you have already created these in a previous lab you can skip this module
 
 Please follow the tasks in the **Setup your container images using scripts** section (click the name in the labs index)
 
@@ -142,7 +178,12 @@ This final module of the lab shows you how to have your deployment pipeline auto
 
 Please follow the steps in **Devops - Testing the CICD process and automatic triggers** section. When you've completed them click the `back` button on your browser to return to this page.
 
-## End of this tutorial
+## Resetting your tenancy
+
+Should you wish (or need) to do so this module shows you how to use a script to remove the resources you created in this lab
+
+
+## At the end of the tutorial
 
 We hope you enjoy doing the labs, and that they will be useful to you. 
 

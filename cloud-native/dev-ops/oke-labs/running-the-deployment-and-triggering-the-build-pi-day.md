@@ -1,4 +1,4 @@
-![](../../../../common/images/customer.logo2.png)
+![Title image](../../../images/customer.logo2.png)
 
 # Combining build and deploy pipelines, and automated triggering
 

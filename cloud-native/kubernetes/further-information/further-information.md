@@ -1,6 +1,7 @@
-![Title image](../../../../common/images/customer.logo2.png)
+# Where to get more information on Kubernetes
 
-# Where to find further information
+## Introduction
+
 While writing these labs I came across many web pages. Ones that I think are especially useful are detailed in the sections below
 
 ## Helm
@@ -46,12 +47,8 @@ This article at [golden metrics](https://blog.appoptics.com/the-four-golden-sign
  
 For more details on the service mesh concept the site [servicemesh.io](https://servicemesh.io) has lot's of interesting information, it is however run by one of the creators of linkerd so may be biased towards that. 
 
-## End of the lab, What's next ?
-
-You have reached the end of this section of the lab and of the Kubernetes sections.
-
 ## Acknowledgements
 
 * **Author** - Tim Graves, Cloud Native Solutions Architect, Oracle EMEA Cloud Native Application Development specialists Team
 * **Contributor** - Jan Leemans, Director Business Development, EMEA Divisional Technology
-* **Last Updated By** - Tim Graves, May 2023
+* **Last Updated By** - Tim Graves, August 2023

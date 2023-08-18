@@ -1,6 +1,10 @@
-![Title image](../../../../../common/images/customer.logo2.png)
+![Title image](../../../../images/customer.logo2.png)
 
 # Improve availability using Rolling Updates
+
+## Introduction
+
+This is one of the core Kubernetes labs
 
 <details><summary><b>Self guided student - video introduction</b></summary>
 
@@ -13,10 +17,6 @@ This video is an introduction to the Kubernetes rolling upgrades lab. Depending 
 
 </details>
 
-## Introduction
-
-This is one of the core Kubernetes labs
-
 **Estimated module duration** 20 mins.
 
 ### Objectives
@@ -27,7 +27,7 @@ This module demonstrates how the rolling update capabilities in Kubernetes can b
 
 You need to complete the **Auto Scaling** module.
 
-## Task 1: Why Rolling updates
+## Task 1: Why Rolling updates ?
 
 One of the problems when deploying an application is how to update it while still delivering service, and perhaps more important (but usually given little consideration) how to revert the changes in the event that the update fails to work in some way.
 
@@ -45,149 +45,157 @@ As a general observation though it may be tempting to just go in and modify the 
 
 So far we've been stopping our services (the undeploy.sh script deletes the deployments) and then creating new ones (the deploy.sh script applies the deployment configurations for us) This results in service down time, and we don't want that. But before we can switch to properly using rolling upgrades there are a few bits of configuration we should do
 
-### Task 2a: Defining the rolling upgrade
+### Task 2A: Defining the rolling upgrade
 Kubernetes aims to keep a service running during the rolling upgrade, it does this by starting new pods to run the service, then stopping old ones once the new ones are ready. Through the magic of services and using labels as selectors the Kubernetes run time adds and removed pods from the service. This will work with a deployment whose replica sets only contain a single pod (the new pod will be started before the old one is stopped) but if your service contains multiple pods it will use some configuration rules to try and manage the process in a more balanced manner and sticking reasonably closely to the number of pods you've asked for (or the auto scaler has).
 
 We are going to once again edit the storefront-deployment.yaml file to give Kubernetes some rules to follow when doing a rolling upgrade. Importantly however we're going to edit a *Copy* of the file so we have a history.
 
-  1. In the OCI Cloud Shell navigate to the folder `$HOME/helidon-kubernetes`
+1.  In the OCI Cloud Shell navigate to the folder `$HOME/helidon-kubernetes`
 
-  2. Copy the storefront-deployment yaml file:
+2.  Copy the storefront-deployment yaml file:
   
-  ```bash
-  <copy>cp storefront-deployment.yaml storefront-deployment-v0.0.1.yaml</copy>
-  ```
+    ```bash
+    <copy>cp storefront-deployment.yaml storefront-deployment-v0.0.1.yaml</copy>
+    ```
 
-  3. Edit the new file `storefront-deployment-v0.0.1.yaml` I'm using vi but use any available editor you liike
-  
-  ```bash
-  <copy>vi storefront-deployment-v0.0.1.yaml</copy>
-  ```
+3.  Edit the new file `storefront-deployment-v0.0.1.yaml` I'm using vi but use any available editor you liike
 
-The current contents of the section of the file looks like this:
+    ```bash
+    <copy>vi storefront-deployment-v0.0.1.yaml</copy>
+    ```
 
-```yaml
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-  name: storefront
-spec:
-  replicas: 1 
-  selector:
-    matchLabels:
-      app: storefront
-  template:
+    The current contents of the section of the file looks like this:
+
+    ```yaml
+    apiVersion: apps/v1
+    kind: Deployment
     metadata:
-      labels:
-        app: storefront
-```
+      name: storefront
+    spec:
+      replicas: 1 
+      selector:
+        matchLabels:
+          app: storefront
+      template:
+        metadata:
+          labels:
+            app: storefront
+    ```
 
-  4. Set the number of replicas to 4:
+4.  Set the number of replicas to 4:
 
-  ```yaml
-  replicas: 4
-```
+    ```yaml
+    replicas: 4
+    ```
 
-We're now going to tell Kubernetes to use a rolling upgrade strategy for any upgrades. 
+    We're now going to tell Kubernetes to use a rolling upgrade strategy for any upgrades. 
 
-  5. After the replicas:4 line,  add
+5.  After the replicas:4 line,  add
 
-  ```yaml
+    ```yaml
     strategy:
       type: RollingUpdate
-```
+        ```
 
 Finally we're going to tell Kubernetes what limits we want to place on the rolling upgrade. 
 
-  6. Under the type line above, and **at the same indent** add the following
+6.  Under the type line above, and **at the same indent** add the following
 
-  ```yaml
+    ```yaml
       rollingUpdate:
         maxSurge: 1
         maxUnavailable: 1
-```
+    ```
 
-This limits the rollout process to having no more than 1 additional pods online above the normal replicas set, and only one pod below that specified in the replica set unavailable. So the roll out (in this case) allows us to have up to 5 pods running during the rollout and requires that at least 3 are running.
+    This limits the rollout process to having no more than 1 additional pods online above the normal replicas set, and only one pod below that specified in the replica set unavailable. So the roll out (in this case) allows us to have up to 5 pods running during the rollout and requires that at least 3 are running.
 
-Note that unless you have very specific reasons don't change the default settings for strategy type and maxSurge / minUnavailable. We are setting these for two reasons. First to show that the settings are available, and secondly for the purposes of this lab to show the roll out process in a way that let's us actually see what's happening by slowing things down (of course in a production you'd want it to run as fast as possible, so think about the settings used if you do override the defaults)
+    Note that unless you have very specific reasons don't change the default settings for strategy type and maxSurge / minUnavailable. We are setting these for two reasons. First to show that the settings are available, and secondly for the purposes of this lab to show the roll out process in a way that let's us actually see what's happening by slowing things down (of course in a production you'd want it to run as fast as possible, so think about the settings used if you do override the defaults)
 
-The section of the file after the changes will look like this
+    The section of the file after the changes will look like this
 
-```yaml
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-  name: storefront
-spec:
-  replicas: 4 
-  strategy:
-    type: RollingUpdate
-    rollingUpdate:
-      maxSurge: 1
-      maxUnavailable: 1
-  selector:
-    matchLabels:
-      app: storefront
-  template:
+    ```yaml
+    apiVersion: apps/v1
+    kind: Deployment
     metadata:
-      labels:
-        app: storefront
-```
+      name: storefront
+    spec:
+      replicas: 4 
+      strategy:
+        type: RollingUpdate
+        rollingUpdate:
+          maxSurge: 1
+          maxUnavailable: 1
+      selector:
+        matchLabels:
+          app: storefront
+      template:
+        metadata:
+          labels:
+            app: storefront
+    ```
 
-  7. Save the changes
+7.  Save the changes
 
 
-### Task 2b: Applying the rollout strategy
+### Task 2B: Applying the rollout strategy
 
 To do the roll out we're just going to apply the new file. Kubernetes will compare that to the old config and update appropriately.
 
-  1. Apply the new config
+1.  Apply the new config
   
-  ```bash
-  <copy>kubectl apply -f storefront-deployment-v0.0.1.yaml</copy>
-  ```
+    ```bash
+    <copy>kubectl apply -f storefront-deployment-v0.0.1.yaml</copy>
+    ```
+    
+    Example Output
 
-  ```
-deployment.apps/storefront configured
-```
+    ```text
+    deployment.apps/storefront configured
+    ```
 
-  2. Kubernetes will automatically keep a record of the previous versions and the command used (e.g. `kubectl apply -f storefront-deployment.yaml`), but the command may not be that usefull and we may want to describe the change. To provide a meaningful description we're going to apply an annotation to the deployment and when we then look at the deployment history we will see the change description.
+2.  Kubernetes will automatically keep a record of the previous versions and the command used (e.g. `kubectl apply -f storefront-deployment.yaml`), but the command may not be that usefull and we may want to describe the change. To provide a meaningful description we're going to apply an annotation to the deployment and when we then look at the deployment history we will see the change description.
   
-  ```bash
-  <copy>kubectl annotate deployment/storefront kubernetes.io/change-cause="Changed rollout settings"</copy>
-  ```
+    ```bash
+    <copy>kubectl annotate deployment/storefront kubernetes.io/change-cause="Changed rollout settings"</copy>
+    ```
+    
+    Example Output
 
-  ```text
-  deployment.apps/storefront annotated
-  ```
+    ```text
+    deployment.apps/storefront annotated
+    ```
  
-  3.  We can have a look at the status of the rollout
+3.  We can have a look at the status of the rollout
   
-```bash
-  <copy>kubectl rollout status deployment storefront</copy>
-  ```
+    ```bash
+    <copy>kubectl rollout status deployment storefront</copy>
+    ```
+    
+    Example Output
 
-  ```
-deployment "storefront" successfully rolled out
-```
+    ```text
+    deployment "storefront" successfully rolled out
+    ```
 
-If you get a message along the lines of `Waiting for deployment "storefront" rollout to finish: 3 of 4 updated replicas are available...` this just means that the roll out is still in progress, once it's complete you should see the success message.
+    If you get a message along the lines of `Waiting for deployment "storefront" rollout to finish: 3 of 4 updated replicas are available...` this just means that the roll out is still in progress, once it's complete you should see the success message.
 
-  4. Let's also look at the history of this deployment :
+4.  Let's also look at the history of this deployment :
 
-  ```bash
-  <copy>kubectl rollout history  deployment storefront</copy>
-  ```
+    ```bash
+    <copy>kubectl rollout history  deployment storefront</copy>
+    ```
+    
+    Example Output
+  
+    ```text
+    deployment.apps/storefront 
+    REVISION  CHANGE-CAUSE
+    1         Changed rollout settings
+    ```
 
-  ```
-deployment.apps/storefront 
-REVISION  CHANGE-CAUSE
-1         Changed rollout settings
-```
+    The update has the change-cause of `"Changed rollout settings"` from the `kubectl annotate` command.
 
-The update has the change-cause of `"Changed rollout settings"` from the `kubectl annotate` command.
-
-One point to note here, these changes *only* modified the deployment roll out configuration, so there was no need for Kubernetes to actually restart any pods as those were unchanged, however additional pods may have needed to be started to meet the replica count.
+    One point to note here, these changes *only* modified the deployment roll out configuration, so there was no need for Kubernetes to actually restart any pods as those were unchanged, however additional pods may have needed to be started to meet the replica count.
 
 ### Making a change that updates the pods
 
@@ -195,228 +203,240 @@ Of course normally you would make a change to the deployment yaml, test it and b
 
 For this lab we are focusing on Helidon and Kubernetes, not the entire CI/CD chain so like any good cooking program we're going to use a v0.0.2 image that we created for you. For the purposes of this module the image is basically the same as the v0.0.1 version, except it reports it's version as 0.0.2 
 
-
-Applying our new image
+### Applying our new image
 
 To apply the new v0.0.2 image we need to upgrade the configuration again. As discussed above this we would *normally* and following best practice do this by creating a new version of the deployment yaml file (say storefront-deploymentv0.0.2.yaml to match the container and code versions)
 
 However ... for the purpose of showing how this can be done using kubectl we are going to do this using the command line, not a configuration file change. This **might** be something you'd do in a test environment, but **don't** do it in a production environment or your change management processes will almost certainly end up damaged.
 
-  1. Edit the  `storefront-deployment-v0.0.1.yaml` file and locate the image line, in my case it looks like `image: fra.ocir.io/nrrwtjdl235/tg_labs_base_repo/storefront:0.0.1` but yours will be different. I'm using vi here but use the editor you prefer
+1.  Edit the  `storefront-deployment-v0.0.1.yaml` file and locate the image line, in my case it looks like `image: fra.ocir.io/nrrwtjdl235/tg_labs_base_repo/storefront:0.0.1` but yours will be different. I'm using vi here but use the editor you prefer
   
-  ```bash
-  <copy>vi storefront-deployment-v0.0.1.yaml</copy>
-  ```
+    ```bash
+    <copy>vi storefront-deployment-v0.0.1.yaml</copy>
+    ```
   
-  2. Copy **your** image location details to a notepad or similar. In my case the image location is `fra.ocir.io/nrrwtjdl235/tg_labs_base_repo/storefront:0.0.1` but yours **will be different**, replace the version with the micro release `2` so for me after making the chance it will look like ``fra.ocir.io/nrrwtjdl235/tg_labs_base_repo/storefront:0.0.2`
+2.  Copy **your** image location details to a notepad or similar. In my case the image location is `fra.ocir.io/nrrwtjdl235/tg_labs_base_repo/storefront:0.0.1` but yours **will be different**, replace the version with the micro release `2` so for me after making the chance it will look like ``fra.ocir.io/nrrwtjdl235/tg_labs_base_repo/storefront:0.0.2`
    
-  3. In the OCI cloud shell Execute the command below, replacing `[image location]` with the one you just got
+3.  In the OCI cloud shell Execute the command below, replacing `[image location]` with the one you just got
   
-```bash
-  kubectl set image deployment storefront storefront=[image location]
-  ```
+    ```bash
+    kubectl set image deployment storefront storefront=[image location]
+    ```
 
-  In my case the command is `kubectl set image deployment storefront storefront=fra.ocir.io/nrrwtjdl235/tg_labs_base_repo/storefront:0.0.2` but of course **yours will be different**
+    In **my** case the command is `kubectl set image deployment storefront storefront=fra.ocir.io/nrrwtjdl235/tg_labs_base_repo/storefront:0.0.2` but of course **yours will be different**
+    
+    Example Output
 
-  ```
-deployment.apps/storefront image updated
-```
+    ```text
+    deployment.apps/storefront image updated
+    ```
 
-  4. As is good practice we'll update the history of the deployment so we know what the change is.
+4.  As is good practice we'll update the history of the deployment so we know what the change is.
   
-   ```bash
-  <copy>kubectl annotate deployment/storefront kubernetes.io/change-cause="Updated to v0.0.2 image"</copy>
-  ```
+     ```bash
+    <copy>kubectl annotate deployment/storefront kubernetes.io/change-cause="Updated to v0.0.2 image"</copy>
+    ```
 
-  5. Let's look at the status of our setup during the roll out
+5.  Let's look at the status of our setup during the roll out
   
-  ```bash
-  <copy>kubectl get all</copy>
-  ```
+    ```bash
+    <copy>kubectl get all</copy>
+    ```
+    
+    Example Output
 
-```
-NAME                                READY   STATUS    RESTARTS   AGE
-pod/stockmanager-6759d989bf-mtn76   1/1     Running   0          28m
-pod/storefront-5f777cb4f5-7tlkb     1/1     Running   0          28m
-pod/storefront-5f777cb4f5-8wnfm     1/1     Running   0          27m
-pod/storefront-5f777cb4f5-gsbwd     1/1     Running   0          27m
-pod/storefront-79d7d954d6-5g5ng     0/1     Running   0          5s
-pod/storefront-79d7d954d6-m6qrg     0/1     Running   0          5s
-pod/zipkin-88c48d8b9-r9vx2          1/1     Running   0          28m
+    ```text
+    NAME                                READY   STATUS    RESTARTS   AGE
+    pod/stockmanager-6759d989bf-mtn76   1/1     Running   0          28m
+    pod/storefront-5f777cb4f5-7tlkb     1/1     Running   0          28m
+    pod/storefront-5f777cb4f5-8wnfm     1/1     Running   0          27m
+    pod/storefront-5f777cb4f5-gsbwd     1/1     Running   0          27m
+    pod/storefront-79d7d954d6-5g5ng     0/1     Running   0          5s
+    pod/storefront-79d7d954d6-m6qrg     0/1     Running   0          5s
+    pod/zipkin-88c48d8b9-r9vx2          1/1     Running   0          28m
 
-NAME                   TYPE        CLUSTER-IP       EXTERNAL-IP   PORT(S)             AGE
-service/stockmanager   ClusterIP   10.110.224.255   <none>        8081/TCP,9081/TCP   28m
-service/storefront     ClusterIP   10.99.139.139    <none>        8080/TCP,9080/TCP   28m
-service/zipkin         ClusterIP   10.104.158.61    <none>        9411/TCP            28m
+    NAME                   TYPE        CLUSTER-IP       EXTERNAL-IP   PORT(S)             AGE
+    service/stockmanager   ClusterIP   10.110.224.255   <none>        8081/TCP,9081/TCP   28m
+    service/storefront     ClusterIP   10.99.139.139    <none>        8080/TCP,9080/TCP   28m
+    service/zipkin         ClusterIP   10.104.158.61    <none>        9411/TCP            28m
 
-NAME                           READY   UP-TO-DATE   AVAILABLE   AGE
-deployment.apps/stockmanager   1/1     1            1           28m
-deployment.apps/storefront     3/4     2            3           28m
-deployment.apps/zipkin         1/1     1            1           28m
+    NAME                           READY   UP-TO-DATE   AVAILABLE   AGE
+    deployment.apps/stockmanager   1/1     1            1           28m
+    deployment.apps/storefront     3/4     2            3           28m
+    deployment.apps/zipkin         1/1     1            1           28m
 
-NAME                                      DESIRED   CURRENT   READY   AGE
-replicaset.apps/stockmanager-6759d989bf   1         1         1       28m
-replicaset.apps/storefront-6ha27g8ef4     0         0         0       35m
-replicaset.apps/storefront-5f777cb4f5     3         3         3       28m
-replicaset.apps/storefront-79d7d954d6     2         2         0       5s
-replicaset.apps/zipkin-88c48d8b9          1         1         1       28m
-```
+    NAME                                      DESIRED   CURRENT   READY   AGE
+    replicaset.apps/stockmanager-6759d989bf   1         1         1       28m
+    replicaset.apps/storefront-6ha27g8ef4     0         0         0       35m
+    replicaset.apps/storefront-5f777cb4f5     3         3         3       28m
+    replicaset.apps/storefront-79d7d954d6     2         2         0       5s
+    replicaset.apps/zipkin-88c48d8b9          1         1         1       28m
+    ```
 
-We're going to look at these in a different order to the output
+    We're going to look at these in a different order to the output
 
-Firstly the deployments info. We can see that 3 out of 4 pods are available, this is because we specified a maxUnavailable of 1, so as we have 4 replicas we must always have 3 of them available.
+    Firstly the deployments info. We can see that 3 out of 4 pods are available, this is because we specified a maxUnavailable of 1, so as we have 4 replicas we must always have 3 of them available.
 
-If we look at the replica sets we seem something unusual. There are *two* replica sets for the storefront. the original replica set (`storefront-5f777cb4f5z`) has 3 pods available and running, one of them was stopped as we allow one a maxUnavailable of 1. There is however an additional storefront replica set `storefront-79d7d954d6` This has 2 pods in it, at the time the data was gathered neither of them was ready. But why 2 pods when we'd only specified a surge over the replicas count of 1 pod ? That's because we have one pod count "available" to us from the surge, and another "available" to us because we're allowed to kill of one pod below the replicas count, making a total of two new pods that can be started.
+    If we look at the replica sets we seem something unusual. There are *two* replica sets for the storefront. the original replica set (`storefront-5f777cb4f5z`) has 3 pods available and running, one of them was stopped as we allow one a maxUnavailable of 1. There is however an additional storefront replica set `storefront-79d7d954d6` This has 2 pods in it, at the time the data was gathered neither of them was ready. But why 2 pods when we'd only specified a surge over the replicas count of 1 pod ? That's because we have one pod count "available" to us from the surge, and another "available" to us because we're allowed to kill of one pod below the replicas count, making a total of two new pods that can be started.
 
-Finally if we look at the pods themselves we see that there are five storefront pods. A point on pod naming, the first part of the pod name is actually the replica set the pod is in, so the three pods starting `storefront-5f777cb4f5-` are actually in the replic set `storefront-5f777cb4f5` (the old one) and the two pods starting `storefront-79d7d954d6-` are in the `storefront-79d7d954d6` replica set (the new one)
+    Finally if we look at the pods themselves we see that there are five storefront pods. A point on pod naming, the first part of the pod name is actually the replica set the pod is in, so the three pods starting `storefront-5f777cb4f5-` are actually in the replic set `storefront-5f777cb4f5` (the old one) and the two pods starting `storefront-79d7d954d6-` are in the `storefront-79d7d954d6` replica set (the new one)
 
-Basically what Kuberntes has done is created a new replica set and started some new pods in it by adjusting the number of pod replicas in each set, maintaining the overall count of having 3 pods available at all times, and only one additional pod over the replica count set in the deployment. Over time as those new pods come online in the new replica set **and** pass their readiness test, then they can provide the service and the **old** replica set will be reduced by one pod, allowing another new pod to be started. At all times there are 3 pods running.
+    Basically what Kuberntes has done is created a new replica set and started some new pods in it by adjusting the number of pod replicas in each set, maintaining the overall count of having 3 pods available at all times, and only one additional pod over the replica count set in the deployment. Over time as those new pods come online in the new replica set **and** pass their readiness test, then they can provide the service and the **old** replica set will be reduced by one pod, allowing another new pod to be started. At all times there are 3 pods running.
 
-  6. Rerun the status command a few times to see the changes 
+6.  Rerun the status command a few times to see the changes 
   
-  ```bash
-  <copy>kubectl get all</copy>
-  ```
+    ```bash
+    <copy>kubectl get all</copy>
+    ```
 
-If we look at the output again we can see the progress (note that the exact results will vary depending on how long after the previous kubectl get all command you ran this one).
+    If we look at the output again we can see the progress (note that the exact results will vary depending on how long after the previous kubectl get all command you ran this one).
 
-```
-NAME                                READY   STATUS    RESTARTS   AGE
-pod/stockmanager-6759d989bf-mtn76   1/1     Running   0          29m
-pod/storefront-5f777cb4f5-7tlkb     1/1     Running   0          29m
-pod/storefront-79d7d954d6-5g5ng     1/1     Running   0          63s
-pod/storefront-79d7d954d6-7z2df     0/1     Running   0          17s
-pod/storefront-79d7d954d6-h6qv7     0/1     Running   0          16s
-pod/storefront-79d7d954d6-m6qrg     1/1     Running   0          63s
-pod/zipkin-88c48d8b9-r9vx2          1/1     Running   0          29m
+    ```
+    NAME                                READY   STATUS    RESTARTS   AGE
+    pod/stockmanager-6759d989bf-mtn76   1/1     Running   0          29m
+    pod/storefront-5f777cb4f5-7tlkb     1/1     Running   0          29m
+    pod/storefront-79d7d954d6-5g5ng     1/1     Running   0          63s
+    pod/storefront-79d7d954d6-7z2df     0/1     Running   0          17s
+    pod/storefront-79d7d954d6-h6qv7     0/1     Running   0          16s
+    pod/storefront-79d7d954d6-m6qrg     1/1     Running   0          63s
+    pod/zipkin-88c48d8b9-r9vx2          1/1     Running   0          29m
 
-NAME                   TYPE        CLUSTER-IP       EXTERNAL-IP   PORT(S)             AGE
-service/stockmanager   ClusterIP   10.110.224.255   <none>        8081/TCP,9081/TCP   29m
-service/storefront     ClusterIP   10.99.139.139    <none>        8080/TCP,9080/TCP   29m
-service/zipkin         ClusterIP   10.104.158.61    <none>        9411/TCP            29m
+    NAME                   TYPE        CLUSTER-IP       EXTERNAL-IP   PORT(S)             AGE
+    service/stockmanager   ClusterIP   10.110.224.255   <none>        8081/TCP,9081/TCP   29m
+    service/storefront     ClusterIP   10.99.139.139    <none>        8080/TCP,9080/TCP   29m
+    service/zipkin         ClusterIP   10.104.158.61    <none>        9411/TCP            29m
 
-NAME                           READY   UP-TO-DATE   AVAILABLE   AGE
-deployment.apps/stockmanager   1/1     1            1           29m
-deployment.apps/storefront     3/4     4            3           29m
-deployment.apps/zipkin         1/1     1            1           29m
+    NAME                           READY   UP-TO-DATE   AVAILABLE   AGE
+    deployment.apps/stockmanager   1/1     1            1           29m
+    deployment.apps/storefront     3/4     4            3           29m
+    deployment.apps/zipkin         1/1     1            1           29m
 
-NAME                                      DESIRED   CURRENT   READY   AGE
-replicaset.apps/stockmanager-6759d989bf   1         1         1       29m
-replicaset.apps/storefront-6ha27g8ef4     0         0         0       36m
-replicaset.apps/storefront-5f777cb4f5     1         1         1       29m
-replicaset.apps/storefront-79d7d954d6     4         4         2       63s
-replicaset.apps/zipkin-88c48d8b9          1         1         1       29m
-```
+    NAME                                      DESIRED   CURRENT   READY   AGE
+    replicaset.apps/stockmanager-6759d989bf   1         1         1       29m
+    replicaset.apps/storefront-6ha27g8ef4     0         0         0       36m
+    replicaset.apps/storefront-5f777cb4f5     1         1         1       29m
+    replicaset.apps/storefront-79d7d954d6     4         4         2       63s
+    replicaset.apps/zipkin-88c48d8b9          1         1         1       29m
+    ```
 
-  7. Kubectl provides an easier way to look at the status of our rollout
+7.  Kubectl provides an easier way to look at the status of our rollout
 
-  ```bash
-  <copy>kubectl rollout status deployment storefront</copy>
-  ```
-
-  ```
-Waiting for deployment "storefront" rollout to finish: 3 out of 4 new replicas have been updated...
-Waiting for deployment "storefront" rollout to finish: 3 out of 4 new replicas have been updated...
-Waiting for deployment "storefront" rollout to finish: 1 old replicas are pending termination...
-Waiting for deployment "storefront" rollout to finish: 1 old replicas are pending termination...
-Waiting for deployment "storefront" rollout to finish: 1 old replicas are pending termination...
-Waiting for deployment "storefront" rollout to finish: 3 of 4 updated replicas are available...
-deployment "storefront" successfully rolled out
-```
-Kubectl provides us with a monitor which updates over time. Once all of the deployment is updated then kubectl returns.
-
-During the rollout if you had accessed the status page for the storefront (on /sf/status) you would sometimes have got a version 0.0.1 in the response, and other times 0.0.2 This is because during the rollout there are instances of both versions running.
-
-  8. If we look at the setup now we can see that the storefront is running only the new pods, and that there are 4 pods providing the service.
-
-  ```bash
-  <copy>kubectl get all</copy>
-  ```
-
-  ```
-NAME                                READY   STATUS    RESTARTS   AGE
-pod/stockmanager-6759d989bf-mtn76   1/1     Running   0          30m
-pod/storefront-79d7d954d6-5g5ng     1/1     Running   0          108s
-pod/storefront-79d7d954d6-7z2df     1/1     Running   0          62s
-pod/storefront-79d7d954d6-h6qv7     1/1     Running   0          61s
-pod/storefront-79d7d954d6-m6qrg     1/1     Running   0          108s
-pod/zipkin-88c48d8b9-r9vx2          1/1     Running   0          30m
-
-NAME                   TYPE        CLUSTER-IP       EXTERNAL-IP   PORT(S)             AGE
-service/stockmanager   ClusterIP   10.110.224.255   <none>        8081/TCP,9081/TCP   30m
-service/storefront     ClusterIP   10.99.139.139    <none>        8080/TCP,9080/TCP   30m
-service/zipkin         ClusterIP   10.104.158.61    <none>        9411/TCP            30m
-
-NAME                           READY   UP-TO-DATE   AVAILABLE   AGE
-deployment.apps/stockmanager   1/1     1            1           30m
-deployment.apps/storefront     4/4     4            4           30m
-deployment.apps/zipkin         1/1     1            1           30m
-
-NAME                                      DESIRED   CURRENT   READY   AGE
-replicaset.apps/stockmanager-6759d989bf   1         1         1       30m
-replicaset.apps/storefront-6ha27g8ef4     0         0         0       37m
-replicaset.apps/storefront-5f777cb4f5     0         0         0       30m
-replicaset.apps/storefront-79d7d954d6     4         4         4       108s
-replicaset.apps/zipkin-88c48d8b9          1         1         1       30m
-```
-
-One important point is that you'll see that the **old** replica set is still around, even though it hasn't got any pods assigned to it. This is because it still holds the configuration that was in place before if we wanted to rollback (we'll see this later)
-
-  9. if we now look at the history we see that there have been two sets of changes
+    ```bash
+      <copy>kubectl rollout status deployment storefront</copy>
+    ```
   
-  ```bash
-  <copy>kubectl rollout history deployment storefront</copy>
-  ```
+    Example Output
 
-  ```
-deployment.apps/storefront 
-REVISION  CHANGE-CAUSE
-1         Changed rollout settings
-2         Updated to v0.0.2 image
-```
+    ```text
+    Waiting for deployment "storefront" rollout to finish: 3 out of 4 new replicas have been updated...
+    Waiting for deployment "storefront" rollout to finish: 3 out of 4 new replicas have been updated...
+    Waiting for deployment "storefront" rollout to finish: 1 old replicas are pending termination...
+    Waiting for deployment "storefront" rollout to finish: 1 old replicas are pending termination...
+    Waiting for deployment "storefront" rollout to finish: 1 old replicas are pending termination...
+    Waiting for deployment "storefront" rollout to finish: 3 of 4 updated replicas are available...
+    deployment "storefront" successfully rolled out
+    ```
 
-Note the change cause is what we set with the kubectl annotate command
+    Kubectl provides us with a monitor which updates over time. Once all of the deployment is updated then kubectl returns.
 
-  10. Let's check on our deployment to make sure that the image is the v0.0.2 we expect
+    During the rollout if you had accessed the status page for the storefront (on /sf/status) you would sometimes have got a version 0.0.1 in the response, and other times 0.0.2 This is because during the rollout there are instances of both versions running.
+
+8.  If we look at the setup now we can see that the storefront is running only the new pods, and that there are 4 pods providing the service.
+
+    ```bash
+    <copy>kubectl get all</copy>
+    ```
+    
+    Example Output
+
+    ```text
+    NAME                                READY   STATUS    RESTARTS   AGE
+    pod/stockmanager-6759d989bf-mtn76   1/1     Running   0          30m
+    pod/storefront-79d7d954d6-5g5ng     1/1     Running   0          108s
+    pod/storefront-79d7d954d6-7z2df     1/1     Running   0          62s
+    pod/storefront-79d7d954d6-h6qv7     1/1     Running   0          61s
+    pod/storefront-79d7d954d6-m6qrg     1/1     Running   0          108s
+    pod/zipkin-88c48d8b9-r9vx2          1/1     Running   0          30m
+
+    NAME                   TYPE        CLUSTER-IP       EXTERNAL-IP   PORT(S)             AGE
+    service/stockmanager   ClusterIP   10.110.224.255   <none>        8081/TCP,9081/TCP   30m
+    service/storefront     ClusterIP   10.99.139.139    <none>        8080/TCP,9080/TCP   30m
+    service/zipkin         ClusterIP   10.104.158.61    <none>        9411/TCP            30m
+
+    NAME                           READY   UP-TO-DATE   AVAILABLE   AGE
+    deployment.apps/stockmanager   1/1     1            1           30m
+    deployment.apps/storefront     4/4     4            4           30m
+    deployment.apps/zipkin         1/1     1            1           30m
+
+    NAME                                      DESIRED   CURRENT   READY   AGE
+    replicaset.apps/stockmanager-6759d989bf   1         1         1       30m
+    replicaset.apps/storefront-6ha27g8ef4     0         0         0       37m
+    replicaset.apps/storefront-5f777cb4f5     0         0         0       30m
+    replicaset.apps/storefront-79d7d954d6     4         4         4       108s
+    replicaset.apps/zipkin-88c48d8b9          1         1         1       30m
+    ```
+
+    One important point is that you'll see that the **old** replica set is still around, even though it hasn't got any pods assigned to it. This is because it still holds the configuration that was in place before if we wanted to rollback (we'll see this later)
+
+9.  If we now look at the history we see that there have been two sets of changes
   
-  ```bash
-  <copy>kubectl describe deployment storefront</copy>
-  ```
+    ```bash
+    <copy>kubectl rollout history deployment storefront</copy>
+    ```
 
-  ```
-Name:                   storefront
-Namespace:              tg-helidon
-CreationTimestamp:      Fri, 03 Jan 2020 11:58:05 +0000
-Labels:                 app=storefront
-Annotations:            deployment.kubernetes.io/revision: 2
-                        kubectl.kubernetes.io/last-applied-configuration:
-                          {"apiVersion":"apps/v1","kind":"Deployment","metadata":{"annotations":{},"name":"storefront","namespace":"tg-helidon"},"spec":{...
-Selector:               app=storefront
-Replicas:               4 desired | 4 updated | 4 total | 4 available | 0 unavailable
-StrategyType:           RollingUpdate
-MinReadySeconds:        0
-RollingUpdateStrategy:  1 max unavailable, 1 max surge
-Pod Template:
-  Labels:  app=storefront
-  Containers:
-   storefront:
-    Image:       fra.ocir.io/oractdemeabdmnative/h-k8s_repo/storefront:0.0.2
-... 
-Lots of output 
-... 
-  Normal  ScalingReplicaSet  23m   deployment-controller  Scaled up replica set storefront-79d7d954d6 to 1
-  Normal  ScalingReplicaSet  23m   deployment-controller  Scaled down replica set storefront-5f777cb4f5 to 3
-  Normal  ScalingReplicaSet  23m   deployment-controller  Scaled up replica set storefront-79d7d954d6 to 2
-  Normal  ScalingReplicaSet  22m   deployment-controller  Scaled down replica set storefront-5f777cb4f5 to 2
-  Normal  ScalingReplicaSet  22m   deployment-controller  Scaled up replica set storefront-79d7d954d6 to 3
-  Normal  ScalingReplicaSet  22m   deployment-controller  Scaled down replica set storefront-5f777cb4f5 to 1
-  Normal  ScalingReplicaSet  22m   deployment-controller  Scaled up replica set storefront-79d7d954d6 to 4
-  Normal  ScalingReplicaSet  21m   deployment-controller  Scaled down replica set storefront-5f777cb4f5 to 0
-```
+    Example Output
+ 
+    ```text
+    deployment.apps/storefront 
+    REVISION  CHANGE-CAUSE
+    1         Changed rollout settings
+    2         Updated to v0.0.2 image
+    ```
 
-We see the usual deployment info, the Image is indeed the new one we specified (in this case `fra.ocir.io/oractdemeabdmnative/h-k8s_repo/storefront:0.0.2`) and the events log section shows us the various stages of rolling out the update.
+    Note the change cause is what we set with the `kubectl annotate` command
 
-If your cloud shell session is new or has been restarted then the shell variable `$EXTERNAL_IP` may be invalid, expand this section if you think this may be the case to check and reset it if needed.
+10. Let's check on our deployment to make sure that the image is the v0.0.2 we expect
+  
+    ```bash
+    <copy>kubectl describe deployment storefront</copy>
+    ```
+    
+    Example Output
+
+    ```text
+    Name:                   storefront
+    Namespace:              tg-helidon
+    CreationTimestamp:      Fri, 03 Jan 2020 11:58:05 +0000
+    Labels:                 app=storefront
+    Annotations:            deployment.kubernetes.io/revision: 2
+                            kubectl.kubernetes.io/last-applied-configuration:
+                              {"apiVersion":"apps/v1","kind":"Deployment","metadata":{"annotations":{},"name":"storefront","namespace":"tg-helidon"},"spec":{...
+    Selector:               app=storefront
+    Replicas:               4 desired | 4 updated | 4 total | 4 available | 0 unavailable
+    StrategyType:           RollingUpdate
+    MinReadySeconds:        0
+    RollingUpdateStrategy:  1 max unavailable, 1 max surge
+    Pod Template:
+      Labels:  app=storefront
+      Containers:
+       storefront:
+        Image:       fra.ocir.io/oractdemeabdmnative/h-k8s_repo/storefront:0.0.2
+    ... 
+    Lots of output 
+    ... 
+      Normal  ScalingReplicaSet  23m   deployment-controller  Scaled up replica set storefront-79d7d954d6 to 1
+      Normal  ScalingReplicaSet  23m   deployment-controller  Scaled down replica set storefront-5f777cb4f5 to 3
+      Normal  ScalingReplicaSet  23m   deployment-controller  Scaled up replica set storefront-79d7d954d6 to 2
+      Normal  ScalingReplicaSet  22m   deployment-controller  Scaled down replica set storefront-5f777cb4f5 to 2
+      Normal  ScalingReplicaSet  22m   deployment-controller  Scaled up replica set storefront-79d7d954d6 to 3
+      Normal  ScalingReplicaSet  22m   deployment-controller  Scaled down replica set storefront-5f777cb4f5 to 1
+      Normal  ScalingReplicaSet  22m   deployment-controller  Scaled up replica set storefront-79d7d954d6 to 4
+      Normal  ScalingReplicaSet  21m   deployment-controller  Scaled down replica set storefront-5f777cb4f5 to 0
+    ```
+
+    We see the usual deployment info, the Image is indeed the new one we specified (in this case `fra.ocir.io/oractdemeabdmnative/h-k8s_repo/storefront:0.0.2`) and the events log section shows us the various stages of rolling out the update.
+
+    If your cloud shell session is new or has been restarted then the shell variable `$EXTERNAL_IP` may be invalid, expand this section if you think this may be the case to check and reset it if needed.
 
 <details><summary><b>How to check if $EXTERNAL_IP is set, and re-set it if it's not</b></summary>
 
@@ -430,11 +450,13 @@ If you want to check if the variable is still set type `echo $EXTERNAL_IP` if it
 
 The automated scripts will create a script file `$HOME/clusterSettings.one` this can be executed using the shell built in `source` to set the EXTERNAL_IP variable for you.
 
-  ```bash
-  <copy>source $HOME/clusterSettings.one</copy>
-  ```
-  
+```bash
+<copy>source $HOME/clusterSettings.one</copy>
 ```
+
+Example Output
+  
+```text
 EXTERNAL_IP set to 139.185.45.98
 NAMESPACE set to tg
 ```
@@ -454,11 +476,13 @@ In this case as you manually set this up you will need to get the information fr
 
   - You are going to get the value of the `EXTERNAL_IP` for your environment. This is used to identify the DNS name used by an incoming connection. In the OCI cloud shell type
 
-  ```bash
-  <copy>kubectl get services -n ingress-nginx</copy>
-  ```
-
+```bash
+<copy>kubectl get services -n ingress-nginx</copy>
 ```
+  
+  Example Output
+
+```text
 NAME                                 TYPE           CLUSTER-IP      EXTERNAL-IP      PORT(S)                      AGE
 ingress-nginx-controller             LoadBalancer   10.96.182.204   130.162.40.241   80:31834/TCP,443:31118/TCP   2h
 ingress-nginx-controller-admission   ClusterIP      10.96.216.33    <none>           443/TCP                      2h
@@ -478,267 +502,288 @@ ingress-nginx-controller-admission   ClusterIP      10.96.216.33    <none>      
 
 </details>
 
-  11. We should of course check that our update is correctly delivering a service.
+11. We should of course check that our update is correctly delivering a service.
   
-  ```bash
-  <copy>curl -i -k -X GET -u jack:password https://store.$EXTERNAL_IP.nip.io/store/stocklevel</copy>
-  ```
+    ```bash
+    <copy>curl -i -k -X GET -u jack:password https://store.$EXTERNAL_IP.nip.io/store/stocklevel</copy>
+    ```
+    
+    Example Output
 
-  ```
-HTTP/2 200 
-server: nginx/1.17.8
-date: Fri, 27 Mar 2020 10:33:47 GMT
-content-type: application/json
-content-length: 220
-strict-transport-security: max-age=15724800; includeSubDomains
+    ```text
+    HTTP/2 200 
+    server: nginx/1.17.8
+    date: Fri, 27 Mar 2020 10:33:47 GMT
+    content-type: application/json
+    content-length: 220
+    strict-transport-security: max-age=15724800; includeSubDomains
 
-[{"itemCount":4980,"itemName":"rivet"},{"itemCount":4,"itemName":"chair"},{"itemCount":981,"itemName":"door"},{"itemCount":25,"itemName":"window"},{"itemCount":20,"itemName":"handle"}]
-```
+    [{"itemCount":4980,"itemName":"rivet"},{"itemCount":4,"itemName":"chair"},{"itemCount":981,"itemName":"door"},{"itemCount":25,"itemName":"window"},{"itemCount":20,"itemName":"handle"}]
+    ```
 
-If you get a DNS error that `store..nip.io` cannot be found this means that `EXTERNAL_IP` is not set, follow the instructions above to set it and then re-run the curl command.
+    If you get a DNS error that `store..nip.io` cannot be found this means that `EXTERNAL_IP` is not set, follow the instructions above to set it and then re-run the curl command.
 
-  12. Now let's check the output from the StatusResource
+12. Now let's check the output from the StatusResource
   
-  ```bash
-  <copy>curl -i -k -X GET https://store.$EXTERNAL_IP.nip.io/sf/status</copy>
-  ```
+    ```bash
+    <copy>curl -i -k -X GET https://store.$EXTERNAL_IP.nip.io/sf/status</copy>
+    ```
 
-  ```
-HTTP/2 200 
-server: nginx/1.17.8
-date: Fri, 27 Mar 2020 10:34:05 GMT
-content-type: application/json
-content-length: 51
-strict-transport-security: max-age=15724800; includeSubDomains
+    Example Output
+    
+    ```text
+    HTTP/2 200 
+    server: nginx/1.17.8
+    date: Fri, 27 Mar 2020 10:34:05 GMT
+    content-type: application/json
+    content-length: 51
+    strict-transport-security: max-age=15724800; includeSubDomains
 
-{"name":"My Shop","alive":true,"version":"0.0.2"}
-```
-Now the rollout has completed and all the instances are running the updated image as expected it's reporting version 0.0.2
+    {"name":"My Shop","alive":true,"version":"0.0.2"}
+    
+    ```
+    Now the rollout has completed and all the instances are running the updated image as expected it's reporting version 0.0.2
 
-If you had checked this during the rollout you would have got 0.0.1 or 0.0.2 versions returned depending on which pod you connected to and what version it was running.
+    If you had checked this during the rollout you would have got 0.0.1 or 0.0.2 versions returned depending on which pod you connected to and what version it was running.
 
 ## Task 3: Rolling back a update
+
 In this case the update worked, but what would happen if it had for some reason failed. Fortunately for us Kubernetes keeps the old replica set around, which includes the config for just this reason. 
 
-  1. Let's get the replica set list
+1.  Let's get the replica set list
   
-  ```bash
-  <copy>kubectl get replicaset</copy>
-  ```
+    ```bash
+    <copy>kubectl get replicaset</copy>
+    ```
+    
+    Example Output
 
-  ```
-NAME                                                     DESIRED   CURRENT   READY   AGE
-stockmanager-6759d989bf                                  1         1         1       61m
-storefront-6ha27g8ef4                                    0         0         0       68m
-storefront-5f777cb4f5                                    0         0         0       61m
-storefront-79d7d954d6                                    4         4         4       33m
-zipkin-88c48d8b9                                         1         1         1       61m
-```
+    ```text
+    NAME                                                     DESIRED   CURRENT   READY   AGE
+    stockmanager-6759d989bf                                  1         1         1       61m
+    storefront-6ha27g8ef4                                    0         0         0       68m
+    storefront-5f777cb4f5                                    0         0         0       61m
+    storefront-79d7d954d6                                    4         4         4       33m
+    zipkin-88c48d8b9                                         1         1         1       61m
+    ```
 
-  2. And let's look at the latest storefront replica, of course replace the replica set id with yours
+2.  And let's look at the latest storefront replica, of course replace the replica set id with yours
   
- ```bash
- kubectl describe replicaset storefront-79d7d954d6
- ```
+     ```bash
+     kubectl describe replicaset storefront-79d7d954d6
+     ```
+   
+    Example Output
 
-  ```
-Name:           storefront-79d7d954d6
-Namespace:      tg-helidon
-Selector:       app=storefront,pod-template-hash=79d7d954d6
-Labels:         app=storefront
-                pod-template-hash=79d7d954d6
-Annotations:    deployment.kubernetes.io/desired-replicas: 4
-                deployment.kubernetes.io/max-replicas: 5
-                deployment.kubernetes.io/revision: 2
-                kubernetes.io/change-cause: Updated to v0.0.2 image
-Controlled By:  Deployment/storefront
-Replicas:       4 current / 4 desired
-Pods Status:    4 Running / 0 Waiting / 0 Succeeded / 0 Failed
-Pod Template:
-  Labels:  app=storefront
-           pod-template-hash=79d7d954d6
-  Containers:
-   storefront:
-    Image:       fra.ocir.io/oractdemeabdmnative/h-k8s_repo/storefront:0.0.2
-    Ports:       8080/TCP, 9080/TCP
-    Host Ports:  0/TCP, 0/TCP
-    Limits:
-      cpu:        250m
-    Liveness:     http-get http://:health-port/health/live delay=60s timeout=5s period=5s #success=1 #failure=3
-    Readiness:    exec [/bin/bash -c curl -s http://localhost:9080/health/ready | json_pp | grep "\"outcome\" : \"UP\""] delay=15s timeout=5s period=10s #success=1 #failure=1
-    Environment:  <none>
-    Mounts:
-      /conf from sf-config-map-vol (ro)
-      /confsecure from sf-conf-secure-vol (ro)
-  Volumes:
-   sf-conf-secure-vol:
-    Type:        Secret (a volume populated by a Secret)
-    SecretName:  sf-conf-secure
-    Optional:    false
-   sf-config-map-vol:
-    Type:      ConfigMap (a volume populated by a ConfigMap)
-    Name:      sf-config-map
-    Optional:  false
-Events:
-  Type    Reason            Age   From                   Message
-  ----    ------            ----  ----                   -------
-  Normal  SuccessfulCreate  33m   replicaset-controller  Created pod: storefront-79d7d954d6-m6qrg
-  Normal  SuccessfulCreate  33m   replicaset-controller  Created pod: storefront-79d7d954d6-5g5ng
-  Normal  SuccessfulCreate  33m   replicaset-controller  Created pod: storefront-79d7d954d6-7z2df
-  Normal  SuccessfulCreate  33m   replicaset-controller  Created pod: storefront-79d7d954d6-h6qv7
-```
+    ```text
+    Name:           storefront-79d7d954d6
+    Namespace:      tg-helidon
+    Selector:       app=storefront,pod-template-hash=79d7d954d6
+    Labels:         app=storefront
+                    pod-template-hash=79d7d954d6
+    Annotations:    deployment.kubernetes.io/desired-replicas: 4
+                    deployment.kubernetes.io/max-replicas: 5
+                    deployment.kubernetes.io/revision: 2
+                    kubernetes.io/change-cause: Updated to v0.0.2 image
+    Controlled By:  Deployment/storefront
+    Replicas:       4 current / 4 desired
+    Pods Status:    4 Running / 0 Waiting / 0 Succeeded / 0 Failed
+    Pod Template:
+      Labels:  app=storefront
+               pod-template-hash=79d7d954d6
+      Containers:
+       storefront:
+        Image:       fra.ocir.io/oractdemeabdmnative/h-k8s_repo/storefront:0.0.2
+        Ports:       8080/TCP, 9080/TCP
+        Host Ports:  0/TCP, 0/TCP
+        Limits:
+          cpu:        250m
+        Liveness:     http-get http://:health-port/health/live delay=60s timeout=5s period=5s #success=1 #failure=3
+        Readiness:    exec [/bin/bash -c curl -s http://localhost:9080/health/ready | json_pp | grep "\"outcome\" : \"UP\""] delay=15s timeout=5s period=10s #success=1 #failure=1
+        Environment:  <none>
+        Mounts:
+          /conf from sf-config-map-vol (ro)
+          /confsecure from sf-conf-secure-vol (ro)
+      Volumes:
+       sf-conf-secure-vol:
+        Type:        Secret (a volume populated by a Secret)
+        SecretName:  sf-conf-secure
+        Optional:    false
+       sf-config-map-vol:
+        Type:      ConfigMap (a volume populated by a ConfigMap)
+        Name:      sf-config-map
+        Optional:  false
+    Events:
+      Type    Reason            Age   From                   Message
+      ----    ------            ----  ----                   -------
+      Normal  SuccessfulCreate  33m   replicaset-controller  Created pod: storefront-79d7d954d6-m6qrg
+      Normal  SuccessfulCreate  33m   replicaset-controller  Created pod: storefront-79d7d954d6-5g5ng
+      Normal  SuccessfulCreate  33m   replicaset-controller  Created pod: storefront-79d7d954d6-7z2df
+      Normal  SuccessfulCreate  33m   replicaset-controller  Created pod: storefront-79d7d954d6-h6qv7
+    ```
+    
+    If we look at the Image we can see it's my v0.0.2 image and has the change information we set using kubectl annotate. We can also see stuff like the pods being added during the update
 
-If we look at the Image we can see it's my v0.0.2 image and has the change information we set using kubectl annotate. We can also see stuff like the pods being added during the update
-
-  3. But let's look at the old replica set, again replace the replica set id with yours
+3.  But let's look at the old replica set, again replace the replica set id with yours
   
-  ```bash
-  kubectl describe replicaset storefront-5f777cb4f5
-  ```
+    ```bash
+    kubectl describe replicaset storefront-5f777cb4f5
+    ```
+    
+    Example Output
 
-  ```
-Name:           storefront-5f777cb4f5
-Namespace:      tg-helidon
-Selector:       app=storefront,pod-template-hash=5f777cb4f5
-Labels:         app=storefront
-                pod-template-hash=5f777cb4f5
-Annotations:    deployment.kubernetes.io/desired-replicas: 4
-                deployment.kubernetes.io/max-replicas: 5
-                deployment.kubernetes.io/revision: 1
-                kubernetes.io/change-cause: Changed rollout settings
-Controlled By:  Deployment/storefront
-Replicas:       0 current / 0 desired
-Pods Status:    0 Running / 0 Waiting / 0 Succeeded / 0 Failed
-Pod Template:
-  Labels:  app=storefront
-           pod-template-hash=5f777cb4f5
-  Containers:
-   storefront:
-    Image:       fra.ocir.io/oractdemeabdmnative/h-k8s_repo/storefront:0.0.1
-    Ports:       8080/TCP, 9080/TCP
-    Host Ports:  0/TCP, 0/TCP
-    Limits:
-      cpu:        250m
-    Liveness:     http-get http://:health-port/health/live delay=60s timeout=5s period=5s #success=1 #failure=3
-    Readiness:    exec [/bin/bash -c curl -s http://localhost:9080/health/ready | json_pp | grep "\"outcome\" : \"UP\""] delay=15s timeout=5s period=10s #success=1 #failure=1
-    Environment:  <none>
-    Mounts:
-      /conf from sf-config-map-vol (ro)
-      /confsecure from sf-conf-secure-vol (ro)
-  Volumes:
-   sf-conf-secure-vol:
-    Type:        Secret (a volume populated by a Secret)
-    SecretName:  sf-conf-secure
-    Optional:    false
-   sf-config-map-vol:
-    Type:      ConfigMap (a volume populated by a ConfigMap)
-    Name:      sf-config-map
-    Optional:  false
-Events:
-  Type    Reason            Age   From                   Message
-  ----    ------            ----  ----                   -------
-  Normal  SuccessfulDelete  35m   replicaset-controller  Deleted pod: storefront-5f777cb4f5-24mjr
-  Normal  SuccessfulDelete  34m   replicaset-controller  Deleted pod: storefront-5f777cb4f5-8wnfm
-  Normal  SuccessfulDelete  34m   replicaset-controller  Deleted pod: storefront-5f777cb4f5-gsbwd
-  Normal  SuccessfulDelete  33m   replicaset-controller  Deleted pod: storefront-5f777cb4f5-7tlkb
-```
+    ```text
+    Name:           storefront-5f777cb4f5
+    Namespace:      tg-helidon
+    Selector:       app=storefront,pod-template-hash=5f777cb4f5
+    Labels:         app=storefront
+                    pod-template-hash=5f777cb4f5
+    Annotations:    deployment.kubernetes.io/desired-replicas: 4
+                    deployment.kubernetes.io/max-replicas: 5
+                    deployment.kubernetes.io/revision: 1
+                    kubernetes.io/change-cause: Changed rollout settings
+    Controlled By:  Deployment/storefront
+    Replicas:       0 current / 0 desired
+    Pods Status:    0 Running / 0 Waiting / 0 Succeeded / 0 Failed
+    Pod Template:
+      Labels:  app=storefront
+               pod-template-hash=5f777cb4f5
+      Containers:
+       storefront:
+        Image:       fra.ocir.io/oractdemeabdmnative/h-k8s_repo/storefront:0.0.1
+        Ports:       8080/TCP, 9080/TCP
+        Host Ports:  0/TCP, 0/TCP
+        Limits:
+          cpu:        250m
+        Liveness:     http-get http://:health-port/health/live delay=60s timeout=5s period=5s #success=1 #failure=3
+        Readiness:    exec [/bin/bash -c curl -s http://localhost:9080/health/ready | json_pp | grep "\"outcome\" : \"UP\""] delay=15s timeout=5s period=10s #success=1 #failure=1
+        Environment:  <none>
+        Mounts:
+          /conf from sf-config-map-vol (ro)
+          /confsecure from sf-conf-secure-vol (ro)
+      Volumes:
+      sf-conf-secure-vol:
+        Type:        Secret (a volume populated by a Secret)
+        SecretName:  sf-conf-secure
+        Optional:    false
+       sf-config-map-vol:
+        Type:      ConfigMap (a volume populated by a ConfigMap)
+        Name:      sf-config-map
+        Optional:  false
+    Events:
+      Type    Reason            Age   From                   Message
+      ----    ------            ----  ----                   -------
+      Normal  SuccessfulDelete  35m   replicaset-controller  Deleted pod: storefront-5f777cb4f5-24mjr
+      Normal  SuccessfulDelete  34m   replicaset-controller  Deleted pod: storefront-5f777cb4f5-8wnfm
+      Normal  SuccessfulDelete  34m   replicaset-controller  Deleted pod: storefront-5f777cb4f5-gsbwd
+      Normal  SuccessfulDelete  33m   replicaset-controller  Deleted pod: storefront-5f777cb4f5-7tlkb
+    ```
 
-In this case we see it's showing the old 0.0.1 image and the change info is the one we set when we applied the updated yaml.
+    In this case we see it's showing the old 0.0.1 image and the change info is the one we set when we applied the updated yaml.
 
-So we can see how kubernetes keeps the old configurations around (the different revisions are tied to the replica sets)
+    So we can see how kubernetes keeps the old configurations around (the different revisions are tied to the replica sets)
 
-If we undo the rollout Kubernetes will revert to the previous version
+    If we undo the rollout Kubernetes will revert to the previous version
 
-  4. Undo the rollout 
+4.  Undo the rollout 
   
-  ```bash
-  <copy>kubectl rollout undo deployment storefront</copy>
-  ```
+    ```bash
+    <copy>kubectl rollout undo deployment storefront</copy>
+    ```
+    
+    Example Output
 
-  ```
-deployment.apps/storefront rolled back
-```
+    ```text
+    deployment.apps/storefront rolled back
+    ```
 
-The rollback process follows the same process as the update process, gradually moving resources between the replica sets by creating pods in one and once they are ready deleting in the other.
+    The rollback process follows the same process as the update process, gradually moving resources between the replica sets by creating pods in one and once they are ready deleting in the other.
 
-  5. Let's monitor the status
+5.  Let's monitor the status
   
-  ```bash
-  <copy>kubectl rollout status deployment storefront</copy>
-  ```
+    ```bash
+    <copy>kubectl rollout status deployment storefront</copy>
+    ```
+    
+    Example Output
 
-  ```
-... 
-Waiting for deployment "storefront" rollout to finish: 3 out of 4 new replicas have been updated...
-Waiting for deployment "storefront" rollout to finish: 1 old replicas are pending termination...
-Waiting for deployment "storefront" rollout to finish: 1 old replicas are pending termination...
-Waiting for deployment "storefront" rollout to finish: 1 old replicas are pending termination...
-Waiting for deployment "storefront" rollout to finish: 3 of 4 updated replicas are available...
-deployment "storefront" successfully rolled out
-```
+    ```text
+    ... 
+    Waiting for deployment "storefront" rollout to finish: 3 out of 4 new replicas have been updated...
+    Waiting for deployment "storefront" rollout to finish: 1 old replicas are pending termination...
+    Waiting for deployment "storefront" rollout to finish: 1 old replicas are pending termination...
+    Waiting for deployment "storefront" rollout to finish: 1 old replicas are pending termination...
+    Waiting for deployment "storefront" rollout to finish: 3 of 4 updated replicas are available...
+    deployment "storefront" successfully rolled out
+    ```
 
-  6. Once it's finished if we now look at the namespace
+6. Once it's finished if we now look at the namespace
   
-  ```bash
-  <copy>kubectl get all</copy>
-  ```
+    ```bash
+    <copy>kubectl get all</copy>
+    ```
+    
+    Example Output
 
-  ```
-NAME                                                               READY   STATUS    RESTARTS   AGE
-pod/ingress-nginx-nginx-ingress-controller-57747c8999-sn9nc        1/1     Running   0          12m
-pod/ingress-nginx-nginx-ingress-default-backend-54b9cdbd87-cv6zs   1/1     Running   0          12m
-pod/stockmanager-6759d989bf-mtn76                                  1/1     Running   0          69m
-pod/storefront-5f777cb4f5-lk6gl                                    1/1     Running   0          2m6s
-pod/storefront-5f777cb4f5-p8b4h                                    1/1     Running   0          2m6s
-pod/storefront-5f777cb4f5-xp5ls                                    1/1     Running   0          90s
-pod/storefront-5f777cb4f5-zxmvz                                    1/1     Running   0          87s
-pod/zipkin-88c48d8b9-r9vx2                                         1/1     Running   0          69m
+    ```text
+    NAME                                                               READY   STATUS    RESTARTS   AGE
+    pod/ingress-nginx-nginx-ingress-controller-57747c8999-sn9nc        1/1     Running   0          12m
+    pod/ingress-nginx-nginx-ingress-default-backend-54b9cdbd87-cv6zs   1/1     Running   0          12m
+    pod/stockmanager-6759d989bf-mtn76                                  1/1     Running   0          69m
+    pod/storefront-5f777cb4f5-lk6gl                                    1/1     Running   0          2m6s
+    pod/storefront-5f777cb4f5-p8b4h                                    1/1     Running   0          2m6s
+    pod/storefront-5f777cb4f5-xp5ls                                    1/1     Running   0          90s
+    pod/storefront-5f777cb4f5-zxmvz                                    1/1     Running   0          87s
+    pod/zipkin-88c48d8b9-r9vx2                                         1/1     Running   0          69m
 
-NAME                                                  TYPE           CLUSTER-IP       EXTERNAL-IP   PORT(S)                      AGE
-service/ingress-nginx-nginx-ingress-controller        LoadBalancer   10.97.138.159    localhost     80:30071/TCP,443:30666/TCP   12m
-service/ingress-nginx-nginx-ingress-default-backend   ClusterIP      10.102.87.209    <none>        80/TCP                       12m
-service/stockmanager                                  ClusterIP      10.110.224.255   <none>        8081/TCP,9081/TCP            69m
-service/storefront                                    ClusterIP      10.99.139.139    <none>        8080/TCP,9080/TCP            69m
-service/zipkin                                        ClusterIP      10.104.158.61    <none>        9411/TCP                     69m
+    NAME                                                  TYPE           CLUSTER-IP       EXTERNAL-IP   PORT(S)                      AGE
+    service/ingress-nginx-nginx-ingress-controller        LoadBalancer   10.97.138.159    localhost     80:30071/TCP,443:30666/TCP   12m
+    service/ingress-nginx-nginx-ingress-default-backend   ClusterIP      10.102.87.209    <none>        80/TCP                       12m
+    service/stockmanager                                  ClusterIP      10.110.224.255   <none>        8081/TCP,9081/TCP            69m
+    service/storefront                                    ClusterIP      10.99.139.139    <none>        8080/TCP,9080/TCP            69m
+    service/zipkin                                        ClusterIP      10.104.158.61    <none>        9411/TCP                     69m
 
-NAME                                                          READY   UP-TO-DATE   AVAILABLE   AGE
-deployment.apps/ingress-nginx-nginx-ingress-controller        1/1     1            1           12m
-deployment.apps/ingress-nginx-nginx-ingress-default-backend   1/1     1            1           12m
-deployment.apps/stockmanager                                  1/1     1            1           69m
-deployment.apps/storefront                                    4/4     4            4           69m
-deployment.apps/zipkin                                        1/1     1            1           69m
+    NAME                                                          READY   UP-TO-DATE   AVAILABLE   AGE
+    deployment.apps/ingress-nginx-nginx-ingress-controller        1/1     1            1           12m
+    deployment.apps/ingress-nginx-nginx-ingress-default-backend   1/1     1            1           12m
+    deployment.apps/stockmanager                                  1/1     1            1           69m
+    deployment.apps/storefront                                    4/4     4            4           69m
+    deployment.apps/zipkin                                        1/1     1            1           69m
 
-NAME                                                                     DESIRED   CURRENT   READY   AGE
-replicaset.apps/ingress-nginx-nginx-ingress-controller-57747c8999        1         1         1       12m
-replicaset.apps/ingress-nginx-nginx-ingress-default-backend-54b9cdbd87   1         1         1       12m
-replicaset.apps/stockmanager-6759d989bf                                  1         1         1       69m
-replicaset.apps/storefront-6ha27g8ef4                                    0         0         0       76m
-replicaset.apps/storefront-5f777cb4f5                                    4         4         4       69m
-replicaset.apps/storefront-79d7d954d6                                    0         0         0       40m
-replicaset.apps/zipkin-88c48d8b9                                         1         1         1       69m
-```
-We see that all of the pods are now the original replica set version, and there are no pods in the new one.
+    NAME                                                                     DESIRED   CURRENT   READY   AGE
+    replicaset.apps/ingress-nginx-nginx-ingress-controller-57747c8999        1         1         1       12m
+    replicaset.apps/ingress-nginx-nginx-ingress-default-backend-54b9cdbd87   1         1         1       12m
+    replicaset.apps/stockmanager-6759d989bf                                  1         1         1       69m
+    replicaset.apps/storefront-6ha27g8ef4                                    0         0         0       76m
+    replicaset.apps/storefront-5f777cb4f5                                    4         4         4       69m
+    replicaset.apps/storefront-79d7d954d6                                    0         0         0       40m
+    replicaset.apps/zipkin-88c48d8b9                                         1         1         1       69m
+    ```
+    
+    We see that all of the pods are now the original replica set version, and there are no pods in the new one.
 
-  7. If we check this by going to the status we can see the rollback has worked.
+7.  If we check this by going to the status we can see the rollback has worked.
   
-  ```bash
-  <copy>curl -i -k -X GET https://store.$EXTERNAL_IP.nip.io/sf/status</copy>
-  ```
+    ```bash
+    <copy>curl -i -k -X GET https://store.$EXTERNAL_IP.nip.io/sf/status</copy>
+    ```
+    
+    Example Output
 
-  ```
-HTTP/2 200 
-server: nginx/1.17.8
-date: Fri, 27 Mar 2020 10:34:43 GMT
-content-type: application/json
-content-length: 51
-strict-transport-security: max-age=15724800; includeSubDomains
+    ```text
+    HTTP/2 200 
+    server: nginx/1.17.8
+    date: Fri, 27 Mar 2020 10:34:43 GMT
+    content-type: application/json
+    content-length: 51
+    strict-transport-security: max-age=15724800; includeSubDomains
 
-{"name":"My Shop","alive":true,"version":"0.0.1"}
-```
+    {"name":"My Shop","alive":true,"version":"0.0.1"}
+    ```
 
-Normally of course the testing of the pods would be linked into CI/CD automated tooling that would trigger the rollback if it detected a problem automatically, but here we're trying to show you the capabilities of Kubernetes rather than just run automation.
+    Normally of course the testing of the pods would be linked into CI/CD automated tooling that would trigger the rollback if it detected a problem automatically, but here we're trying to show you the capabilities of Kubernetes rather than just run automation.
 
-We could apply a new change annotation if we wanted, but that doesn;t actually make sense as the change info represents the change when this one was setup, there is not point saying "reverted from ...." as that change is what we just undid.
+    We could apply a new change annotation if we wanted, but that doesn;t actually make sense as the change info represents the change when this one was setup, there is not point saying "reverted from ...." as that change is what we just undid.
 
 <details><summary><b>What if I do new update while another is still in progress ?</b></summary>
 
@@ -754,6 +799,7 @@ Obviously this is not something you're likely to be doing often, but it's quite 
 
 
 ## Task 4: Important note on external services
+
 Kubernetes can manage changes and rollbacks within it's environment, provided the older versions of the changes are available. So don't delete your old container images unless you're sure you won't need them! Kubernetes can handle the older versions of the config itself, but always a good idea to keep an archive of them anyway, in case your cluster crashes and takes your change history with it.
 
 However, Kubernetes itself cannot manage changes outside it's environment. It may seem obvious, but Kubernetes is about compute, not persistence, and in most cases the persistence layer is external to Kubernetes on the providers storage environments.
@@ -804,14 +850,8 @@ Canary testing and A/B testing require a service mesh to handle the split of the
 
 </details>
 
-## End of the module, what's next ?
-
-You have reached the end of this section of the lab and of the core Kubernetes modules.
-
-If you are doing the optional modules version of this course then you can chose from the varions Kubernetes optional modules.
-
 ## Acknowledgements
 
 * **Author** - Tim Graves, Cloud Native Solutions Architect, Oracle EMEA Cloud Native Application Development specialists Team
 * **Contributor** - Jan Leemans, Director Business Development, EMEA Divisional Technology
-* **Last Updated By** - Tim Graves, May 2023
+* **Last Updated By** - Tim Graves, August 2023

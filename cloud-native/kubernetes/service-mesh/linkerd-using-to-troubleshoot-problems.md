@@ -2,6 +2,9 @@
 
 # Troubleshoot problems with the Service mesh
 
+## Introduction
+
+This is one of the optional sets of Kubernetes labs
 
 <details><summary><b>Self guided student - video introduction</b></summary>
 
@@ -13,10 +16,6 @@ This video is an introduction to the troubleshooting with a Service mesh lab. De
 ---
 
 </details>
-
-## Introduction
-
-This is one of the optional sets of Kubernetes labs
 
 **Estimated module duration** 20 mins.
 
@@ -46,19 +45,19 @@ Well fortunately for us I have built a version of the Stock Manager that can be 
 
 ## Task 2: Using a service mesh to troubleshoot
 
-### Task 2a: Start the load generator
+### Task 2A: Start the load generator
 
 The first thing we need is some load so we can see what the service mesh is doing, there is a load generator script we can use to do this
 
 Change to the directory for the service mesh scripts
 
-  1. In the OCI Cloud shell type
+    1. In the OCI Cloud shell type
   
-   ```bash
-   <copy>cd $HOME/helidon-kubernetes/service-mesh</copy>
-   ```
+     ```bash
+     <copy>cd $HOME/helidon-kubernetes/service-mesh</copy>
+     ```
 
-Once you are in the directory start the load generator
+    Once you are in the directory start the load generator
 
 If your cloud shell session is new or has been restarted then the shell variable `$EXTERNAL_IP` may be invalid, expand this section if you think this may be the case to check and reset it if needed.
 
@@ -102,7 +101,7 @@ In this case as you manually set this up you will need to get the information fr
    <copy>kubectl get services -n ingress-nginx</copy>
    ```
 
-```
+```text
 NAME                                 TYPE           CLUSTER-IP      EXTERNAL-IP      PORT(S)                      AGE
 ingress-nginx-controller             LoadBalancer   10.96.182.204   130.162.40.241   80:31834/TCP,443:31118/TCP   2h
 ingress-nginx-controller-admission   ClusterIP      10.96.216.33    <none>           443/TCP                      2h
@@ -123,229 +122,233 @@ ingress-nginx-controller-admission   ClusterIP      10.96.216.33    <none>      
 </details>
 
 
-  2. In the OCI Cloud shell type
+    2. In the OCI Cloud shell type
+    
+    ```bash
+     <copy>bash generate-service-mesh-load.sh $EXTERNAL_IP 2</copy>
+     ```
+     
+     Example Output
   
-  ```bash
-   <copy>bash generate-service-mesh-load.sh $EXTERNAL_IP 2</copy>
-   ```
-  
- ```
-Iteration 1
-Iteration 2
-...
-```
+    ```text
+    Iteration 1
+    Iteration 2
+    ...
+    ```
 
-This will continue generating the load making a request approximately once every two seconds.
+    This will continue generating the load making a request approximately once every two seconds.
 
-If you get a DNS error that `store.2.nip.io` (or similar) cannot be found this means that `EXTERNAL_IP` is not set, follow the instructions above to set it and then re-run the curl command.
+    If you get a DNS error that `store.2.nip.io` (or similar) cannot be found this means that `EXTERNAL_IP` is not set, follow the instructions above to set it and then re-run the curl command.
 
 Note, the OCI Cloud Shell session will terminate (and thus kill off the load generator) after 20 minutes of inactivity. If this happens you will see the throughput figures for your namespace and services in the Linkerd and Grafana UI's drop to zero and potentially even disappear if they fall outside the time ranges displayed. 
 
 If that happens while you are doing the service mesh labs the solution is to connect back to the OCI CLoud shell and restart the load generator
 
-### Task 2b: Viewing the load
+### Task 2B: Viewing the load
 
 Let's just check that the load is running fine
 
-  1. In your web browser go to `https://linkerd.<external IP>.nip.io` (replace `<External IP>` with the IP of the load balancer)
+1.  In your web browser go to `https://linkerd.<external IP>.nip.io` (replace `<External IP>` with the IP of the load balancer)
 
-You may be challenged as you have a self signed certificate. Follow the normal procedures in your browser to accept the connection and proceed.
+    You may be challenged as you have a self signed certificate. Follow the normal procedures in your browser to accept the connection and proceed.
 
-Next you may be presented with the login challenge.
+    Next you may be presented with the login challenge.
 
-  ![Linked login page](images/linkerd-web-login.png)
+    ![Linked login page](images/linkerd-web-login.png)
 
-  2. If you are, login with `admin` as the username, for the password use the one you used when creating the login password during the linkerd installation in the previous module.
+2.  If you are, login with `admin` as the username, for the password use the one you used when creating the login password during the linkerd installation in the previous module.
 
-You'll be presented with the linkerd-web main page, unlike when you saw this previously now it's showing load for your services.
+    You'll be presented with the linkerd-web main page, unlike when you saw this previously now it's showing load for your services.
 
-  ![Linkerd list of servcies](images/linkerd-web-main-apps-load.png)
+    ![Linkerd list of servcies](images/linkerd-web-main-apps-load.png)
 
-  3. Click on the page for your namespace (tg-helidon in my case)
+3.  Click on the page for your namespace (tg-helidon in my case)
 
-  ![Accessing your namepace in linkerd UI](images/linkerd-namespace-running-ok.png)
+    ![Accessing your namepace in linkerd UI](images/linkerd-namespace-running-ok.png)
 
-We can see that the services are running with a 100% success rate.
+    We can see that the services are running with a 100% success rate.
 
-For now let's stop the load generator while we deploy our "broken" service
+    For now let's stop the load generator while we deploy our "broken" service
 
-  4. In the OCI cloud shell stop the load generator using Control-C
+4.  In the OCI cloud shell stop the load generator using Control-C
  
-### Task 2c: Deploying our broken service
+### Task 2C: Deploying our broken service
 
 We are going to edit one of the configurations for the stock manager to specify that we want a 50% failure rate on requests to the stock manager. The deliberately "broken" stockmanager will pay attention to this, but the normal one will not.
 
-  1. In the OCI Cloud Shell use your preferred editor (vi, nano etc.) to edit the stock manager configuration
+1.  In the OCI Cloud Shell use your preferred editor (vi, nano etc.) to edit the stock manager configuration
   
-  ```bash
-  <copy>vi $HOME/helidon-kubernetes/configurations/stockmanagerconf/conf/stockmanager-config.yaml</copy>
-   ```
+    ```bash
+    <copy>vi $HOME/helidon-kubernetes/configurations/stockmanagerconf/conf/stockmanager-config.yaml</copy>
+     ```
 
-  2. Add the following to the end of the file on a line of it's own, note that this is **not** indented 
+2.  Add the following to the end of the file on a line of it's own, note that this is **not** indented 
   
-```
-<copy>errorgenerationrate: 0.5</copy>
-```
+    ```
+    <copy>errorgenerationrate: 0.5</copy>
+    ```
 
-The resulting file will look something like this **the department name should be different in your case** it should not be `Tims shop` unless your name is Tim !
+    The resulting file will look something like this **the department name should be different in your case** it should not be `Tims shop` unless your name is Tim !
 
-```yaml
-app:
-  persistenceUnit: "HelidonATPJTA"
-  department: "Tims Shop"
+    ```yaml
+    app:
+      persistenceUnit: "HelidonATPJTA"
+      department: "Tims Shop"
   
-tracing:
-  service: "stockmanager"
-  host: "zipkin"
+    tracing:
+      service: "stockmanager"
+      host: "zipkin"
  
-errorgenerationrate: 0.5
-```
+    errorgenerationrate: 0.5
+    ```
 
-  3. Save the updated file
+3.  Save the updated file
 
-Strangely `kubectl` doesn't seem to have a mechanism to replace a config map that's been created using multiple files in a directory, so we will have to delete and then re-create the stockmanager
+    Strangely `kubectl` doesn't seem to have a mechanism to replace a config map that's been created using multiple files in a directory, so we will have to delete and then re-create the stockmanager
 
-  4. In the OCI Cloud shell type
+4.  In the OCI Cloud shell type
   
-  ```bash
-   <copy>kubectl delete configmap sm-config-map</copy>
-   ```
+    ```bash
+    <copy>kubectl delete configmap sm-config-map</copy>
+    ```
+    
+    Example Output
   
-  ```
-configmap "sm-config-map" deleted
-```
+    ```text
+    configmap "sm-config-map" deleted
+    ```
 
-  5. In the OCI Cloud shell type
+5.  In the OCI Cloud shell type
   
-  ```bash
-   <copy>kubectl create configmap sm-config-map --from-file=$HOME/helidon-kubernetes/configurations/stockmanagerconf/conf</copy>
-   ```
+    ```bash
+     <copy>kubectl create configmap sm-config-map --from-file=$HOME/helidon-kubernetes/configurations/stockmanagerconf/conf</copy>
+     ```
+     
+     Example Output
 
-  ```
-configmap/sm-config-map created
-```
+    ```text
+    configmap/sm-config-map created
+    ```
 
-Now we can apply the update, we'll use the Kubernetes rolling upgrade process to make the change (as we're going to want to revert this one!)
+    Now we can apply the update, we'll use the Kubernetes rolling upgrade process to make the change (as we're going to want to revert this one!)
 
-  6. In the OCI Cloud shell type
+6.  In the OCI Cloud shell type
   
-  ```bash
-   <copy>kubectl apply -f $HOME/helidon-kubernetes/service-mesh/stockmanager-deployment-broken.yaml</copy>
-   ```
+    ```bash
+    <copy>kubectl apply -f $HOME/helidon-kubernetes/service-mesh/stockmanager-deployment-broken.yaml</copy>
+    ```
+    
+    Example Output
 
-  ```
-deployment.apps/stockmanager configured
-```
+    ```text
+    deployment.apps/stockmanager configured
+    ```
 
-Wait a short while for the update to be applied. 
+    Wait a short while for the update to be applied. 
    
 
-This is basically the same stockmanager code that was created in the Helidon labs, however it has a bit of additional code that generates errors at the rate specified by the errorGeneration rate we set in the config file.
+    This is basically the same stockmanager code that was created in the Helidon labs, however it has a bit of additional code that generates errors at the rate specified by the errorGeneration rate we set in the config file.
   
-Now let's check that the change has applied by going direct to the stockmanager and seeing how it behaves, remember that we said that 0.5 (so 50%) of the requests should generate an error.
-
-  7. In the OCI Cloud shell type the following
+7.  Now let's check that the change has applied by going direct to the stockmanager and seeing how it behaves, remember that we said that 0.5 (so 50%) of the requests should generate an error. In the OCI Cloud shell type the following
   
-  ```bash
-   <copy>curl -i -k -X GET -u jack:password https://store.$EXTERNAL_IP.nip.io/sm/stocklevel</copy>
-   ```
+    ```bash
+     <copy>curl -i -k -X GET -u jack:password https://store.$EXTERNAL_IP.nip.io/sm/stocklevel</copy>
+     ```
 
-(As usual the first response may take a short while, if you get a 503 error it means that the Kubernetes is waiting for the stockmanager to come online. If you get a 'Cannot resolve host' or similar then the `$EXTErNAL_IP` address is wrong, follow the earlier instructions in an expansion section to set it correctly.
+    (As usual the first response may take a short while, if you get a 503 error it means that the Kubernetes is waiting for the stockmanager to come online. If you get a 'Cannot resolve host' or similar then the `$EXTErNAL_IP` address is wrong, follow the earlier instructions in an expansion section to set it correctly.
  
-Depending on if you get an error you'll get something similar to the following
+    Depending on if you get an error you'll get something similar to the following
 
-If the code randomly throws the error
+    Example Output if the code randomly throws the error
 
-```
-HTTP/1.1 500 Internal Server Error
-Server: nginx/1.17.8
-Date: Mon, 01 Jun 2020 18:52:11 GMT
-Content-Length: 0
-Connection: keep-alive
-Strict-Transport-Security: max-age=15724800; includeSubDomains
-```
+    ```text
+    HTTP/1.1 500 Internal Server Error
+    Server: nginx/1.17.8
+    Date: Mon, 01 Jun 2020 18:52:11 GMT
+    Content-Length: 0
+    Connection: keep-alive
+    Strict-Transport-Security: max-age=15724800; includeSubDomains
+    ```
 
-If the code randomly works correctly
+    Example output if the code randomly works correctly
 
-```
-HTTP/1.1 200 OK
-Server: nginx/1.17.8
-Date: Mon, 01 Jun 2020 18:52:09 GMT
-Content-Type: application/json
-Content-Length: 149
-Connection: keep-alive
-Strict-Transport-Security: max-age=15724800; includeSubDomains
+    ```text
+    HTTP/1.1 200 OK
+    Server: nginx/1.17.8
+    Date: Mon, 01 Jun 2020 18:52:09 GMT
+    Content-Type: application/json
+    Content-Length: 149
+    Connection: keep-alive
+    Strict-Transport-Security: max-age=15724800; includeSubDomains
 
-[{"itemCount":410,"itemName":"Pencil"},{"itemCount":50,"itemName":"Eraser"},{"itemCount":4490,"itemName":"Pins"},{"itemCount":100,"itemName":"Book"}]
-```
+    [{"itemCount":410,"itemName":"Pencil"},{"itemCount":50,"itemName":"Eraser"},{"itemCount":4490,"itemName":"Pins"},{"itemCount":100,"itemName":"Book"}]
+    ```
 
-Repeat the request several times and you should see that approximately half the time you get a response of `500 Internal Server Error` and half the time a response of `200 OK`
+    Repeat the request several times and you should see that approximately half the time you get a response of `500 Internal Server Error` and half the time a response of `200 OK`
 
-Now try making the request a few times to the storefront service
-
-  8. In the OCI Cloud shell type the following
+8.  Now try making the request a few times to the storefront service. In the OCI Cloud shell type the following
   
-  ```bash
-   <copy>curl -i -k -X GET -u jack:password https://store.$EXTERNAL_IP.nip.io/store/stocklevel</copy>
-   ```
+    ```bash
+     <copy>curl -i -k -X GET -u jack:password https://store.$EXTERNAL_IP.nip.io/store/stocklevel</copy>
+     ```
   
-You will get either error messages like this
+    You will get either error messages like this
 
-```
-HTTP/1.1 424 Failed Dependency
-Server: nginx/1.17.8
-Date: Mon, 01 Jun 2020 19:15:21 GMT
-Content-Type: application/json
-Transfer-Encoding: chunked
-Connection: keep-alive
-Strict-Transport-Security: max-age=15724800; includeSubDomains
+    ```text
+    HTTP/1.1 424 Failed Dependency
+    Server: nginx/1.17.8
+    Date: Mon, 01 Jun 2020 19:15:21 GMT
+    Content-Type: application/json
+    Transfer-Encoding: chunked
+    Connection: keep-alive
+    Strict-Transport-Security: max-age=15724800; includeSubDomains
 
-{"errormessage":"Unable to connect to the stock manager service"}
-```
+    {"errormessage":"Unable to connect to the stock manager service"}
+    ```
 
-Or it will succeed 
+    Or it will succeed 
 
-```
-HTTP/1.1 200 OK
-Server: nginx/1.17.8
-Date: Mon, 01 Jun 2020 19:15:17 GMT
-Content-Type: application/json
-Content-Length: 149
-Connection: keep-alive
-Strict-Transport-Security: max-age=15724800; includeSubDomains
+    ```text
+    HTTP/1.1 200 OK
+    Server: nginx/1.17.8
+    Date: Mon, 01 Jun 2020 19:15:17 GMT
+    Content-Type: application/json
+    Content-Length: 149
+    Connection: keep-alive
+    Strict-Transport-Security: max-age=15724800; includeSubDomains
 
-[{"itemCount":410,"itemName":"Pencil"},{"itemCount":50,"itemName":"Eraser"},{"itemCount":4490,"itemName":"Pins"},{"itemCount":100,"itemName":"Book"}]
-```
+    [{"itemCount":410,"itemName":"Pencil"},{"itemCount":50,"itemName":"Eraser"},{"itemCount":4490,"itemName":"Pins"},{"itemCount":100,"itemName":"Book"}]
+    ```
 
-As before repeat this a few times, approximately half the time it will succeed and half the time it will fail. Note that if you had tried this on the reserverStock end point it would fail 75% of the time - because that API makes two calls to the stockmanager, either of which failing will result in a failure back to the caller.
+    As before repeat this a few times, approximately half the time it will succeed and half the time it will fail. Note that if you had tried this on the reserverStock end point it would fail 75% of the time - because that API makes two calls to the stockmanager, either of which failing will result in a failure back to the caller.
 
-Restart the load generator
+9.  Restart the load generator. In the OCI Cloud shell type
 
-  9. In the OCI Cloud shell type
+    ```bash
+     <copy>bash generate-service-mesh-load.sh $EXTERNAL_IP 2</copy>
+     ```
+     
+     Example Output
   
-  ```bash
-   <copy>bash generate-service-mesh-load.sh $EXTERNAL_IP 2</copy>
-   ```
-  
- ```
- Iteration 1
- Iteration2
- ...
- ```
+     ```text
+     Iteration 1
+     Iteration2
+     ...
+     ```
 
 As previously if the OCI shell stops then you will need to re-open is and re-start the load generator.
 
-### Step 2d: Looking at the results using the service mesh
+### Step 2D: Looking at the results using the service mesh
 
 We'll open the LinkerdUI and see what it's reporting.
 
-  1. In your web browser go to `https://linkerd.<external IP>.nip.io` (replace `<external IP>` of course) If asked login with the user name admin and the password you chose when setting up the Linkerd ingress
+1.  In your web browser go to `https://linkerd.<external IP>.nip.io` (replace `<external IP>` of course) If asked login with the user name admin and the password you chose when setting up the Linkerd ingress
 
-  2. Click on **Namespaces** in the **Cluster** section of the left menu and locate the **HTTP metrics** entry for your namespace (mine is tg-helidon, yours will have a different name)
+2.  Click on **Namespaces** in the **Cluster** section of the left menu and locate the **HTTP metrics** entry for your namespace (mine is tg-helidon, yours will have a different name)
 
-  ![Looking at the details in linkerd when we have deliberatly deployed a broken microservice implementation](images/linkerd-broken-overview-namespace.png)
+    ![Looking at the details in linkerd when we have deliberatly deployed a broken microservice implementation](images/linkerd-broken-overview-namespace.png)
 
-While the precise numbers will of course vary you should see that the success rate is not 100%, it's likely to be around 90% That is not a surprise (after all we are deliberately throwing an error on about half of the calls to the stock manager) but it looks like we have a bit of a problem!
+    While the precise numbers will of course vary you should see that the success rate is not 100%, it's likely to be around 90% That is not a surprise (after all we are deliberately throwing an error on about half of the calls to the stock manager) but it looks like we have a bit of a problem!
 
 <details><summary><b>Why only 90% ?</b></summary>
 
@@ -355,38 +358,37 @@ Remember that here we're looking at all the HTTP REST API calls that happen in t
 ---
 
 </details>
+3.  Click on the name of your namespace to access it.
 
-  3. Click on the name of your namespace to access it.
+    ![Accessing the namespace of the broken service](images/linkerd-broken-detailed-namespace.png)
 
-  ![Accessing the namespace of the broken service](images/linkerd-broken-detailed-namespace.png)
+    We can see that it's the stockmanager service that has a problem, the rest are all reporting 100% success
 
-We can see that it's the stockmanager service that has a problem, the rest are all reporting 100% success
+4.  Click on the stockmanager **in the deployments list** then scroll down so you can see the inbound and outbound HTTP metrics, pods and the live calls
 
-  4. Click on the stockmanager **in the deployments list** then scroll down so you can see the inbound and outbound HTTP metrics, pods and the live calls
+    ![Details of our deliberately broken stock manager service](images/linkerd-broken-detailed-service.png)
 
-  ![Details of our deliberately broken stock manager service](images/linkerd-broken-detailed-service.png)
+    Now we can see that it's the inbound requests on the stockmanager that's the problem, the outbound ones are working fine, and (in this case) there is one pod that has the problem (if there were multiple pods you wild see them listed, and might be able to see if the problem was pod specific, or a problem across all pods in the deployment)
 
-Now we can see that it's the inbound requests on the stockmanager that's the problem, the outbound ones are working fine, and (in this case) there is one pod that has the problem (if there were multiple pods you wild see them listed, and might be able to see if the problem was pod specific, or a problem across all pods in the deployment)
+5.  Now look at the **Live calls** section
 
-  5. Now look at the **Live calls** section
+    ![Live call info to the broken stock manager service](images/linkerd-broken-live-calls.png)
 
-  ![Live call info to the broken stock manager service](images/linkerd-broken-live-calls.png)
+    We can see that the from deploy/storefront to /stocklevel call is the one that's generating a lot of failures
 
-We can see that the from deploy/storefront to /stocklevel call is the one that's generating a lot of failures
+6.  Click on the **Tap** icon ![](images/linkerd-tap-icon.png) for this row to access the call history
 
-  6. Click on the **Tap** icon ![](images/linkerd-tap-icon.png) for this row to access the call history
+7.  Click the **Start** button at the top of this page and wait for a few calls to come in, then click the **Stop** button
 
-  7. Click the **Start** button at the top of this page and wait for a few calls to come in, then click the **Stop** button
+    ![The list of live calls reported by tap to out broken service](images/linkerd-broken-tap-list.png)
 
-  ![The list of live calls reported by tap to out broken service](images/linkerd-broken-tap-list.png)
+8.  Locate a row where the HTTP status is 500, click the down arrow / Expand" icon ![](images/linkerd-tap-expand-icon.png)
 
-  8. Locate a row where the HTTP status is 500, click the down arrow / Expand" icon ![](images/linkerd-tap-expand-icon.png)
+    ![Details of a failed call to the broken service](images/linkerd-broken-tap-details.png)
 
-  ![Details of a failed call to the broken service](images/linkerd-broken-tap-details.png)
+    You can now see the details of the failed call. Click the **Close** button on the lower right to close this popup.
 
-You can now see the details of the failed call. Click the **Close** button on the lower right to close this popup.
-
-### Step 2e: Diagnostics summary
+### Step 2E: Diagnostics summary
 
 Of course this is only showing us the network part of the troubleshooting process, but it's given us a lot of useful information to we can easily understand where the problems might be, and at least some information as to the details surrounding the failures. It's a lot better than just getting a `424 Failed Dependency` result!
 
@@ -397,28 +399,26 @@ So we have a clean environment for the next moduels you may do we need to reset 
 
 **Stopping the load generator**
 
-  1. In the OCI cloud shell stop the load generator using Control-C
+1.  In the OCI cloud shell stop the load generator using Control-C
 
 **Removing the failing service**
 
 Let's use the Kubernetes rollout mechanism to reverse our "upgrade"
 
-  2. In the OCI Cloud Shell type
+2.  In the OCI Cloud Shell type
   
-  ```bash
-   <copy>kubectl rollout undo deployment stockmanager</copy>
-   ```
+    ```bash
+    <copy>kubectl rollout undo deployment stockmanager</copy>
+    ```
+    
+    Example Output
 
-```
-deployment.apps/stockmanager rolled back
-```
-
-## End of the module, What's next ?
-
-You can chose from the remaining `Linkerd service mesh` modules or switch to one of the other Kubernetes optional module sets.
+    ```text
+    deployment.apps/stockmanager rolled back
+    ```
 
 ## Acknowledgements
 
 * **Author** - Tim Graves, Cloud Native Solutions Architect, Oracle EMEA Cloud Native Applications Development specialists team
 * **Contributor** - Charles Pretzer, Bouyant, Inc for reviewing and sanity checking parts of this document.
-* **Last Updated By** - Tim Graves, May 2023
+* **Last Updated By** - Tim Graves, August 2023

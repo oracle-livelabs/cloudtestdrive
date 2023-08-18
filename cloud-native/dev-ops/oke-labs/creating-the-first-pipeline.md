@@ -1,4 +1,4 @@
-![](../../../../common/images/customer.logo2.png)
+![Title image](../../../images/customer.logo2.png)
 
 # Creating a build pipeline
 
