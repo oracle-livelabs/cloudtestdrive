@@ -7,7 +7,7 @@
 
 This video is an introduction to the Kubernetes core features lab. Depending on your browser settings it may open in this tab / window or open a new one. Once you've watched it please return to this page to continue the labs.
 
-[![Kubernetes core features lab only setup Introduction Video](https://img.youtube.com/vi/kc1SvmTbvZ8/0.jpg)](https://youtu.be/kc1SvmTbvZ8 "Kubernetes core features lab introduction video")
+[Kubernetes core features lab only setup Introduction Video](youtube:kc1SvmTbvZ8)
 
 ---
 

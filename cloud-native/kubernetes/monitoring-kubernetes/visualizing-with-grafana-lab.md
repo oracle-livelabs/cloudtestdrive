@@ -9,7 +9,7 @@
 
 This video is an introduction to the Visualizing metrics with Grafana lab. Depending on your browser settings it may open in this tab / window or open a new one. Once you've watched it please return to this page to continue the labs.
 
-[![Visualizing metrics with Grafana lab Introduction Video](https://img.youtube.com/vi/upAhbUQ0K7s/0.jpg)](https://youtu.be/upAhbUQ0K7s "Visualizing metrics with Grafana lab introduction video")
+[Visualizing metrics with Grafana lab Introduction Video](youtube:upAhbUQ0K7s)
 
 ---
 
