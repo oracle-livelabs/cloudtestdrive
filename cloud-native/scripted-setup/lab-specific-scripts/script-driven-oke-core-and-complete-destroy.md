@@ -2,6 +2,10 @@
 
 # Reset your environment after the OKE labs using scripts for free trial accounts
 
+## Introduction
+
+Estimated time to complete this module 20 minutes
+
 Firstly congratulations on completing your lab, we hope that you have found it informative and useful.
 
 This module walks you through the process of resetting your tenancy after completing the OKE lab **should you wish to do so.**
