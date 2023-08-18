@@ -1,4 +1,4 @@
-![](../../../../../common/images/customer.logo2.png)
+![Title image](../../../../images/customer.logo2.png)
 
 # Configuring OCI security for DevOps
 

@@ -1,4 +1,4 @@
-![Title image](../../../../../common/images/customer.logo2.png)
+![Title image](../../../../images/customer.logo2.png)
 
 # Configure Log Capture for Archive
 
@@ -66,17 +66,19 @@ If you  did not do the capture log for processing, or deleted the logging namesp
 
 As with elsewhere in the labs we do this module in it's own namespace. 
 
-  1. In the cloud console type 
+1.  In the cloud console type 
   
-  ```bash
-  <copy>kubectl create namespace logging</copy>
-  ```
+    ```bash
+    <copy>kubectl create namespace logging</copy>
+    ```
+    
+    Example Output
   
-  ```
-namespace/logging created
-```
+    ```text
+    namespace/logging created
+    ```
 
-If the namespace already exists this command will report : `Error from server (AlreadyExists): namespaces "logging" already exists`
+    If the namespace already exists this command will report : `Error from server (AlreadyExists): namespaces "logging" already exists`
 
 ## Task 3: Storing the log data
 
@@ -104,7 +106,7 @@ Fluentd is an open source solution to processing the log data, it's basically an
 
 We will be using one of the built in output plug-ins of Fluentd that allows us to write to storage solutions that provide a Amazon Simple Storage Service (S3) compatible interface. In this case we will be writing the data to the Oracle Object Storage Service, but you could of course use other compatible services.
 
-### Task 3a: Gathering the required information
+### Task 3A: Gathering the required information
 
 The first thing we need to do is to gather a bit of data about the storage service to configure the fluentd output plugin.
 
@@ -116,113 +118,113 @@ We will gather a number of bits of information here, **please save it** in a tex
 
 Firstly let's get the OCI Region details.
 
-  1. On the upper right of the OCI browser UI you will see the name of **your** current region
+1.  On the upper right of the OCI browser UI you will see the name of **your** current region
 
-  ![Locating your current OCI region](images/Region-dropdown.png)
+    ![Locating your current OCI region](images/Region-dropdown.png)
 
-In the example above this is Germany Central (Frankfurt) **but yours may vary**
+    In the example above this is Germany Central (Frankfurt) **but yours may vary**
 
-However we need the region ID, not the name
+    However we need the region ID, not the name
 
-  2. Click on the name you will get a list of regions enabled for your tenancy.
+2.  Click on the name you will get a list of regions enabled for your tenancy.
 
-  ![Getting the list of regions enabled for your tenancy](images/Regions-enabled.png)
+    ![Getting the list of regions enabled for your tenancy](images/Regions-enabled.png)
 
-  3. Click the **Manage Regions** button to get a list of the infrastructure regions, along with their details
+3.  Click the **Manage Regions** button to get a list of the infrastructure regions, along with their details
   
-  ![Details for the various OCI regions](images/Regions-choice.png)
+    ![Details for the various OCI regions](images/Regions-choice.png)
 
-Regions that are enabled for **your** tenancy are in green, the ones in grey are not enabled.
+    Regions that are enabled for **your** tenancy are in green, the ones in grey are not enabled.
 
-  4. Locate **your** region in the list (it will have a green region icon) Then locate the region identifier, these are the details for the region I'm using Frankfurt in Germany.
+4.  Locate **your** region in the list (it will have a green region icon) Then locate the region identifier, these are the details for the region I'm using Frankfurt in Germany.
 
-  ![Details for the Frankfurt region](images/Region-frankfurt.png)
+    ![Details for the Frankfurt region](images/Region-frankfurt.png)
 
-We can see here that the region identifier for Frankfurt (the region I'm using) is `eu-frankfurt-1` **your region identifier will be different if you are not in this region**
+    We can see here that the region identifier for Frankfurt (the region I'm using) is `eu-frankfurt-1` **your region identifier will be different if you are not in this region**
 
-Next we need to get the storage endpoint this is of the form `https://<object storage namespace>.compat.objectstorage.<region identifier>.oraclecloud.com` Obviously we need to determine the value of `<object storage namespace>` (you have just retrieved the region identifier)
+    Next we need to get the storage endpoint this is of the form `https://<object storage namespace>.compat.objectstorage.<region identifier>.oraclecloud.com` Obviously we need to determine the value of `<object storage namespace>` (you have just retrieved the region identifier)
 
-  5. In the upper right of the screen you can access your tenancy details.
+5.  In the upper right of the screen you can access your tenancy details.
 
-  ![How to access your region details](images/Region-dropdown.png)
+    ![How to access your region details](images/Region-dropdown.png)
 
-  6. Click on the little "shadow" of a person to access your profile.
+6.  Click on the little "shadow" of a person to access your profile.
 
-  ![Opening your tennacy information menu](images/User-profile-details.png)
+    ![Opening your tennacy information menu](images/User-profile-details.png)
 
-  7. Click on the tenancy name (oractdemeabdnmative in this case) to access the tenancy details
+7.  Click on the tenancy name (oractdemeabdnmative in this case) to access the tenancy details
 
-  ![The tenancy details page](images/Tenancy-details.png)
+    ![The tenancy details page](images/Tenancy-details.png)
 
-In this case in the Object Storage Settings you can see that the `Object Storage Namespace` is `oractdemeabdmnative` It will be different in other tenancies. This particular tenancy is quite old which is why the storage namespace is the same as the tenancy name, recent tenancies have a storage namespace that is a set of random letters and numbers.
+    In this case in the Object Storage Settings you can see that the `Object Storage Namespace` is `oractdemeabdmnative` It will be different in other tenancies. This particular tenancy is quite old which is why the storage namespace is the same as the tenancy name, recent tenancies have a storage namespace that is a set of random letters and numbers.
 
-The object storage endpoint is `https://<object storage namespace>.compat.objectstorage.<region identifier>.oraclecloud.com` Replace `<object storage namespace>` with the value you've just retrieved and `<region identifier>` with the value you gathered earlier.
+    The object storage endpoint is `https://<object storage namespace>.compat.objectstorage.<region identifier>.oraclecloud.com` Replace `<object storage namespace>` with the value you've just retrieved and `<region identifier>` with the value you gathered earlier.
 
-For example **FOR MY TENANCY, YOURS WILL VARY** it might be  `https://oractdemeabdmnative.compat.objectstorage.eu-frankfurt-1.oraclecloud.com`
+    For example **FOR MY TENANCY, YOURS WILL VARY** it might be  `https://oractdemeabdmnative.compat.objectstorage.eu-frankfurt-1.oraclecloud.com`
 
-  8. Save the Object Storage Service endpoint in your texteditor for later use.
+8.  Save the Object Storage Service endpoint in your texteditor for later use.
 
-  9. Note the value for the `Amazon S3 Compatibility API Designated Compartment:` (`JAM` in this case)
+9.  Note the value for the `Amazon S3 Compatibility API Designated Compartment:` (`JAM` in this case)
 
-This is the OCI compartment that will be used to hold the storage bucket. In this case the compartment is named `JAM` If there is no compartment shown then the storage bucket will be created in the root compartment. If you want to change that (only do this if this is your tenancy, if it belongs to your organization then make sure your tenancy admin is OK with you changing it as you might break other things) then click the `Edit Object Storage Settings` and chose another compartment (if this is a new tenancy you may only have the root compartment).
+    This is the OCI compartment that will be used to hold the storage bucket. In this case the compartment is named `JAM` If there is no compartment shown then the storage bucket will be created in the root compartment. If you want to change that (only do this if this is your tenancy, if it belongs to your organization then make sure your tenancy admin is OK with you changing it as you might break other things) then click the `Edit Object Storage Settings` and chose another compartment (if this is a new tenancy you may only have the root compartment).
 
-**Important** You need to have rights to create storage objects in the compatibility compartment, If this is a trial tenancy then you will be operating as the tenancy administrator, if it's a commercial tenancy you may need to check with your admins to ensure you have the appropriate rights.
+    **Important** You need to have rights to create storage objects in the compatibility compartment, If this is a trial tenancy then you will be operating as the tenancy administrator, if it's a commercial tenancy you may need to check with your admins to ensure you have the appropriate rights.
 
-We need to have security keys to access the S3 compliant storage API. Access those from the User details. 
+    We need to have security keys to access the S3 compliant storage API. Access those from the User details. 
 
-  10. Click on the little "shadow" of a person to access your profile.
+10. Click on the little "shadow" of a person to access your profile.
 
-  ![Accessing your user profile](images/User-profile-details.png)
+    ![Accessing your user profile](images/User-profile-details.png)
 
-  11. Click on your name (in this case oracleidentitycloudservice/tim.graves) to go to your account details.
+11. Click on your name (in this case oracleidentitycloudservice/tim.graves) to go to your account details.
 
-  12. Locate the resources section, this is on the lower left of the page (you may need to scroll down to see it
+12. Locate the resources section, this is on the lower left of the page (you may need to scroll down to see it
 
-  ![Your users resources](images/User-profile-resources.png)
+    ![Your users resources](images/User-profile-resources.png)
 
-  13. Click on the **Customer Secret Keys** in the resources section.
+13. Click on the **Customer Secret Keys** in the resources section.
 
-The table changes to showing the **Customer Secret Keys** table
+    The table changes to showing the **Customer Secret Keys** table
 
-  ![Customer secret keys list](images/User-profile-customer-secret-keys.png)
+    ![Customer secret keys list](images/User-profile-customer-secret-keys.png)
 
-In this case there is already one Customer secret key for my account.
+    In this case there is already one Customer secret key for my account.
 
-Note, if you have already generated a Customer Secret Key for another reason (you may have been doing a different lab) and you still have both the key and the secret, then you can re-use those values. You only need to do this if you do not have the information for a secret key you've previously generated.
+    Note, if you have already generated a Customer Secret Key for another reason (you may have been doing a different lab) and you still have both the key and the secret, then you can re-use those values. You only need to do this if you do not have the information for a secret key you've previously generated.
 
-To generate a new Customer Secret Key 
+    To generate a new Customer Secret Key 
 
-  14. Click the generate secret key button. 
+14. Click the generate secret key button. 
 
-  ![Generating a new secret key](images/User-profile-generate-secret-key.png)
+    ![Generating a new secret key](images/User-profile-generate-secret-key.png)
 
-  15. Provide a name that you'll be able to remember, in this case I'm using `MySecretKey` but you chose your own
+15. Provide a name that you'll be able to remember, in this case I'm using `MySecretKey` but you chose your own
 
-  16. Click the **Generate Secret Key** button, to get the system to generate a key pair for you.
+16. Click the **Generate Secret Key** button, to get the system to generate a key pair for you.
 
-  ![Saving the new secret key](images/User-profile-save-secret-key.png)
+    ![Saving the new secret key](images/User-profile-save-secret-key.png)
 
-**VITALLY IMPORTANT**
+    **VITALLY IMPORTANT**
 
-  17. Click the **Copy** link to copy the secret key, be sure to paste it into a texteditor or somewhere safe (this is a secret key, so it needs to be protected against access). **You cannot retrieve it at any point once this popup is closed** 
+17. Click the **Copy** link to copy the secret key, be sure to paste it into a texteditor or somewhere safe (this is a secret key, so it needs to be protected against access). **You cannot retrieve it at any point once this popup is closed** 
 
-  18. **ONLY** after you'ce copied and saved the secret key click the **Close** button
+18. **ONLY** after you'ce copied and saved the secret key click the **Close** button
 
-  ![Updated list of secret keys](images/User-profile-secret-key-list.png)
+    ![Updated list of secret keys](images/User-profile-secret-key-list.png)
 
-You'll see the newly generated key in the list (remember in this case I had an existing key, you may not have in which case you'll only see the key you just generated)
+    You'll see the newly generated key in the list (remember in this case I had an existing key, you may not have in which case you'll only see the key you just generated)
 
-You now need to get the access key (this is the other part of the generated key pair)
+    You now need to get the access key (this is the other part of the generated key pair)
 
-  19. Click on the **Access key** for the key you just generated, if you have multiple keys remember to chose the key you just generated (the name you chose will help you)
+19. Click on the **Access key** for the key you just generated, if you have multiple keys remember to chose the key you just generated (the name you chose will help you)
 
-  ![Getting the access key for the new secret key](images/User-profile-get-access-key.png)
+    ![Getting the access key for the new secret key](images/User-profile-get-access-key.png)
 
-  20. Click on the **Copy** link to get a copy of the key, save this in a text editor or something.
+20. Click on the **Copy** link to get a copy of the key, save this in a text editor or something.
 
-You have now gathered the information we need to write data into the Object Storage Service.
+    You have now gathered the information we need to write data into the Object Storage Service.
 
-### Task 3b: Create the storage bucket to hold the logs
+### Task 3B: Create the storage bucket to hold the logs
 
 You can let the S3 integration just create the storage bucket, but the scenario we are looking at here is for the long term retention of the log data for occasional access, in that case you want the cheapest possible storage, and for that you need the archive storage tier for the storage bucket. This is not the default tier so it needs to be set when the Oracle Object Storage Service bucket is created. The archive tier does mean that there is a delay to retrieve the data (Archive after all is about long term efficient storage of the data) so if you were planning on doing something with the data directly (For example uploading into the Oracle log analytics service) as you'd be transferring them once they were uploaded to the storage service, and probably only retaining them for a short while after that you would use the standard tier.
 
@@ -243,57 +245,57 @@ Here we're using the archive tier as that's the most cost effective for long ter
 
 Let's create our storage bucket. 
 
-  1. Log in to the OCI console in your web browser
+1.  Log in to the OCI console in your web browser
 
-  2. Click on the "Hamburger" menu, then in the **Core Infastructure** section click on **Object Storage** then **Object Storage** 
+2.  Click on the "Hamburger" menu, then in the **Core Infastructure** section click on **Object Storage** then **Object Storage** 
 
-  ![Accessing the object storage service](images/Object-storage-hamburger-menu.png)
+    ![Accessing the object storage service](images/Object-storage-hamburger-menu.png)
 
-This will take you to the storage service page
+    This will take you to the storage service page
 
-  ![Choosing the OCI compartment for your S3 compatibility](images/Object-storage-compartment-selection.png)
+    ![Choosing the OCI compartment for your S3 compatibility](images/Object-storage-compartment-selection.png)
 
-  3. Make sure in the compartments list you have selected the compartment used for the Amazon S3 Compatibility (this was shown in the tenancy details earlier). This may be `root` if there isn't a S3 compatibility compartment specified for the tenancy
+3.  Make sure in the compartments list you have selected the compartment used for the Amazon S3 Compatibility (this was shown in the tenancy details earlier). This may be `root` if there isn't a S3 compatibility compartment specified for the tenancy
 
-You will now see a list of buckets in this compartment, In this case there is just one called `TG` In your tenancy there may be a zero or more existing buckets.
+    You will now see a list of buckets in this compartment, In this case there is just one called `TG` In your tenancy there may be a zero or more existing buckets.
 
-  ![Details of existing storage buckets (if any)](images/Obiect-storage-initial-compartments.png)
+    ![Details of existing storage buckets (if any)](images/Obiect-storage-initial-compartments.png)
 
-We're going to create a new bucket set for archive storage
+    We're going to create a new bucket set for archive storage
 
-  4. Click the **Create Bucket** button.
+4.  Click the **Create Bucket** button.
 
-  5. In the popup name the bucket `<YOUR INITIALS>-FLUENTD` For fluentd to write to this bucket the name **must** be entirely in UPPER CASE and you **must** replace <YOUR INITIALS> with something unique to you!
+5.  In the popup name the bucket `<YOUR INITIALS>-FLUENTD` For fluentd to write to this bucket the name **must** be entirely in UPPER CASE and you **must** replace <YOUR INITIALS> with something unique to you!
 
-  6. Change the storage tier option to **archive**
+6.  Change the storage tier option to **archive**
 
-  ![Creating a new object storage bucket](images/Object-storage-create-bucket.png)
+    ![Creating a new object storage bucket](images/Object-storage-create-bucket.png)
 
-  7. Click the **Create Bucket** button
+7.  Click the **Create Bucket** button
 
-Note, if the bucket name must be unique across your entire tenancy in the region, if it's not (even if the other bucket is in a different compartment) you will not be able to create it and will have to try again using a different name.
+    Note, if the bucket name must be unique across your entire tenancy in the region, if it's not (even if the other bucket is in a different compartment) you will not be able to create it and will have to try again using a different name.
 
-You will now see the list of buckets in your compartment. Remember that in my case the `TG` bucket existed previously, so there are two shown here.
+    You will now see the list of buckets in your compartment. Remember that in my case the `TG` bucket existed previously, so there are two shown here.
 
-  ![Object storage buckets list after creating your new bucket](images/Object-storage-after-create-bucket.png)
+    ![Object storage buckets list after creating your new bucket](images/Object-storage-after-create-bucket.png)
 
-Note that the storage tier for the new bucket (named TG-FLUENTD in this case **but yours will vary**) is **Archive** This means all data will be held in a long term storage model which is much cheaper, but may take time to become available when requested.
+    Note that the storage tier for the new bucket (named TG-FLUENTD in this case **but yours will vary**) is **Archive** This means all data will be held in a long term storage model which is much cheaper, but may take time to become available when requested.
 
-### Task 3c: Configuring the log monitoring process.
+### Task 3C: Configuring the log monitoring process.
 
-  1. In the OCI Cloud shell Change to the logging folder.
-  
-  ```bash
-  <copy>cd $HOME/helidon-kubernetes/management/logging</copy>
-  ```
+1.  In the OCI Cloud shell Change to the logging folder.
+    
+    ```bash
+    <copy>cd $HOME/helidon-kubernetes/management/logging</copy>
+    ```
 
-There are a several of yaml files that we will use. These will all be applied in the `logging` namespace
+    There are a several of yaml files that we will use. These will all be applied in the `logging` namespace
 
-The `fluentd-to-ooss-configmap.yaml` file defines a configuration map representing the basic configuration for fluentd, in this case it tells it to use the S3 compatible output for all log data. This is mounted into the pod as the the `fluentd.conf` file. This config map brings in some of the environment variables that are defined in the `fluentd-s3-configmap` and processed when the `fluentd-daemonset-oss-rbac.yaml` is applied and the logs start. Kubernetes uses the syntax `"#{ENV['SWITCH_LOG_FILE_INTERVAL']}"` to identify that the environment variable needs to be substituted.
+    The `fluentd-to-ooss-configmap.yaml` file defines a configuration map representing the basic configuration for fluentd, in this case it tells it to use the S3 compatible output for all log data. This is mounted into the pod as the the `fluentd.conf` file. This config map brings in some of the environment variables that are defined in the `fluentd-s3-configmap` and processed when the `fluentd-daemonset-oss-rbac.yaml` is applied and the logs start. Kubernetes uses the syntax `"#{ENV['SWITCH_LOG_FILE_INTERVAL']}"` to identify that the environment variable needs to be substituted.
 
-The `fluentd-s3-configmap.yaml` contains a config map with the specific settings we will be using (these are what you gathered above) which are applied to the environment variables inside the pod. You will need to edit this to hold the values you gathered.
+    The `fluentd-s3-configmap.yaml` contains a config map with the specific settings we will be using (these are what you gathered above) which are applied to the environment variables inside the pod. You will need to edit this to hold the values you gathered.
 
-The `fluentd-daemonset-oss-rbac.yaml` configures the cluster role, service account, binding between the two and also the details of the daemonset that gathers the log data and writes it to the S3 compatible storage service. The daemon set uses the values that are set in the `fluentd-s3-configmap.yaml` for it's environment variables (look at the file for the details of how the environment variables are defined in terms of config map entries). This means we won't need to change the daemon set configuration / it's yaml file if we want to change those settings.
+    The `fluentd-daemonset-oss-rbac.yaml` configures the cluster role, service account, binding between the two and also the details of the daemonset that gathers the log data and writes it to the S3 compatible storage service. The daemon set uses the values that are set in the `fluentd-s3-configmap.yaml` for it's environment variables (look at the file for the details of how the environment variables are defined in terms of config map entries). This means we won't need to change the daemon set configuration / it's yaml file if we want to change those settings.
 
 <details><summary><b>Using Kubernetes 1.20 or earlier ?</b></summary>
 
@@ -335,42 +337,42 @@ in the `env:` section we see the name of the environment variable (`SWITCH_LOG_F
 
 </details>
 
-  1. You will need to edit the `fluentd-s3-configmap.yaml` file and update it with the values you gathered earlier. I'm using vi here, but use the supported editor of your choice. 
+1.  You will need to edit the `fluentd-s3-configmap.yaml` file and update it with the values you gathered earlier. I'm using vi here, but use the supported editor of your choice. 
   
-  ```bash
-  <copy>vi fluentd-s3-configmap.yaml</copy>
-  ```
+    ```bash
+    <copy>vi fluentd-s3-configmap.yaml</copy>
+    ```
   
-  Remember to keep the values in double quotes.
+    Remember to keep the values in double quotes.
 
-  - ACCESS_KEY - This is the OCI access key
+    - ACCESS_KEY - This is the OCI access key
 
-  - ACCESS_SECRET - This is the OCI secret key
+    - ACCESS_SECRET - This is the OCI secret key
 
-  - REGION - The OCI Region
+    - REGION - The OCI Region
 
-  - STORAGE_END_POINT - The object storage endpoint
+    - STORAGE_END_POINT - The object storage endpoint
 
-  - BUCKET_NAME - The name of the bucket you created
+    - BUCKET_NAME - The name of the bucket you created
 
-Do not change the ROTATION_INTERVAL setting, leave that set to 60
+    Do not change the ROTATION_INTERVAL setting, leave that set to 60
 
-The following is an **example** of the updated file. This specific example **will not work** in your tenancy, you will need to use the values you gathered for your tenancy.
+    The following is an **example** of the updated file. This specific example **will not work** in your tenancy, you will need to use the values you gathered for your tenancy.
 
-```yaml
-apiVersion: v1
-kind: ConfigMap
-metadata:
-  name: fluentd-s3-config
-  namespace: logging
-data:
-  ACCESS_KEY: "225c7ab16d07465e1234567e724863ea552e11b0"
-  ACCESS_SECRET: "bgUdGT20T4KpFh5awJR0pZBwxR4siml2utj3f+W2mJ8="
-  BUCKET_NAME: "TG-FLUENTD"
-  REGION: "eu-frankfurt-1"
-  STORAGE_END_POINT: "https://oractdemeabdmnative.compat.objectstorage.eu-frankfurt-1.oraclecloud.com"
-  SWITCH_LOG_FILE_INTERVAL: "60"
-```
+    ```yaml
+    apiVersion: v1
+    kind: ConfigMap
+    metadata:
+      name: fluentd-s3-config
+      namespace: logging
+    data:
+      ACCESS_KEY: "225c7ab16d07465e1234567e724863ea552e11b0"
+      ACCESS_SECRET: "bgUdGT20T4KpFh5awJR0pZBwxR4siml2utj3f+W2mJ8="
+      BUCKET_NAME: "TG-FLUENTD"
+      REGION: "eu-frankfurt-1"
+      STORAGE_END_POINT: "https://oractdemeabdmnative.compat.objectstorage.eu-frankfurt-1.oraclecloud.com"
+      SWITCH_LOG_FILE_INTERVAL: "60"
+    ```
 
 <details><summary><b>What's the SWITCH_LOG_FILE_INTERVAL for?</b></summary>
 
@@ -382,19 +384,21 @@ For lab purposes we have setup the configuration with a 60 second cycle on switc
 
 </details>
 
-### Task 3d: Actually starting the log capture
+### Task 3D: Actually starting the log capture
 
 First we will create the `fluentd-config-to-ooss` config map, this is in the `fluentd-to-ooss-configmap.yaml` This is the basic configuration of fluentd and tells it to output to the S3 service, it just used environment variable place holders for the actual setting details though, the Kubernetes runtime will replace those with the actual values from the environment when the configuration map is added to the pod as it starts.
 
-  1. In the OCI Cloud Shell type 
+1.  In the OCI Cloud Shell type 
   
-  ```bash
-  <copy>kubectl apply -f fluentd-to-ooss-configmap.yaml</copy>
-  ```
+    ```bash
+    <copy>kubectl apply -f fluentd-to-ooss-configmap.yaml</copy>
+    ```
+    
+    Example Output
 
-  ```
-configmap/fluentd-config-to-ooss configured
-```
+    ```text
+    configmap/fluentd-config-to-ooss configured
+    ```
 <details><summary><b>Why didn't I need to specify a namespace ?</b></summary>
 
 
@@ -414,60 +418,63 @@ data:
 
 Now let's apply the configuration settings specific to our environment we just setup. These are the settings used to setup the environment variables inside the the daemonset configuration
 
-  2. In the OCI Cloud Shell type 
+2.  In the OCI Cloud Shell type 
   
-  ```bash
-  <copy>kubectl apply -f fluentd-s3-configmap.yaml</copy>
-  ```
+    ```bash
+    <copy>kubectl apply -f fluentd-s3-configmap.yaml</copy>
+    ```
+    
+    Example Output
   
-  ```
-configmap/fluentd-s3-config configured
-```
+    ```text
+    configmap/fluentd-s3-config configured
+    ```
 
-Finally let's start the daemonset itself
-
-  3. In the OCI Cloud Shell type 
+3.  Finally let's start the daemonset itself. In the OCI Cloud Shell type 
   
-  ```bash
-  <copy>kubectl apply -f fluentd-daemonset-ooss-rbac.yaml</copy>
-  ```
+    ```bash
+    <copy>kubectl apply -f fluentd-daemonset-ooss-rbac.yaml</copy>
+    ```
+    
+    Example Output
 
-  ```
-serviceaccount/fluentd-to-ooss created
-clusterrole.rbac.authorization.k8s.io/fluentd-to-ooss created
-clusterrolebinding.rbac.authorization.k8s.io/fluentd-to-ooss created
-daemonset.apps/fluentd-to-ooss created
-```
-Let's make sure that everything has started
+    ```
+    serviceaccount/fluentd-to-ooss created
+    clusterrole.rbac.authorization.k8s.io/fluentd-to-ooss created
+    clusterrolebinding.rbac.authorization.k8s.io/fluentd-to-ooss created
+    daemonset.apps/fluentd-to-ooss created
+    ```
 
-  4. In the OCI Cloud Shell type 
+4.  Let's make sure that everything has started. In the OCI Cloud Shell type 
   
-  ```bash
-  <copy>kubectl get daemonsets -n logging</copy>
-  ```
+    ```bash
+    <copy>kubectl get daemonsets -n logging</copy>
+    ```
+    
+    Example Output
 
-```
-NAME              DESIRED   CURRENT   READY   UP-TO-DATE   AVAILABLE   NODE SELECTOR   AGE
-fluentd-to-ooss   2         2         2       2            2           <none>          88s
-```
+    ```text
+    NAME              DESIRED   CURRENT   READY   UP-TO-DATE   AVAILABLE   NODE SELECTOR   AGE
+    fluentd-to-ooss   2         2         2       2            2           <none>          88s
+    ```
 
-We can see that there are 2 instances running, this is because the cluster I am using has 2 nodes, and Kubernetes will ensure that there is a pod for each daemonset running on each node (restarting it on the same node if the pod crashes)
+    We can see that there are 2 instances running, this is because the cluster I am using has 2 nodes, and Kubernetes will ensure that there is a pod for each daemonset running on each node (restarting it on the same node if the pod crashes)
 
-Let's get the specifics of the pods
-
-  5. In the OCI Cloud Shell type 
+5.  Let's get the specifics of the pods. In the OCI Cloud Shell type 
   
-  ```bash
-  <copy>kubectl get pods -n logging</copy>
-  ```
+    ```bash
+    <copy>kubectl get pods -n logging</copy>
+    ```
+    
+    Example Output
   
-```
-NAME                                    READY   STATUS             RESTARTS   AGE
-fluentd-to-ooss-fgx4s                   1/1     Running            0          55s
-fluentd-to-ooss-frkrp                   1/1     Running            0          55s
-```
+    ```
+    NAME                                    READY   STATUS             RESTARTS   AGE
+    fluentd-to-ooss-fgx4s                   1/1     Running            0          55s
+    fluentd-to-ooss-frkrp                   1/1     Running            0          55s
+    ```
 
-In this case I had left the fluentd and elastic search instances running from the log capture for processing module running. This is why you can see a total of 6 fluentd pods running, three (fluentd-to-es) writing to Elastic Search (whcih itself has a number of pods) and three (fluentd-to-ooss) writing to Oracle Object Storage Service. If you have not done the log capture for processing lab (or tidies up after it) then you should only see three fluend based pods.
+    In this case I had left the fluentd and elastic search instances running from the log capture for processing module running. This is why you can see a total of 6 fluentd pods running, three (fluentd-to-es) writing to Elastic Search (whcih itself has a number of pods) and three (fluentd-to-ooss) writing to Oracle Object Storage Service. If you have not done the log capture for processing lab (or tidies up after it) then you should only see three fluend based pods.
 
 <details><summary><b>What's with the CrashLoopBackOff STATUS ?</b></summary>
 
@@ -478,77 +485,78 @@ You may occasionally see a fluentd pod with status CrashLoopBackOff, this is usu
 </details>
 
 
-Let's look at the logs from one of these pods, in this case I'm going to use `fluentd-to-ooss-fgx4s` but of course the pod name you have will be different.
-
-  6. In the OCI Cloud Shell type the followibng, replace the pod id with yours.
+6.  Let's look at the logs from one of these pods, in this case I'm going to use `fluentd-to-ooss-fgx4s` but of course the pod name you have will be different.
+In the OCI Cloud Shell type the following, replace the pod id with yours.
   
-  ```
-  kubectl logs -n logging fluentd-to-ooss-fgx4s
-  ```
+    ```
+    kubectl logs -n logging fluentd-to-ooss-fgx4s
+    ```
+    
+    Example Output
 
-  ```
-2020-05-05 14:53:35 +0000 [info]: parsing config file is succeeded path="/fluentd/etc/override/fluent.conf"
-2020-05-05 14:53:35 +0000 [info]: gem 'fluent-plugin-concat' version '2.4.0'
-2020-05-05 14:53:35 +0000 [info]: gem 'fluent-plugin-detect-exceptions' version '0.0.13'
-...
-more gem stuff
-...
-2020-05-05 14:53:35 +0000 [info]: gem 'fluentd' version '1.10.2'
-2020-05-05 14:53:37 +0000 [info]: using configuration file: <ROOT>
-  <source>
-    @type prometheus
-    bind "0.0.0.0"
-    port 24231
-    metrics_path "/metrics"
-  </source>
-...
-Long list of sources
-...
-  <match **>
-    @type s3
-    @id out_s3
-    @log_level "info"
-    s3_bucket "TG-FLUENTD"
-    s3_endpoint "https://oractdemeabdmnative.compat.objectstorage.eu-frankfurt-1.oraclecloud.com"
-    s3_region "eu-frankfurt-1"
-    s3_object_key_format "%{path}%Y/%m/%d/cluster-log-%{index}.%{file_extension}"
-    <inject>
-      time_key "time"
-      tag_key "tag"
-      localtime false
-    </inject>
-    <buffer>
-      @type "file"
-      path "/var/log/fluentd-buffers/s3.buffer"
-      timekey 60
-      timekey_use_utc true
-      chunk_limit_size 256m
-    </buffer>
-  </match>
-</ROOT>
-2020-05-05 14:53:37 +0000 [info]: starting fluentd-1.10.2 pid=6 ruby="2.6.6"
-2020-05-05 14:53:37 +0000 [info]: spawn command to main:  cmdline=["/usr/local/bin/ruby", "-Eascii-8bit:ascii-8bit", "/fluentd/vendor/bundle/ruby/2.6.0/bin/fluentd", "-c", "/fluentd/etc/override/fluent.conf", "-p", "/fluentd/plugins", "--gemfile", "/fluentd/Gemfile", "--under-supervisor"]
-2020-05-05 14:53:37 +0000 [info]: adding match in @FLUENT_LOG pattern="fluent.**" type="null"
-2020-05-05 14:53:37 +0000 [info]: adding filter pattern="kubernetes.**" type="kubernetes_metadata"
-2020-05-05 14:53:38 +0000 [info]: adding match pattern="**" type="s3"
-2020-05-05 14:53:38 +0000 [info]: adding source type="prometheus"
-2020-05-05 14:53:38 +0000 [info]: adding source type="prometheus_output_monitor"
-2020-05-05 14:53:38 +0000 [info]: adding source type="tail"
-...
-more adding source stuff
-...
-2020-05-05 14:53:38 +0000 [info]: adding source type="tail"
-2020-05-05 14:53:38 +0000 [info]: #0 starting fluentd worker pid=15 ppid=6 worker=0
-2020-05-05 14:53:38 +0000 [info]: #0 [in_tail_container_logs] following tail of /var/log/containers/kube-flannel-ds-kbphm_kube-system_install-cni-95d15a83f2fc30c51a4467c7e8314cdd442c62e430d61f31f6dfa9cb72e5836e.log
-2020-05-05 14:53:38 +0000 [info]: #0 [in_tail_container_logs] following tail of /var/log/containers/kube-proxy-mx5cq_kube-system_kube-proxy-92ac482f6ee8ab963ec3660877efc007e75f967a46a7a3e6514f0fb961e2fc93.log
-2020-05-05 14:53:38 +0000 [info]: #0 [in_tail_container_logs] following tail of /var/log/containers/kube-flannel-ds-kbphm_kube-system_kube-flannel-f2bc3614d3e7079f83a75ace155a42be641243320b5f9ca088ecd6961b739279.log
-2020-05-05 14:53:38 +0000 [info]: #0 [in_tail_container_logs] following tail of /var/log/containers/proxymux-client-t5m64_kube-system_proxymux-client-821a69cbc98bccf181260fc184fc5172ef5487812098eafffa1b269a7e3572e0.log
-...
-Lots more output
-...
-```
+    ```text
+    2020-05-05 14:53:35 +0000 [info]: parsing config file is succeeded path="/fluentd/etc/override/fluent.conf"
+    2020-05-05 14:53:35 +0000 [info]: gem 'fluent-plugin-concat' version '2.4.0'
+    2020-05-05 14:53:35 +0000 [info]: gem 'fluent-plugin-detect-exceptions' version '0.0.13'
+    ...
+    more gem stuff
+    ...
+    2020-05-05 14:53:35 +0000 [info]: gem 'fluentd' version '1.10.2'
+    2020-05-05 14:53:37 +0000 [info]: using configuration file: <ROOT>
+      <source>
+        @type prometheus
+        bind "0.0.0.0"
+        port 24231
+        metrics_path "/metrics"
+      </source>
+    ...
+    Long list of sources
+    ...
+      <match **>
+        @type s3
+        @id out_s3
+        @log_level "info"
+        s3_bucket "TG-FLUENTD"
+        s3_endpoint "https://oractdemeabdmnative.compat.objectstorage.eu-frankfurt-1.oraclecloud.com"
+        s3_region "eu-frankfurt-1"
+        s3_object_key_format "%{path}%Y/%m/%d/cluster-log-%{index}.%{file_extension}"
+        <inject>
+          time_key "time"
+          tag_key "tag"
+          localtime false
+        </inject>
+        <buffer>
+          @type "file"
+          path "/var/log/fluentd-buffers/s3.buffer"
+          timekey 60
+          timekey_use_utc true
+          chunk_limit_size 256m
+        </buffer>
+          </match>
+    </ROOT>
+    2020-05-05 14:53:37 +0000 [info]: starting fluentd-1.10.2 pid=6 ruby="2.6.6"
+    2020-05-05 14:53:37 +0000 [info]: spawn command to main:  cmdline=["/usr/local/bin/ruby", "-Eascii-8bit:ascii-8bit", "/fluentd/vendor/bundle/ruby/2.6.0/bin/fluentd", "-c",     "/fluentd/etc/override/fluent.conf", "-p", "/fluentd/plugins", "--gemfile", "/fluentd/Gemfile", "--under-supervisor"]
+    2020-05-05 14:53:37 +0000 [info]: adding match in @FLUENT_LOG pattern="fluent.**" type="null"
+    2020-05-05 14:53:37 +0000 [info]: adding filter pattern="kubernetes.**" type="kubernetes_metadata"
+    2020-05-05 14:53:38 +0000 [info]: adding match pattern="**" type="s3"
+    2020-05-05 14:53:38 +0000 [info]: adding source type="prometheus"
+    2020-05-05 14:53:38 +0000 [info]: adding source type="prometheus_output_monitor"
+    2020-05-05 14:53:38 +0000 [info]: adding source type="tail"
+    ...
+    more adding source stuff
+    ...
+    2020-05-05 14:53:38 +0000 [info]: adding source type="tail"
+    2020-05-05 14:53:38 +0000 [info]: #0 starting fluentd worker pid=15 ppid=6 worker=0
+    2020-05-05 14:53:38 +0000 [info]: #0 [in_tail_container_logs] following tail of /var/log/containers/kube-flannel-ds-kbphm_kube-system_install-cni-95d15a83f2fc30c51a4467c7e8314cdd442c62e430d61f31f6dfa9cb72e5836e.log
+    2020-05-05 14:53:38 +0000 [info]: #0 [in_tail_container_logs] following tail of /var/log/containers/kube-proxy-mx5cq_kube-system_kube-proxy-92ac482f6ee8ab963ec3660877efc007e75f967a46a7a3e6514f0fb961e2fc93.log
+    2020-05-05 14:53:38 +0000 [info]: #0 [in_tail_container_logs] following tail of /var/log/containers/kube-flannel-ds-kbphm_kube-system_kube-flannel-f2bc3614d3e7079f83a75ace155a42be641243320b5f9ca088ecd6961b739279.log
+    2020-05-05 14:53:38 +0000 [info]: #0 [in_tail_container_logs] following tail of /var/log/containers/proxymux-client-t5m64_kube-system_proxymux-client-821a69cbc98bccf181260fc184fc5172ef5487812098eafffa1b269a7e3572e0.log
+    ...
+    Lots more output
+    ...
+    ```
 
-The log data shows is the sources whish fluentd is scanning looking for the log data, The match section is the contents of the config map we specified in `fluentd-to-ooss-configmap.yaml` but note that there are values for items like `s3-bucket` which reflect the settings we provided in the `fluentd-s3-configmap.yaml` file of our environment specific settings.
+    The log data shows is the sources which fluentd is scanning looking for the log data, The match section is the contents of the config map we specified in `fluentd-to-ooss-configmap.yaml` but note that there are values for items like `s3-bucket` which reflect the settings we provided in the `fluentd-s3-configmap.yaml` file of our environment specific settings.
 
 <details><summary><b>If the log is reporting an unexpected error</b></summary>
 
@@ -576,9 +584,9 @@ It may be that the bucket name is already in use (though this should have genera
 
 </details>
 
-Do some requests to the storefront service which will generate log data
+    Do some requests to the storefront service which will generate log data
 
-If your cloud shell session is new or has been restarted then the shell variable `$EXTERNAL_IP` may be invalid, expand this section if you think this may be the case to check and reset it if needed.
+    If your cloud shell session is new or has been restarted then the shell variable `$EXTERNAL_IP` may be invalid, expand this section if you think this may be the case to check and reset it if needed.
 
 <details><summary><b>How to check if $EXTERNAL_IP is set, and re-set it if it's not</b></summary>
 
@@ -641,27 +649,29 @@ ingress-nginx-controller-admission   ClusterIP      10.96.216.33    <none>      
 </details>
 
 
-  7. Sent a request that will generate log data. In the OCI Cloud Shell terminal type.
+7.  Send a request that will generate log data. In the OCI Cloud Shell terminal type.
   
-  ```bash
-  <copy>curl -i -k -X GET -u jack:password https://store.$EXTERNAL_IP.nip.io/store/stocklevel</copy>
-  ```
+    ```bash
+    <copy>curl -i -k -X GET -u jack:password https://store.$EXTERNAL_IP.nip.io/store/stocklevel</copy>
+    ```
+    
+    Exampple Output
   
-  ```
-HTTP/1.1 200 OK
-Server: nginx/1.17.8
-Date: Thu, 23 Apr 2020 18:38:50 GMT
-Content-Type: application/json
-Content-Length: 149
-Connection: keep-alive
-Strict-Transport-Security: max-age=15724800; includeSubDomains
+    ```text
+    HTTP/1.1 200 OK
+    Server: nginx/1.17.8
+    Date: Thu, 23 Apr 2020 18:38:50 GMT
+    Content-Type: application/json
+    Content-Length: 149
+    Connection: keep-alive
+    Strict-Transport-Security: max-age=15724800; includeSubDomains
 
-[{"itemCount":100,"itemName":"Book"},{"itemCount":50,"itemName":"Eraser"},{"itemCount":500,"itemName":"Pencil"},{"itemCount":5000,"itemName":"Pins"}]
-```
+    [{"itemCount":100,"itemName":"Book"},{"itemCount":50,"itemName":"Eraser"},{"itemCount":500,"itemName":"Pencil"},{"itemCount":5000,"itemName":"Pins"}]
+    ```
 
-Do this several times
+    Do this several times
 
-If you get a DNS error that `store..nip.io` cannot be found this means that `EXTERNAL_IP` is not set, follow the instructions above to set it and then re-run the curl command.
+    If you get a DNS error that `store..nip.io` cannot be found this means that `EXTERNAL_IP` is not set, follow the instructions above to set it and then re-run the curl command.
 
 
 ## Task 4: The saved log files
@@ -672,57 +682,55 @@ Open the Object storage page on the OCI web console again and navigate to the bu
 
 The Object storage UI provides a pseudo directory structure view. In this case there's only one "directory"
 
-  1. Click on the year
+1.  Click on the year
 
-  ![The top level of the Object storage hierarchy](images/Object-storage-hierarchy-top-level.png)
+    ![The top level of the Object storage hierarchy](images/Object-storage-hierarchy-top-level.png)
 
-  2. Continue navigating down the pseudo directory structure until you get to the objects created today
+2.  Continue navigating down the pseudo directory structure until you get to the objects created today
 
-  ![Navigating to todays log data in the hierarchy](images/Object-storage-bucket-with-logs.png)
+    ![Navigating to todays log data in the hierarchy](images/Object-storage-bucket-with-logs.png)
 
-You can see the list of logs that have been saved. Note that all of them have a status of `Archived`.
+    You can see the list of logs that have been saved. Note that all of them have a status of `Archived`.
 
-If you can't see the list of files and fluentd has been running for a while try clicking on the **More Actions** button, then **Refresh**
+    If you can't see the list of files and fluentd has been running for a while try clicking on the **More Actions** button, then **Refresh**
 
-Let's start the process to restore from the archive.
+3.  Let's start the process to restore from the archive. Click the selection checkbox next to **one** of the entries. Then click the **More Actions** button and chose **Restore** from the menu
 
-  3. Click the selection checkbox next to **one** of the entries. Then click the **More Actions** button and chose **Restore** from the menu
+    ![Identifying objects to restore](images/Object-storage-select-for-restore.png)
 
-  ![Identifying objects to restore](images/Object-storage-select-for-restore.png)
+    Note that the **Restore** and **Delete** buttons are now enabled.
 
-Note that the **Restore** and **Delete** buttons are now enabled.
+4.  Click the **Restore** button, the confirm restore popup is shown
 
-  4. Click the **Restore** button, the confirm restore popup is shown
+    ![Confirming restoration of archived objects](images/Object-storage-confirm-restore.png)
 
-  ![Confirming restoration of archived objects](images/Object-storage-confirm-restore.png)
+    By default the restored data is available for 24 hours before it's only available in the archive again, you can change this duration if you like, but for now we'll leave the field blank which keeps the default 24 hours download window. The storage service will be charging you the extra copy for the time it's spent online, so you want to keep that to a minimum that meets your needs
 
-By default the restored data is available for 24 hours before it's only available in the archive again, you can change this duration if you like, but for now we'll leave the field blank which keeps the default 24 hours download window. The storage service will be charging you the extra copy for the time it's spent online, so you want to keep that to a minimum that meets your needs
+5.  Click the **Restore** button in the popup and the object storage service will trigger the restore process to start.
 
-  5. Click the **Restore** button in the popup and the object storage service will trigger the restore process to start.
+    ![Object storage starts the restore process](images/Object-storage-restore-in-process.png)
 
-  ![Object storage starts the restore process](images/Object-storage-restore-in-process.png)
+    You can see that the status is now `Restoring`. Of course there is also a REST API to allow you to automate this process if you wanted in a production environment.
 
-You can see that the status is now `Restoring`. Of course there is also a REST API to allow you to automate this process if you wanted in a production environment.
+    It can take several hours for the restore process to complete, especially if you chose multiple objects (remember we chose **Archive** as the storage tier as we wanted to show how to do long term cost effective storage of log data, and the archive tier is far more cost effective compared to the **Standard** tier, but the balance of that is the time to restore if you need to access the data. 
 
-It can take several hours for the restore process to complete, especially if you chose multiple objects (remember we chose **Archive** as the storage tier as we wanted to show how to do long term cost effective storage of log data, and the archive tier is far more cost effective compared to the **Standard** tier, but the balance of that is the time to restore if you need to access the data. 
+    If you want to progress with the lab then you can do so and come back to this section later to look at the restored data.
 
-If you want to progress with the lab then you can do so and come back to this section later to look at the restored data.
+    Once the restore process has completed you will see that the objects state becomes `Restored` (The images below were taken about an hour after starting the restore process). If you don't want to wait for the restore to complete just look at the images below to see what can be done, then follow the instructions in the **Tidying up the environment** section.
 
-Once the restore process has completed you will see that the objects state becomes `Restored` (The images below were taken about an hour after starting the restore process). If you don't want to wait for the restore to complete just look at the images below to see what can be done, then follow the instructions in the **Tidying up the environment** section.
+    ![Our newly restored object](images/Object-storage-restored-object.png)
 
-  ![Our newly restored object](images/Object-storage-restored-object.png)
+6.  Click the three vertical dots just to the right of the word Restored to get the object menu.
 
-  6. Click the three vertical dots just to the right of the word Restored to get the object menu.
+    ![Accessing the menu for our restored object](images/Object-storage-restored-object-menu.png)
 
-  ![Accessing the menu for our restored object](images/Object-storage-restored-object-menu.png)
+7.  Click the **Download** option on this menu
 
-  7. Click the **Download** option on this menu
+    Your web browser will start to download the object and depending on the web browser you will get a download options popup. This is the one I got when doing a similar download using Firefox on MacOS Catalina
 
-Your web browser will start to download the object and depending on the web browser you will get a download options popup. This is the one I got when doing a similar download using Firefox on MacOS Catalina
+    ![Doanload popup when accessing a restored object](images/Object-storage-restored-object-download-options.png)
 
-  ![Doanload popup when accessing a restored object](images/Object-storage-restored-object-download-options.png)
-
-To access the restored object follow whatever the normal procedure is on your computer to access a downloaded `.gz` file.
+    To access the restored object follow whatever the normal procedure is on your computer to access a downloaded `.gz` file.
 
 ## Task 5: Tidying up the environment
 
@@ -731,19 +739,21 @@ If you are in a trial tenancy there are limitations on how many resources you ca
 
 If you want to leave the log capture running to see more of the data please feel free to do so (this particular module only generates storage objects) but do remember that this is consuming processing and storage resources. If you don't want to keep those tasks running the simplest way to stop all of the log capture activities is to delete the entire `logging` namespace. 
 
-  1. To delete the `logging` namespace (if you have chosen to do this). In the OCI Cloud Shell type 
+1.  To delete the `logging` namespace (if you have chosen to do this). In the OCI Cloud Shell type 
   
-  ```bash
-  <copy>kubectl delete namespace logging</copy>
-  ```
+    ```bash
+    <copy>kubectl delete namespace logging</copy>
+    ```
+    
+    Example Output
   
-  ```
-namespace "logging" deleted
-```
+    ```text
+    namespace "logging" deleted
+    ```
 
-This may take a short time as there is quite a lot of stuff to be stopped and removed form the Kubernetes cluster.
+    This may take a short time as there is quite a lot of stuff to be stopped and removed form the Kubernetes cluster.
 
-Note that this will **not** reclaim the Object storage space used as the Object storage service is outside the Kubernetes environment. 
+    Note that this will **not** reclaim the Object storage space used as the Object storage service is outside the Kubernetes environment. 
 
 <details><summary><b>To reclaim the Object storage capacity used</b></summary>
 
@@ -799,12 +809,8 @@ We have seen how you can capture log data for long term storage, in this case us
 
 Of course if the cost savings of the long term storage are outweighed by the time taken to retrieve the log data (maybe you're only holding it for a few days and it's being used often in that time) then you can use the standard storage tier which os more expensive, but offers immediate access.
 
-## End of the module, what's next ?
-
-You can chose from the various Kubernetes optional module sets.
-
 ## Acknowledgements
 
 * **Author** - Tim Graves, Cloud Native Solutions Architect, Oracle EMEA Cloud Native Application Development specialists Team
 * **Contributor** - Jan Leemans, Director Business Development, EMEA Divisional Technology
-* **Last Updated By** - Tim Graves, May 2023
+* **Last Updated By** - Tim Graves, August 2023

@@ -1,88 +1,88 @@
 {
-  "workshoptitle": "Deploy Microservices in Kubernetes and supporting cloud native services",
+  "workshoptitle": "Deploy Microservices in Kubernetes and related cloud native services",
   "help": "livelabs-help-oci_us@oracle.com",
 	"tutorials": [
         {
-          "title": "Labs introduction",
+          "title": "Introduction",
           "filename":"kubernetes-complete.md"
         },
         {
-            "title": "Oracle Cloud Free Tier",
+            "title": "Get Started",
             "description": "Use your Always Free resources as long as you want with no time constraints—subject only to the capacity limits noted. When your 30-day trial period for the expanded set of services ends, you can continue using Always Free services with no interruption.",
             "filename": "https://oracle-livelabs.github.io/common/labs/cloud-login/pre-register-free-tier-account.md"
         },
         {
-          "title": "Setup your environment with the all-in-one script",
+          "title": "Lab 1: Setup your environment with the all-in-one script",
           "filename":"../../../../scripted-setup/lab-specific-scripts/script-driven-oke-core-and-complete-setup.md"
         },
         {
-          "title": "Lab 1: Set up the cluster and run your services in Kubernetes",
+          "title": "Lab 2: Set up the cluster and run your services in Kubernetes",
           "filename": "../../../../kubernetes/base-kubernetes/kubernetes-base-labs.md"
         },
 		{
-          "title": "Lab 2: Cloud native availability with Kubernetes",
+          "title": "Lab 3: Cloud native availability with Kubernetes",
           "filename": "../../../../kubernetes/cloud-native-labs/health-readiness-liveness/health-liveness-readiness.md"
         },
 		{
-          "title": "Lab 3a: Horizontal Scaling",
+          "title": "Lab 4A: Horizontal Scaling",
           "filename": "../../../../kubernetes/cloud-native-labs/horizontal-scaling/horizontal-scaling.md"
         },
 		{
-          "title": "Lab 3b: Auto Scaling",
+          "title": "Lab 4B: Auto Scaling",
           "filename": "../../../../kubernetes/cloud-native-labs/horizontal-scaling/auto-scaling.md"
         },
         {
-          "title": "Lab 4: Rolling Updates",
+          "title": "Lab 5: Rolling Updates",
           "filename": "../../../../kubernetes/cloud-native-labs/rolling-updates/rolling-updates.md"
         },
         {
-          "title": "Optional Lab 1a: Capture metrics with Prometheus",
+          "title": "Lab 6A: Capture metrics with Prometheus [Optional]",
           "filename": "../../../../kubernetes/monitoring-kubernetes/monitoring-with-prometheus-lab.md"
         },
 		{
-          "title": "Optional Lab 1b: Visualize metrics with Grafana",
+          "title": "Lab 6B: Visualize metrics with Grafana [Optional]",
           "filename": "../../../../kubernetes/monitoring-kubernetes/visualizing-with-grafana-lab.md"
         },
 		{
-          "title": "Optional Lab 2a: Capture log data for imediate processing",
+          "title": "Lab 7A: Capture log data for imediate processing [Optional]",
           "filename": "../../../../kubernetes/management/logging/log-capture-for-processing.md"
         },
         {
-          "title": "Optional Lab 2b: Log Capture for long term storage",
+          "title": "Lab 7B: Capture log data for long term storage [Optional]",
           "filename": "../../../../kubernetes/management/logging/log-capture-for-archive.md"
         },
 		{
-          "title": "Optional Lab 3a: Install the Linkerd service mesh",
+          "title": "Lab 8A: Install the Linkerd service mesh [Optional]",
           "filename": "../../../../kubernetes/service-mesh/linkerd-install.md"
         },
         {
-          "title": "Optional Lab 3b: Monitor traffic with the Linkerd service mesh",
+          "title": "Lab 8B: Monitor traffic with the Linkerd service mesh [Optional]",
           "filename": "../../../../kubernetes/service-mesh/linkerd-monitoring-traffic-flows.md"
         },
 		{
-          "title": "Optional Lab 3c: Use the Linkerd service mesh to troubleshoot problems",
+          "title": "Lab 8C: Use the Linkerd service mesh to troubleshoot problems [Optional]",
           "filename": "../../../../kubernetes/service-mesh/linkerd-using-to-troubleshoot-problems.md"
         },
         {
-          "title": "Optional Lab 3d: Traffic splits with the Linkerd service mesh (Canary deployments, and chaos engineering)",
+          "title": "Lab 8D: Traffic splits with the Linkerd service mesh (Canary deployments, and chaos engineering) [Optional]",
           "filename": "../../../../kubernetes/service-mesh/linkerd-exploring-traffic-splits.md"
         },
 		{
-          "title": "Optional Lab 3e: Uninstall the Linkerd service mesh",
+          "title": "Lab 8E: Uninstall the Linkerd service mesh [Optional]",
           "filename": "../../../../kubernetes/service-mesh/linkerd-uninstall.md"
         },
         {
-          "title": "Reset your tenancy",
+          "title": "Lab 9: Clean Up [Optional]",
           "filename":"../../../../scripted-setup/lab-specific-scripts/script-driven-oke-core-and-complete-destroy.md"
         },
         {
-          "title": "Further Information on Kubernetes",
+          "title": "Learn more about Kubernetes",
           "filename": "../../../../kubernetes/further-information/further-information.md"
         },
         {
           "title": "Need Help?",
           "description": "Solutions to Common Problems and Directions for Receiving Live Help",
-          "filename": "https://raw.githubusercontent.com/oracle/learning-library/master/oci-library/need-help/need-help-livelabs.md"
+          "filename": "https://github.com/oracle-livelabs/common/blob/main/labs/need-help/need-help-freetier.md"
         }
     ]
 }

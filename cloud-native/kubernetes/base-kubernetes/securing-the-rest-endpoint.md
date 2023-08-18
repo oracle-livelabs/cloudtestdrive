@@ -88,12 +88,8 @@ Managing certificates can be a pain, especially if you have short lived certific
 
 This section has only covered at a simple level a few of the security options. Clearly in a sensitive commercial situation you will want to conduct a thorough security assessment of your risks, ensure you have not made any common security mistakes etc. Oracle (and I'm sure other vendors and consultants) has a security assessment service that can help with this. Oracle also has automated tools that can help you monitor your OCI environment for security problems.
 
-## End of the module, what's next ?
-
-The next module is the **Cloud native availability with Kubernetes** module
-
 ## Acknowledgements
 
 * **Author** - Tim Graves, Cloud Native Solutions Architect, Oracle EMEA Cloud Native Applications Development specialists team
 * **Contributor** - Jan Leemans, Director Business Development, EMEA Divisional Technology
-* **Last Updated By** - Tim Graves, May 2023
+* **Last Updated By** - Tim Graves, August 2023
