@@ -11,7 +11,7 @@ This is one of the optional sets of Kubernetes labs
 
 This video is an introduction to the uninstalling the service mesh module. Depending on your browser settings it may open in this tab / window or open a new one. Once you've watched it please return to this page to continue the labs.
 
-[![Uninstalling the service mesh Video](https://img.youtube.com/vi/Hx0amwN3Zjs/0.jpg)](https://youtu.be/Hx0amwN3Zjs "Uninstalling the service mesh")
+[Uninstalling the service mesh Video](youtube:Hx0amwN3Zjs)
 
 ---
 

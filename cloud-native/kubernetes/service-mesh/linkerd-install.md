@@ -11,7 +11,7 @@ This is one of the optional sets of Kubernetes labs
 
 This video is an introduction to the Service mesh basics lab. Depending on your browser settings it may open in this tab / window or open a new one. Once you've watched it please return to this page to continue the labs.
 
-[![Service mesh setup Introduction Video](https://img.youtube.com/vi/jfNp6VEfFEk/0.jpg)](https://youtu.be/jfNp6VEfFEk "Service mesh setup lab introduction video")
+[Service mesh setup Introduction Video](youtube:jfNp6VEfFEk)
 
 ---
 
@@ -314,32 +314,34 @@ Let's check that the linkerd command can talk to the control plane
     Server version: stable-2.11.0
     ```
 
-Expect a short delay while the linkerd command contacts the control plane servers.
+    Expect a short delay while the linkerd command contacts the control plane servers.
 
-If you get `Unavailable` for the server version or an error message that means the control plane is still starting, wait a short time and then re-run the command.
+    If you get `Unavailable` for the server version or an error message that means the control plane is still starting, wait a short time and then re-run the command.
 
-We can see the version information (this was correct at the time of writing, you make have later versions.)
+    We can see the version information (this was correct at the time of writing, you make have later versions.)
 
-Linkerd creates it's own namespace so we can check what's in there using kubectl 
+    Linkerd creates it's own namespace so we can check what's in there using kubectl 
 
-  4. In the OCI Cloud shell type 
+4.  In the OCI Cloud shell type 
   
-  ```bash
-  <copy>kubectl get namespaces</copy>
-  ```
+    ```bash
+    <copy>kubectl get namespaces</copy>
+    ```
+    
+    Example Output
 
-  ```
-NAME              STATUS   AGE
-default           Active   29d
-ingress-nginx     Active   28d
-kube-node-lease   Active   29d
-kube-public       Active   29d
-kube-system       Active   29d
-linkerd           Active   63s
-logging           Active   7d22h
-monitoring        Active   27d
-tg-helidon        Active   27d
-```
+    ```text
+    NAME              STATUS   AGE
+    default           Active   29d
+    ingress-nginx     Active   28d
+    kube-node-lease   Active   29d
+    kube-public       Active   29d
+    kube-system       Active   29d
+    linkerd           Active   63s
+    logging           Active   7d22h
+    monitoring        Active   27d
+    tg-helidon        Active   27d
+    ```
 
 (Depending on what lab modules you've done, and the name you gave your namespace the list will vary)
 

@@ -2,6 +2,8 @@
 
 ## About this Workshop
 
+In this series of labs we will focus on the specific features of Kubernetes to run Microservices.  These labs use a pre-built set of docker images but you can if you did the **Helidon** and **Docker** modules you can use the images you created there if you wish. 
+
 Estimated Workshop time is 2 hours
 
 <details><summary><b>Self guided student - video introduction</b></summary>
@@ -15,15 +17,6 @@ This video is an introduction to the Kubernetes labs. Depending on your browser 
 
 </details>
 
-### Prerequisites
-
-These labs can be run in many different ways, but in all cases you will need access to a Oracle Cloud Tenancy and be signed in to it.
-
-Please look at the instructions in the **Oracle Cloud Free Tier** section for details of how to sign up for a free trial tenancy and how to log into it. If you already have access to a tenancy (you may be in an instructor led lab, or have a pre-existing tenancy) then go direct to Prerequisites Step 2 which covers how to login to the tenancy.
-
-### Introduction
-
-In this series of labs we will focus on the specific features of Kubernetes to run Microservices.  These labs use a pre-built set of docker images but you can if you did the **Helidon** and **Docker** modules you can use the images you created there if you wish. 
 
 
 ### What you are about to create
@@ -36,8 +29,6 @@ You are about to create a Kubernetes deployment with two microservices, Storefro
 ### Lab conventions
 
 We have used a few layout tricks to make the reading of this tutorial more intuitive : 
-
-- If you see a "Bullet" sign, this means **you** need to perform some sort of **action**.  For example opening a window and navigating to some point in a file system
   
 In some cases you will need to executing some command on the command line of a terminal window. If this is a command you can just copy directly from the lab is will be in a box with a **Copy** button. For example
   
@@ -99,14 +90,18 @@ Kubernetes provides support for performing rolling upgrades, ensuring that the s
 
 This lab looks at how this works and how to recover from a failed update
 
-## Clean Up (Optional) 
+#### Clean Up (Optional) 
 
 Should you wish (or need) to do so this module shows you how to use a script to remove the resources you created in this lab
 
----
+### Prerequisites
+
+These labs can be run in many different ways, but in all cases you will need access to a Oracle Cloud Tenancy and be signed in to it.
+
+Please look at the instructions in the **Oracle Cloud Free Tier** section for details of how to sign up for a free trial tenancy and how to log into it. If you already have access to a tenancy (you may be in an instructor led lab, or have a pre-existing tenancy) then go direct to Prerequisites Step 2 which covers how to login to the tenancy.
 
 
-## Further Information
+## Learn more about Kubernetes
 
 For links to useful web pages and other information that I found while writing these labs see the further information on Kubernetes section
 

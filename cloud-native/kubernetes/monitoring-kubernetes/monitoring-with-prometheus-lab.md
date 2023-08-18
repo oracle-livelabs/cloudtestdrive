@@ -11,7 +11,7 @@ This is one of the optional sets of Kubernetes labs
 
 This video is an introduction to the Monitoring microservices with Prometheus lab. Depending on your browser settings it may open in this tab / window or open a new one. Once you've watched it please return to this page to continue the labs.
 
-[![Gathering metrics with Prometheus lab Introduction Video](https://img.youtube.com/vi/qnDzZ2eOy0E/0.jpg)](https://youtu.be/qnDzZ2eOy0E "Gathering metrics with Prometheus lab introduction video")
+[Gathering metrics with Prometheus lab Introduction Video](youtube:qnDzZ2eOy0E)
 
 ---
 

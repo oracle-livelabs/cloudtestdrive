@@ -12,7 +12,7 @@ This is one of the optional sets of Kubernetes labs
 
 This video is an introduction to the monitoring traffic with a Service mesh lab. Depending on your browser settings it may open in this tab / window or open a new one. Once you've watched it please return to this page to continue the labs.
 
-[![Using the service mesh to monitor traffic Introduction Video](https://img.youtube.com/vi/sLOM1FUcPwE/0.jpg)](https://youtu.be/sLOM1FUcPwE "Using the service mesh to monitor traffic introduction video")
+[Using the service mesh to monitor traffic Introduction Video](youtube:sLOM1FUcPwE)
 
 ---
 
