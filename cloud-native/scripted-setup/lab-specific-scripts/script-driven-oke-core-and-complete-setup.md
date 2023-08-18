@@ -1,3 +1,5 @@
+![](../../images/customer.logo2.png)
+
 # Set up the OKE lab environment with scripts for free trial accounts
 
 ## Introduction
