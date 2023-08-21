@@ -229,10 +229,7 @@ Of course if the database was implemented as a Kubernetes based service (perhaps
 
 </details>
 
-
-    We can see reporting details on a number of Kubernetes objects within the namespace in addition to the route diagram.
-
-2.  There are details on the deployments and also specific pods, scroll down a bit we can see further information.
+2.  We can use the service mesh to see details on a number of Kubernetes objects within the namespace in addition to the route diagram. There are details on the deployments and also specific pods, scroll down a bit we can see further information.
 
     ![Additional details on out namespace in linkerd](images/linkerd-app-namespace-bottom-of-page.png)
 

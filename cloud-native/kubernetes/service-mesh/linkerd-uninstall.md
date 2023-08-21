@@ -77,9 +77,9 @@ First remove the linkerd annotation on the namespaces
     
     Example Output
 
-    ``text
+    ```text
     namespace "usernameecho" uninjected
-
+    
     namespace/usernameecho replaced
     ```
 
