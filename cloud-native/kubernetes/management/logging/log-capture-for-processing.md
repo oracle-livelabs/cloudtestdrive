@@ -514,7 +514,7 @@ If we go back and look at the Elastic search list of indices now we can see that
     [{"itemCount":100,"itemName":"Book"},{"itemCount":50,"itemName":"Eraser"},{"itemCount":500,"itemName":"Pencil"},{"itemCount":5000,"itemName":"Pins"}]
     ```
 
-vIf you get a DNS error that `store..nip.io` cannot be found this means that `EXTERNAL_IP` is not set, follow the instructions above to set it. Hopefully you did have it set when you installed Elastic !.
+    If you get a DNS error that `store..nip.io` cannot be found this means that `EXTERNAL_IP` is not set, follow the instructions above to set it. Hopefully you did have it set when you installed Elastic !.
 
 6.  Do this several times, then look at the log URL again
 

@@ -140,7 +140,7 @@ Let's switch to the right directory
     
     Example Output
 
-    ```taxt
+    ```text
     NAME                             READY   STATUS    RESTARTS   AGE
     stockmanager-7cbf798cd9-tdk5h    2/2     Running   0          5m48s
     storefront-7667fc5fdc-5zwbr      2/2     Running   0          22h
@@ -244,24 +244,24 @@ We need to do define the version based services now so we can create the traffic
 
 The versioned services are defined in a couple of yaml files. The key differences are that their selectors mean they are bound to specific versions of the deployment. This means that the selector specifies the version to match. Our previous service (which is still running) allowed connections to any version of the service as it didn't select using the version.
 
-    ```yaml
-    apiVersion: v1
-    kind: Service
-    metadata:
-      name: stockmanagerv0-0-2
-    spec:
-      type: ClusterIP
-      selector:
-        app: stockmanager
-        version: 0.0.2
-      ports:
-        - name: stockmanager
-          protocol: TCP
-          port: 8081
-        - name: stockmanager-mgt
-          protocol: TCP
-          port: 9081
-    ```
+```
+apiVersion: v1
+kind: Service
+metadata:
+  name: stockmanagerv0-0-2
+spec:
+   type: ClusterIP
+   selector:
+    app: stockmanager
+    version: 0.0.2
+   orts:
+    - name: stockmanager
+      protocol: TCP
+      port: 8081
+    - name: stockmanager-mgt
+      protocol: TCP
+      port: 9081
+```
 
 
 1.  Let's deploy the 0.0.1 service version - this has a service name stockmanagerv0-0-1 (we have to use use `-` because the service name is used by Kubernetes as part of it's internal DNS setup, and of course a `.` represents a break point in the DNS naming scheme). In the OCI Cloud shell type the following
@@ -360,19 +360,19 @@ We are going to deploy our split on the service `stockmanager` (In service mesh 
 
 As we can see below, that breakdown sends all the traffic to the v0.0.1 version and none to the v0.0.2 version, we need to do this because we haven't setup any pods for the 0.0.2 service yet, so it couldn't respond to requests.
 
-    ```yaml
-    apiVersion: split.smi-spec.io/v1alpha1
-    kind: TrafficSplit
-    metadata:
-      name: stockmanager-canary
-    spec:
-      service: stockmanager
-      backends:
-      - service: stockmanagerv0-0-1
-        weight: 90
-      - service: stockmanagerv0-0-2
-        weight: 0
-    ```
+```
+apiVersion: split.smi-spec.io/v1alpha1
+kind: TrafficSplit
+metadata:
+  name: stockmanager-canary
+spec:
+  service: stockmanager
+  backends:
+  - service: stockmanagerv0-0-1
+    weight: 90
+  - service: stockmanagerv0-0-2
+    weight: 0
+```
     
 <details><summary><b>How are the weights applied to the split ?</b></summary>
 
@@ -559,13 +559,12 @@ look at the `ingress-nginx-nginx-ingress-controller` row, IP address in the `EXT
 
 </details>
 
+9.  Click on your namespace name (`tg-helidon` in my case) 
 
     Locate your namespace on the list, you'll see that it's running fine with 100% success rate
 
     ![Looking at fully successful requests for your namespace ](images/linkerd-traffic-split-canary-main-pre-switchupdate.png)
-
-9.  Click on your namespace name (`tg-helidon` in my case) 
-
+    
 10. On the left menu click on **Traffic Splits**
 
     ![Details of traffic flows through the split](images/linkerd-traffic-split-canary-split-pre-switch-update.png)
@@ -860,19 +859,19 @@ So far all we've done is to create a service that generates 504 errors, not much
 
 Let's look at the traffic split, below is the contents of fault-injector-traffic-split.yaml
 
-    ```yaml
-    apiVersion: split.smi-spec.io/v1alpha1
-    kind: TrafficSplit
-    metadata:
-      name: fault-injector
-    spec:
-      service: zipkin
-      backends:
-      - service: zipkin
-        weight: 50
-      - service: fault-injector-zipkin
-        weight: 50
-    ```
+```
+ apiVersion: split.smi-spec.io/v1alpha1
+ kind: TrafficSplit
+ metadata:
+   name: fault-injector
+ spec:
+   service: zipkin
+   backends:
+   - service: zipkin
+     weight: 50
+   - service: fault-injector-zipkin
+     weight: 50
+ ```
 
 The weight indicates how many requests of the service should go to each backend, so in this example we have a 50% split between fault and working, normally you would have a lower number of requests being sent to the fault-injector (after all, if it does break things you don't want your end customers to be impacted, especially in a production environment if you wern't sure what would happen, but here we want to be confident we'll see some "failures"  generated.
 
@@ -896,7 +895,7 @@ OK, now we know what it is let's deploy it.
 
     ![Looking at the namespaces](images/linkerd-namespaces-menu.png)
 
-4  Click **your namespace** in the list (tg-helidon in my case, but yours should be different)
+4.  Click **your namespace** in the list (tg-helidon in my case, but yours should be different)
 
 5.  On the left menu in the configuration section click **Traffic Splits**
 
@@ -1127,7 +1126,7 @@ For now let's remove the Traffic split and the fault-injector components we crea
 
 The [Service mesh specification for traffic splits](https://github.com/servicemeshinterface/smi-spec/blob/master/apis/traffic-split/v1alpha3/traffic-split.md) supports other mechanisms (be warned not all service mesh implementation support this specification, and not all support all the traffic split options).
 
-One interesting one is to have a split based on an `HTTPRouteGroup` This is interesting because it allows you to split traffic based on HTTP elements such as the presence (or not) of specific headers / header values. For example you could split traffic base on if the users browser was Firefox or not. More interestingly you could add a custom header to your request, for example declaring that the request should be treated in a particular way, thus you could have a header "DevelopmentUser", the request would progress through the connected microservices as usual until it got to the particular traffic split, then the traffic split would sent only traffic with that header to the service. This means you can test an update to your microservice in the fully operational production environment, with no risk that non developers would use the in-test version. Naturally for this to be safe your microservcies have to fail safe in that they don't just crash entirely when calling another service that fails (or you have multiple instances and just let Kubernetes handle restarting them). This solves many of the problems of testing in that it is genuinely operating in the production environment, not a test environment that you believe is "close to" the production environment (but in reality unlikely to be so as the load and scale is usually much smaller for cost reasons)
+One interesting one is to have a split based on an `HTTPRouteGroup` This is interesting because it allows you to split traffic based on HTTP elements such as the presence (or not) of specific headers / header values. For example you could split traffic base on if the users browser was Firefox or not. Perhaps more usefully you could add a custom header to your request, for example declaring that the request should be treated in a particular way, thus you could have a header "DevelopmentUser", the request would progress through the connected microservices as usual until it got to the particular traffic split, then the traffic split would sent only traffic with that header to the service. This means you can test an update to your microservice in the fully operational production environment, with no risk that non developers would use the in-test version. Naturally for this to be safe your microservcies have to fail safe in that they don't just crash entirely when calling another service that fails (or you have multiple instances and just let Kubernetes handle restarting them). This solves many of the problems of testing in that it is genuinely operating in the production environment, not a test environment that you believe is "close to" the production environment (but in reality unlikely to be so as the load and scale is usually much smaller for cost reasons)
 
 Of course splitting by header is assuming that the headers are correctly passed on between micro-services.
 

@@ -33,7 +33,7 @@ The concept behind a service mesh is pretty simple. It's basically a set of netw
 
 The following diagram (from [buoyant.io](https://buoyant.io)) shows the components in the [linkerd](https://linkerd.io) service mesh, but other service mesh implementations have a similar structure. In this architecture, the proxies run as containers within the pod using the [sidecar pattern](https://dzone.com/articles/sidecar-design-pattern-in-your-microservices-ecosy-1)
 
-![Diagram of the linkerd architecture](https://buoyant.io/images/manifesto/diag1.svg)
+There is a diagram of the linkerd architecture [on their documentation pages (this is the 2.13 version)](https://linkerd.io/2.13/reference/architecture/)
 
 The data plane consists of proxies which intercept the network operations of the pods and can apply rules to the data, for example restricting which services can be called by other services, encrypting data between proxies so cross microservice connections are transparently encrypted, splitting or mirroring traffic to help with update processes, and also gathering metrics on the number of calls, how often a cross microservice call failed and such like. Of course in a non Kubernetes environment you may have had your network switches or host operating systems do this, and many organizations had various levels of networking (separated by firewalls) for users, web applications, and databases, but in Kubernetes the boundary between the physical and logical compute resources is blurred, so using a service mesh allows you to have a simple implementation approach that applies regardless of if pods are running on the same node, different nodes in the same environment, or potentially even between data centers in opposite sides of the world.
 
@@ -300,8 +300,9 @@ There is a lot of output here, we've only seen the beginning of it above
 
 </details>
 
-Let's check that the linkerd command can talk to the control plane
-3.  After a few mins delay for the linkerd control plane to startup, In the OCI Cloud Shell type
+
+
+3.  Let's check that the linkerd command can talk to the control plane. After a few mins delay for the linkerd control plane to startup, In the OCI Cloud Shell type
   
     ```bash
     <copy>linkerd version</copy>
@@ -343,236 +344,236 @@ Let's check that the linkerd command can talk to the control plane
     tg-helidon        Active   27d
     ```
 
-(Depending on what lab modules you've done, and the name you gave your namespace the list will vary)
+    (Depending on what lab modules you've done, and the name you gave your namespace the list will vary)
 
-And we can see what's in the linkerd namespace
-
-  5. In the OCI Cloud shell type
+5.  And we can see what's in the linkerd namespace. In the OCI Cloud shell type
   
-  ```bash
-  <copy>kubectl get all -n linkerd</copy>
-  ```
+    ```bash
+    <copy>kubectl get all -n linkerd</copy>
+    ```
+    
+    Example Output
 
-  ```
-NAME                                          READY   STATUS    RESTARTS   AGE
-pod/linkerd-controller-b8f9df548-m45zw        2/2     Running   0          4m20s
-pod/linkerd-destination-77cc876746-vslqf      2/2     Running   0          4m19s
-pod/linkerd-identity-695d64dfdf-sgdkh         2/2     Running   0          4m20s
-pod/linkerd-proxy-injector-6d9db65bff-s77pm   2/2     Running   0          4m19s
-pod/linkerd-sp-validator-5c77df9f7b-5nkp5     2/2     Running   0          4m19s
+    ```text
+    NAME                                          READY   STATUS    RESTARTS   AGE
+    pod/linkerd-controller-b8f9df548-m45zw        2/2     Running   0          4m20s
+    pod/linkerd-destination-77cc876746-vslqf      2/2     Running   0          4m19s
+    pod/linkerd-identity-695d64dfdf-sgdkh         2/2     Running   0          4m20s
+    pod/linkerd-proxy-injector-6d9db65bff-s77pm   2/2     Running   0          4m19s
+    pod/linkerd-sp-validator-5c77df9f7b-5nkp5     2/2     Running   0          4m19s
 
-NAME                                TYPE        CLUSTER-IP     EXTERNAL-IP   PORT(S)    AGE
-service/linkerd-controller-api      ClusterIP   10.96.27.60    <none>        8085/TCP   4m20s
-service/linkerd-dst                 ClusterIP   10.96.175.38   <none>        8086/TCP   4m20s
-service/linkerd-dst-headless        ClusterIP   None           <none>        8086/TCP   4m20s
-service/linkerd-identity            ClusterIP   10.96.38.40    <none>        8080/TCP   4m20s
-service/linkerd-identity-headless   ClusterIP   None           <none>        8080/TCP   4m20s
-service/linkerd-proxy-injector      ClusterIP   10.96.46.245   <none>        443/TCP    4m19s
-service/linkerd-sp-validator        ClusterIP   10.96.193.45   <none>        443/TCP    4m19s
+    NAME                                TYPE        CLUSTER-IP     EXTERNAL-IP   PORT(S)    AGE
+    service/linkerd-controller-api      ClusterIP   10.96.27.60    <none>        8085/TCP   4m20s
+    service/linkerd-dst                 ClusterIP   10.96.175.38   <none>        8086/TCP   4m20s
+    service/linkerd-dst-headless        ClusterIP   None           <none>        8086/TCP   4m20s
+    service/linkerd-identity            ClusterIP   10.96.38.40    <none>        8080/TCP   4m20s
+    service/linkerd-identity-headless   ClusterIP   None           <none>        8080/TCP   4m20s
+    service/linkerd-proxy-injector      ClusterIP   10.96.46.245   <none>        443/TCP    4m19s
+    service/linkerd-sp-validator        ClusterIP   10.96.193.45   <none>        443/TCP    4m19s
 
-NAME                                     READY   UP-TO-DATE   AVAILABLE   AGE
-deployment.apps/linkerd-controller       1/1     1            1           4m20s
-deployment.apps/linkerd-destination      1/1     1            1           4m19s
-deployment.apps/linkerd-identity         1/1     1            1           4m20s
-deployment.apps/linkerd-proxy-injector   1/1     1            1           4m19s
-deployment.apps/linkerd-sp-validator     1/1     1            1           4m19s
+    NAME                                     READY   UP-TO-DATE   AVAILABLE   AGE
+    deployment.apps/linkerd-controller       1/1     1            1           4m20s
+    deployment.apps/linkerd-destination      1/1     1            1           4m19s
+    deployment.apps/linkerd-identity         1/1     1            1           4m20s
+    deployment.apps/linkerd-proxy-injector   1/1     1            1           4m19s
+    deployment.apps/linkerd-sp-validator     1/1     1            1           4m19s
 
-NAME                                                DESIRED   CURRENT   READY   AGE
-replicaset.apps/linkerd-controller-b8f9df548        1         1         1       4m21s
-replicaset.apps/linkerd-destination-77cc876746      1         1         1       4m20s
-replicaset.apps/linkerd-identity-695d64dfdf         1         1         1       4m21s
-replicaset.apps/linkerd-proxy-injector-6d9db65bff   1         1         1       4m20s
-replicaset.apps/linkerd-sp-validator-5c77df9f7b     1         1         1       4m20s
+    NAME                                                DESIRED   CURRENT   READY   AGE
+    replicaset.apps/linkerd-controller-b8f9df548        1         1         1       4m21s
+    replicaset.apps/linkerd-destination-77cc876746      1         1         1       4m20s
+    replicaset.apps/linkerd-identity-695d64dfdf         1         1         1       4m21s
+    replicaset.apps/linkerd-proxy-injector-6d9db65bff   1         1         1       4m20s
+    replicaset.apps/linkerd-sp-validator-5c77df9f7b     1         1         1       4m20s
 
-NAME                              SCHEDULE       SUSPEND   ACTIVE   LAST SCHEDULE   AGE
-cronjob.batch/linkerd-heartbeat   32 16 * * *    False     0        <none>          4m20s
-```
+    NAME                              SCHEDULE       SUSPEND   ACTIVE   LAST SCHEDULE   AGE
+    cronjob.batch/linkerd-heartbeat   32 16 * * *    False     0        <none>          4m20s    
+    ```
 
-Linkerd has created a number of items, but note that all of the pods have 2 instances (for high availability).
+    Linkerd has created a number of items, but note that all of the pods have 2 instances (for high availability).
 
-Let's get linkerd to check that it's been installed correctly and everything is running.
-
-  6. In the OCI Cloud Shell type
+6.  Let's get linkerd to check that it's been installed correctly and everything is running. In the OCI Cloud Shell type
+    
+    ```bash
+    <copy>linkerd check</copy>  
+    ```
   
-  ```bash
-  <copy>linkerd check</copy>
-  ```
+  Example Output
   
-```
-kubernetes-api
---------------
-√ can initialize the client
-√ can query the Kubernetes API
+    ```text
+    kubernetes-api
+    --------------
+    √ can initialize the client
+    √ can query the Kubernetes API
 
-kubernetes-version
-------------------
-√ is running the minimum Kubernetes API version
-√ is running the minimum kubectl version
+    kubernetes-version
+    ------------------
+    √ is running the minimum Kubernetes API version
+    √ is running the minimum kubectl version
 
-linkerd-existence
------------------
-√ 'linkerd-config' config map exists
-√ heartbeat ServiceAccount exist
-√ control plane replica sets are ready
-√ no unschedulable pods
-√ controller pod is running
-√ can initialize the client
-√ can query the control plane API
+    linkerd-existence
+    -----------------
+    √ 'linkerd-config' config map exists
+    √ heartbeat ServiceAccount exist
+    √ control plane replica sets are ready
+    √ no unschedulable pods
+    √ controller pod is running
+    √ can initialize the client
+    √ can query the control plane API
 
-linkerd-config
---------------
-√ control plane Namespace exists
-√ control plane ClusterRoles exist
-√ control plane ClusterRoleBindings exist
-√ control plane ServiceAccounts exist
-√ control plane CustomResourceDefinitions exist
-√ control plane MutatingWebhookConfigurations exist
-√ control plane ValidatingWebhookConfigurations exist
-√ control plane PodSecurityPolicies exist
+    linkerd-config
+    --------------
+    √ control plane Namespace exists
+    √ control plane ClusterRoles exist
+    √ control plane ClusterRoleBindings exist
+    √ control plane ServiceAccounts exist    
+    √ control plane CustomResourceDefinitions exist
+    √ control plane MutatingWebhookConfigurations exist
+    √ control plane ValidatingWebhookConfigurations exist
+    √ control plane PodSecurityPolicies exist
 
-linkerd-identity
-----------------
-√ certificate config is valid
-√ trust anchors are using supported crypto algorithm
-√ trust anchors are within their validity period
-√ trust anchors are valid for at least 60 days
-√ issuer cert is using supported crypto algorithm
-√ issuer cert is within its validity period
-√ issuer cert is valid for at least 60 days
-√ issuer cert is issued by the trust anchor
+    linkerd-identity
+    ----------------
+    √ certificate config is valid
+    √ trust anchors are using supported crypto algorithm
+    √ trust anchors are within their validity period
+    √ trust anchors are valid for at least 60 days
+    √ issuer cert is using supported crypto algorithm
+    √ issuer cert is within its validity period
+    √ issuer cert is valid for at least 60 days
+    √ issuer cert is issued by the trust anchor
 
-linkerd-api
------------
-√ control plane pods are ready
-√ control plane self-check
-√ [kubernetes] control plane can talk to Kubernetes
-√ [prometheus] control plane can talk to Prometheus
-√ tap api service is running
+    linkerd-api
+    -----------
+    √ control plane pods are ready
+    √ control plane self-check
+    √ [kubernetes] control plane can talk to Kubernetes
+    √ [prometheus] control plane can talk to Prometheus
+    √ tap api service is running
 
-linkerd-version
----------------
-√ can determine the latest version
-√ cli is up-to-date
+    linkerd-version
+    ---------------
+    √ can determine the latest version
+    √ cli is up-to-date
 
-control-plane-version
----------------------
-√ control plane is up-to-date
-√ control plane and cli versions match
+    control-plane-version
+    ---------------------
+    √ control plane is up-to-date
+    √ control plane and cli versions match
 
-linkerd-addons
---------------
-√ 'linkerd-config-addons' config map exists
+    linkerd-addons
+    --------------
+    √ 'linkerd-config-addons' config map exists
 
-linkerd-grafana
----------------
-√ grafana add-on service account exists
-√ grafana add-on config map exists
-√ grafana pod is running
+    linkerd-grafana
+    ---------------
+    √ grafana add-on service account exists
+    √ grafana add-on config map exists
+    √ grafana pod is running
 
-Status check results are √
-```
+    Status check results are √
+    ```
 
-If the linkerd environment is not yet running the check will block until the services are starting.
+    If the linkerd environment is not yet running the check will block until the services are starting.
 
-You can see that everything is running fine, there is a lot more output as the check confirms that linkerd itself has all the elements it needs to operate, and it is working fine.
+    You can see that everything is running fine, there is a lot more output as the check confirms that linkerd itself has all the elements it needs to operate, and it is working fine.
 
-Prior to version 2.10.0 Linkerd used to install a number of other components as standard (Prometheus, Grafana and the Linkerd dashboard) but they are now installed separately as Linkerd extensions. This allows you to setup clusters that are managed by the cli / yaml files without the overhead of the visuals. Importantly to help us with debugging the viz extentions also include the Linkerd tap service which will let us look into the requests as they flow through the service mesh.
-
-For this lab however we want to see the visuals, so let's install them. First we're going to install the underlying support for visualization.
-
-  7. In the OCI Cloud Shell type
+    Prior to version 2.10.0 Linkerd used to install a number of other components as standard (Prometheus, Grafana and the Linkerd dashboard) but they are now installed separately as Linkerd extensions. This allows you to setup clusters that are managed by the cli / yaml files without the overhead of the visuals. Importantly to help us with debugging the viz extentions also include the Linkerd tap service which will let us look into the requests as they flow through the service mesh.For this lab however we want to see the visuals.
+    
+7.  Let's install the linkerd visuals. First we're going to install the underlying support for visualization.  In the OCI Cloud Shell type
   
-  ```bash
-  <copy>linkerd viz install | kubectl apply -f -</copy>
-  ```
+    ```bash
+    <copy>linkerd viz install | kubectl apply -f -</copy>
+    ```
+    
+    Example Output
 
-```
-namespace/linkerd-viz created
-clusterrole.rbac.authorization.k8s.io/linkerd-linkerd-viz-metrics-api created
-clusterrolebinding.rbac.authorization.k8s.io/linkerd-linkerd-viz-metrics-api created
-serviceaccount/metrics-api created
-serviceaccount/grafana created
-clusterrole.rbac.authorization.k8s.io/linkerd-linkerd-viz-prometheus created
-clusterrolebinding.rbac.authorization.k8s.io/linkerd-linkerd-viz-prometheus created
-serviceaccount/prometheus created
-clusterrole.rbac.authorization.k8s.io/linkerd-linkerd-viz-tap created
-clusterrole.rbac.authorization.k8s.io/linkerd-linkerd-viz-tap-admin created
-clusterrolebinding.rbac.authorization.k8s.io/linkerd-linkerd-viz-tap created
-clusterrolebinding.rbac.authorization.k8s.io/linkerd-linkerd-viz-tap-auth-delegator created
-serviceaccount/tap created
-rolebinding.rbac.authorization.k8s.io/linkerd-linkerd-viz-tap-auth-reader created
-secret/tap-k8s-tls created
-apiservice.apiregistration.k8s.io/v1alpha1.tap.linkerd.io created
-role.rbac.authorization.k8s.io/web created
-rolebinding.rbac.authorization.k8s.io/web created
-clusterrole.rbac.authorization.k8s.io/linkerd-linkerd-viz-web-check created
-clusterrolebinding.rbac.authorization.k8s.io/linkerd-linkerd-viz-web-check created
-clusterrolebinding.rbac.authorization.k8s.io/linkerd-linkerd-viz-web-admin created
-clusterrole.rbac.authorization.k8s.io/linkerd-linkerd-viz-web-api created
-clusterrolebinding.rbac.authorization.k8s.io/linkerd-linkerd-viz-web-api created
-serviceaccount/web created
-rolebinding.rbac.authorization.k8s.io/viz-psp created
-service/metrics-api created
-deployment.apps/metrics-api created
-configmap/grafana-config created
-service/grafana created
-deployment.apps/grafana created
-configmap/prometheus-config created
-service/prometheus created
-deployment.apps/prometheus created
-service/tap created
-deployment.apps/tap created
-clusterrole.rbac.authorization.k8s.io/linkerd-tap-injector created
-clusterrolebinding.rbac.authorization.k8s.io/linkerd-tap-injector created
-serviceaccount/tap-injector created
-secret/tap-injector-k8s-tls created
-mutatingwebhookconfiguration.admissionregistration.k8s.io/linkerd-tap-injector-webhook-config created
-service/tap-injector created
-deployment.apps/tap-injector created
-service/web created
-deployment.apps/web created
-```
-If you looked at the namespaces you'd see a new namespace called `linkerd-viz` has appeared, this contains the services for the visuals we just installed
+    ```text
+    namespace/linkerd-viz created
+    clusterrole.rbac.authorization.k8s.io/linkerd-linkerd-viz-metrics-api created
+    clusterrolebinding.rbac.authorization.k8s.io/linkerd-linkerd-viz-metrics-api created
+    serviceaccount/metrics-api created
+    serviceaccount/grafana created
+    clusterrole.rbac.authorization.k8s.io/linkerd-linkerd-viz-prometheus created
+    clusterrolebinding.rbac.authorization.k8s.io/linkerd-linkerd-viz-prometheus created
+    serviceaccount/prometheus created
+    clusterrole.rbac.authorization.k8s.io/linkerd-linkerd-viz-tap created
+    clusterrole.rbac.authorization.k8s.io/linkerd-linkerd-viz-tap-admin created
+    clusterrolebinding.rbac.authorization.k8s.io/linkerd-linkerd-viz-tap created
+    clusterrolebinding.rbac.authorization.k8s.io/linkerd-linkerd-viz-tap-auth-delegator created
+    serviceaccount/tap created
+    rolebinding.rbac.authorization.k8s.io/linkerd-linkerd-viz-tap-auth-reader created
+    secret/tap-k8s-tls created
+    apiservice.apiregistration.k8s.io/v1alpha1.tap.linkerd.io created
+    role.rbac.authorization.k8s.io/web created
+    rolebinding.rbac.authorization.k8s.io/web created
+    clusterrole.rbac.authorization.k8s.io/linkerd-linkerd-viz-web-check created
+    clusterrolebinding.rbac.authorization.k8s.io/linkerd-linkerd-viz-web-check created
+    clusterrolebinding.rbac.authorization.k8s.io/linkerd-linkerd-viz-web-admin created
+    clusterrole.rbac.authorization.k8s.io/linkerd-linkerd-viz-web-api created
+    clusterrolebinding.rbac.authorization.k8s.io/linkerd-linkerd-viz-web-api created
+    serviceaccount/web created
+    rolebinding.rbac.authorization.k8s.io/viz-psp created
+    service/metrics-api created
+    deployment.apps/metrics-api created
+    configmap/grafana-config created
+    service/grafana created
+    deployment.apps/grafana created
+    configmap/prometheus-config created
+    service/prometheus created
+    deployment.apps/prometheus created
+    service/tap created
+    deployment.apps/tap created
+    clusterrole.rbac.authorization.k8s.io/linkerd-tap-injector created
+    clusterrolebinding.rbac.authorization.k8s.io/linkerd-tap-injector created
+    serviceaccount/tap-injector created
+    secret/tap-injector-k8s-tls created
+    mutatingwebhookconfiguration.admissionregistration.k8s.io/linkerd-tap-injector-webhook-config created
+    service/tap-injector created
+    deployment.apps/tap-injector created
+    service/web created
+    deployment.apps/web created
+    ```
+    If you looked at the namespaces you'd see a new namespace called `linkerd-viz` has appeared, this contains the services for the visuals we just installed
 <details><summary><b>Other Linkerd extensions</b></summary>
 
-Linkerd has a number of other extensions that include things like Jeager (tracing), multi cluster support, and also support for 3rd party extensions for example the [Boyant Cloud (Which provides a hosted dash board for displaying the linkerd metrics)](https://buoyant.io/cloud)
+    Linkerd has a number of other extensions that include things like Jeager (tracing), multi cluster support, and also support for 3rd party extensions for example the [Boyant Cloud (Which provides a hosted dash board for displaying the linkerd metrics)](https://buoyant.io/cloud)
 
 </details>
 
-Now let's make sure everything installed correctly 
-
-  8. In the OCI CLoud shell type 
+8.  Now let's make sure everything installed correctly. In the OCI CLoud shell type 
   
-  ```bash
-  <copy>linkerd check</copy>
-  ```
+    ```bash
+    <copy>linkerd check</copy>
+    ```
+    
+    Example Output
   
-```
-...
-(You'll see the previous check output first)
-...
-Linkerd extensions checks
-=========================
+    ```text
+    ...
+    (You'll see the previous check output first)
+    ...
+    Linkerd extensions checks
+    =========================
 
-linkerd-viz
------------
-√ linkerd-viz Namespace exists
-√ linkerd-viz ClusterRoles exist
-√ linkerd-viz ClusterRoleBindings exist
-√ tap API server has valid cert
-√ tap API server cert is valid for at least 60 days
-√ tap API service is running
-√ linkerd-viz pods are injected
-√ viz extension pods are running
-√ prometheus is installed and configured correctly
-√ can initialize the client
-√ viz extension self-check
+    linkerd-viz
+    -----------
+    √ linkerd-viz Namespace exists
+    √ linkerd-viz ClusterRoles exist
+    √ linkerd-viz ClusterRoleBindings exist
+    √ tap API server has valid cert
+    √ tap API server cert is valid for at least 60 days
+    √ tap API service is running
+    √ linkerd-viz pods are injected
+    √ viz extension pods are running
+    √ prometheus is installed and configured correctly
+    √ can initialize the client
+    √ viz extension self-check
 
-Status check results are √
+    Status check results are √
 
-```
+    ```
 
-At the end of the output we'll see the status of the extensions.
+    At the end of the output we'll see the status of the extensions.
 
 ## Task 5: Configuring access to the linkerd UI
 
@@ -587,25 +588,25 @@ For ease of setting up the lab we are going to use an ingress but relax the secu
 
 The first thing we need to do is to remove the restriction in the linkerd web front end on which hosts are allowed to access the web front end. Of course you would not do this in a production system!
 
-  1. In the OCI Cloud shell type
+1.  In the OCI Cloud shell type
   
-  ```bash
-  <copy>kubectl edit deployment web -n linkerd-viz</copy>
+    ```bash
+    <copy>kubectl edit deployment web -n linkerd-viz</copy>
+    ```
+  
+2.  In the spec.template.spec.containers.args locate the line that is like 
+  
+  ```yaml
+      - -enforced-host=^(localhost|127\\.0\\.0\\.1|linkerd-web\\.linkerd\\.svc\\.cluster\\.local|linkerd-web\\.linkerd\\.svc|\\[::1\\])(:\\d+)?$
   ```
-  
-  2. In the spec.template.spec.containers.args locate the line that is like 
-  
-```yaml
-- -enforced-host=^(localhost|127\\.0\\.0\\.1|linkerd-web\\.linkerd\\.svc\\.cluster\\.local|linkerd-web\\.linkerd\\.svc|\\[::1\\])(:\\d+)?$
-```
 
-  3. Remove all of the value section of the line after the `=` the new line will look like
+3.  Remove all of the value section of the line after the `=` the new line will look like
 
-```yaml
-        - -enforced-host=
-```
+    ```yaml
+    <copy>    - -enforced-host=</copy>
+    ```
 
-  4. Save the changes
+4.  Save the changes
 
 kubectl will pick them up and apply them, Kubernetes will restart the linkerd-web deployment with the new arguments and linkerd-web will no longer enforce the check on the hostnames.
 
@@ -678,33 +679,35 @@ ingress-nginx-controller-admission   ClusterIP      10.96.216.33    <none>      
 Curiously the linkerd-web ingress does not by default use a TLS certificate to ensure that the connection to it is encrypted, as we will be sending passwords we want to ensure it is encrypted, to do which we need to create a TLS secret in Kubernetes that the ingress controller can use.
 
 We will use step to help us here, it was installed when you did the cloud shell setup
+
+1.  Move to the directory containing the scripts for the service mesh lab
   
-  1. Move to the directory containing the scripts for the service mesh lab
+    ```bash
+    <copy>cd $HOME/helidon-kubernetes/service-mesh</copy>
+    ```
+
+2.  Create the cretificate. In the OCI Cloud shell run the following.
   
-  ```bash
-  <copy>cd $HOME/helidon-kubernetes/service-mesh</copy>
-  ```
+    ```bash
+    <copy>$HOME/keys/step certificate create linkerd.$EXTERNAL_IP.nip.io tls-linkerd-$EXTERNAL_IP.crt tls-linkerd-$EXTERNAL_IP.key --profile leaf  --not-after 8760h --no-password --insecure --kty=RSA --ca $HOME/keys/root.crt --ca-key $HOME/keys/root.key</copy>
+    ```
+    
+    Example Output
 
-  2. In the OCI Cloud shell run the following.
+    ```text
+    Your certificate has been saved in tls-linkerd-123.456.789.123.crt.
+    Your private key has been saved in tls-linkerd-123.456.789.123.key.
+    ```
+
+    (The above is example output, your files will be based on the IP you provided)
+
+    If your output says it's created key files like `tls-linkerd-.crt` and does not include the IP address then the `EXTERNAL_IP` variable is not set, please follow the instructions in Task 1 and re-run the step certificate creation command
+
+3.  Now let's put this in a Kubernetes TLS secret. In the OCI Cloud shell
   
-  ```bash
-  <copy>$HOME/keys/step certificate create linkerd.$EXTERNAL_IP.nip.io tls-linkerd-$EXTERNAL_IP.crt tls-linkerd-$EXTERNAL_IP.key --profile leaf  --not-after 8760h --no-password --insecure --kty=RSA --ca $HOME/keys/root.crt --ca-key $HOME/keys/root.key</copy>
-  ```
-
-  ```
-  Your certificate has been saved in tls-linkerd-123.456.789.123.crt.
-  Your private key has been saved in tls-linkerd-123.456.789.123.key.
-```
-
-(The above is example output, your files will be based on the IP you provided)
-
-If your output says it's created key files like `tls-linkerd-.crt` and does not include the IP address then the `EXTERNAL_IP` variable is not set, please follow the instructions in Task 1 and re-run the step certificate creation command
-
-  3. Now let's put this in a Kubernetes TLS secret. In the OCI Cloud shell
-  
-  ```bash
-  <copy>kubectl create secret tls tls-linkerd --key tls-linkerd-$EXTERNAL_IP.key --cert tls-linkerd-$EXTERNAL_IP.crt -n linkerd-viz</copy>
-  ```
+    ```bash
+    <copy>kubectl create secret tls tls-linkerd --key tls-linkerd-$EXTERNAL_IP.key --cert tls-linkerd-$EXTERNAL_IP.crt -n linkerd-viz</copy>
+    ```
   
 
 ### Task 5c: Create a login password to secure the connection
@@ -713,27 +716,29 @@ The default configuration for the linkerd-web service includes a password of adm
 
 First let's create a password file for the admin user. In the example below I'm using `ZaphodBeeblebrox` as the password, but please feel free to change this if you like
 
-  1. In the OCI Cloud Shell type
+1.  Use htpasswd to create the  password details. In the OCI Cloud Shell type
   
-  ```bash
-  <copy>htpasswd -c -b auth admin ZaphodBeeblebrox</copy>
-  ```
+    ```bash
+    <copy>htpasswd -c -b auth admin ZaphodBeeblebrox</copy>
+    ```
+    
+    Example Output
 
-  ```
-Adding password for user admin
-```
+    ```
+    Adding password for user admin
+    ```
 
-Now having create the password file we need to add it to Kuberntes as a secret so the ingress controller can use it.
-
-  2. In the OCI Cloud Shell type
+2.  Now having created the password file we need to add it to Kuberntes as a secret so the ingress controller can use it. In the OCI Cloud Shell type
   
-  ```bash
-  <copy>kubectl create secret generic web-ingress-auth -n linkerd-viz --from-file=auth</copy>
-  ```
+    ```bash
+    <copy>kubectl create secret generic web-ingress-auth -n linkerd-viz --from-file=auth</copy>
+    ```
+    
+    Example Output
 
-  ```
-secret/web-ingress-auth created
-```
+    ```
+    secret/web-ingress-auth created
+    ```
 
 ### Task 5d: Creating an ingress rule to access the UI
 
@@ -747,57 +752,55 @@ Though these are not perfect they do ensure that users need to be authenticated 
 
 As with the base services because we are using a certificate with the DNS name embedded in it for the host we need to modify the ingress rules to add this. The script `set-ingress-ip.sh` will do this for us. Of course in a real production environment where you have a DNS entry pointing to the ingress controller and also a certificate using that name you would not have to do this, but for now in this lab we don't have the time to wait for that to be setup and the DNS updates to propagate.
 
-  1. In the OCI Cloud shell type
+1.  Use the script to configure the ingress rules we wiull use. In the OCI Cloud shell type
   
-  ```bash
-  <copy>bash set-ingress-ip.sh $EXTERNAL_IP</copy>
-  ```
+    ```bash
+    <copy>bash set-ingress-ip.sh $EXTERNAL_IP</copy>
+    ```
   
 
-  2. Apply the ingress rule - in the OCI Cloud Shell type
+2.  Apply the ingress rules, in the OCI Cloud Shell type
   
-  ```bash
-  <copy>kubectl apply -f ingressLinkerdRules-`kubectl config current-context`.yaml</copy>
-  ```
+    ```bash
+    <copy>kubectl apply -f ingressLinkerdRules-`kubectl config current-context`.yaml</copy>
+    ```
+    
+    Example Output
   
-  ```
-ingress.networking.k8s.io/web-ingress created
-```
+    ```
+    ingress.networking.k8s.io/web-ingress created
+    ```
 
-Now you can go to the ingress ip address for the linkerd UI
+    Now you can go to the ingress ip address for the linkerd UI
 
-  3. In your laptop web browser go to `https://linkerd.<external IP>.nip.io` (Replace `<External IP>` witrh the IP address of the load balancer)
+3.  In your laptop web browser go to `https://linkerd.<external IP>.nip.io` (Replace `<External IP>` witrh the IP address of the load balancer)
 
+    You will probably be challenged as you have a self signed certificate.
 
-
-You will probably be challenged as you have a self signed certificate.
-
-  4. In the browser, accept a self signed certificate. There are several way you may need to do this and they vary by browser and version. as of the time of writing (Sept 2020) the following worked using the browsers on MacOs
+4.  In the browser, accept a self signed certificate. There are several way you may need to do this and they vary by browser and version. as of the time of writing (Sept 2020) the following worked using the browsers on MacOs
   
-  - In Safari you will be presented with a page saying "This Connection Is Not Private" Click the "Show details" button, then you will see a link titled `visit this website` click that, then click the `Visit Website` button on the confirmation pop-up. To update the security settings you may need to enter a password, use Touch ID or confirm using your Apple Watch.
-  - In Firefox once the security risk page is displayed click on the "Advanced" button, then on the "Accept Risk and Continue" button
-  - In Chrome once the "Your connection is not private" page is displayed click the advanced button, then you may see a link titled `Proceed to ....(unsafe)` click that. 
+    - In Safari you will be presented with a page saying "This Connection Is Not Private" Click the "Show details" button, then you will see a link titled `visit this website` click that, then click the `Visit Website` button on the confirmation pop-up. To update the security settings you may need to enter a password, use Touch ID or confirm using your Apple Watch.
+    - In Firefox once the security risk page is displayed click on the "Advanced" button, then on the "Accept Risk and Continue" button
+    - In Chrome once the "Your connection is not private" page is displayed click the advanced button, then you may see a link titled `Proceed to ....(unsafe)` click that. 
   
-We have had reports that some versions of Chrome will not allow you to override the page like this, for Chrome 83 at least one solution is to click in the browser window and type the words `thisisunsafe` (copy and past doesn't seem to work, you need to actually type it.) Alternatively use a different browser.
+    We have had reports that some versions of Chrome will not allow you to override the page like this, for Chrome 83 at least one solution is to click in the browser window and type the words `thisisunsafe` (copy and past doesn't seem to work, you need to actually type it.) Alternatively use a different browser.
 
 
-Next you will be presented with the login challenge. The image below was captured using Safari, different browsers have slightly different looks, but the basic content is the same.
+5.  Next you will be presented with the login challenge. The image below was captured using Safari, different browsers have slightly different looks, but the basic content is the same.
 
-  ![Logging in to the Linkerd web page](images/linkerd-web-login.png)
+    ![Logging in to the Linkerd web page](images/linkerd-web-login.png)
 
-  5. Login with `admin` as the username, for the password use the one you used when creating the login password above. Some browsers offer the change to remember the password details for later use. Feel free to do so if you like, or if you prefer you can re-enter the username and password when prompted by the browser.
+    Login with `admin` as the username, for the password use the one you used when creating the login password above. Some browsers offer the change to remember the password details for later use. Feel free to do so if you like, or if you prefer you can re-enter the username and password when prompted by the browser.
 
-You'll be presented with the linkerd-web main page
+    You'll be presented with the linkerd-web main page
 
-  ![Main linkerd UI](images/linkerd-web-main-page.png)
+    ![Main linkerd UI](images/linkerd-web-main-page.png)
 
-Let's also check you can access the grafana dashboard that's been installed by linkerd
+6.  Let's also check you can access the grafana dashboard that's been installed by linkerd. In your web browser go to `https://linkerd.<externalIP>.nip.io/grafana`(replace `<External IP>` as usual) Note if you did not save the username / password details you may be prompted to re-enter them
 
-  6. In your web browser go to `https://linkerd.<externalIP>.nip.io/grafana`(replace `<External IP>` as usual) Note if you did not save the username / password details you may be prompted to re-enter them
+    I have found that for some versions of Firefox that grafana complains about reverse-proxy settings. You may find that you need to use chrome or safari to access the grafana page.
 
-I have found that for some versions of Firefox that grafana complains about reverse-proxy settings. You may find that you need to use chrome or safari to access the grafana page.
-
-  ![Possible browser related access issues for the linkerd ui](images/linkerd-grafana-initial-topline.png)
+    ![Possible browser related access issues for the linkerd ui](images/linkerd-grafana-initial-topline.png)
 
 <details><summary><b>Other options for linkerd access</b></summary>
 
@@ -839,29 +842,31 @@ You can of course do this by editing the namespace directly via the yaml file th
 
 First let's see what this looks like
 
-  1. in the OCI shell type the following, replacing <ns name> with your namespace 
+1.  in the OCI shell type the following, replacing <ns name> with your namespace 
   
-  ```bash
-  kubectl get namespace <ns name> -o yaml
-  ```
+    ```bash
+    kubectl get namespace <ns name> -o yaml
+    ```
+    
+    Example Output
   
-  ```yaml
-apiVersion: v1
-kind: Namespace
-metadata:
-  creationTimestamp: "2020-04-16T14:07:53Z"
-  name: tg-helidon
-  resourceVersion: "239255"
-  selfLink: /api/v1/namespaces/tg-helidon
-  uid: c77e0d99-e3b4-42cc-ad87-881c245aadf3
-spec:
-  finalizers:
-  - kubernetes
-status:
-  phase: Active
-```
+    ```yaml
+    apiVersion: v1
+    kind: Namespace
+    metadata:
+      creationTimestamp: "2020-04-16T14:07:53Z"
+      name: tg-helidon
+      resourceVersion: "239255"
+      selfLink: /api/v1/namespaces/tg-helidon
+      uid: c77e0d99-e3b4-42cc-ad87-881c245aadf3
+    spec:
+      finalizers:
+      - kubernetes
+    status:
+      phase: Active
+    ```
 
-The above output was using tg-helidon as the namespace name, but of course you will have used a different name so the output will be different.
+    The above output was using tg-helidon as the namespace name, but of course you will have used a different name so the output will be different.
 
 <details><summary><b>If you can't remember your namespace name</b></summary>
 
@@ -892,102 +897,100 @@ tg-helidon        Active   35d
 
 </details>
 
-We can use the linkerd command to add the annotations, first let's just see what it does
-
-  2. In the OCI Cloud shell type the following replacing `[ns-name]` with your namespace name
+2.  We can use the linkerd command to add the annotations, first let's just see what it does. In the OCI Cloud shell type the following replacing `[ns-name]` with your namespace name
   
-  ```bash
-  kubectl get namespace [ns-name] -o yaml | linkerd inject -
-  ```
+    ```bash
+    kubectl get namespace [ns-name] -o yaml | linkerd inject -
+    ```
+    
+    Example Output
 
-  ```yaml
-apiVersion: v1
-kind: Namespace
-metadata:
-  annotations:
-    linkerd.io/inject: enabled
-  name: tg-helidon
-  resourceVersion: "239255"
-  selfLink: /api/v1/namespaces/tg-helidon
-  uid: c77e0d99-e3b4-42cc-ad87-881c245aadf3
-spec:
-  finalizers:
-  - kubernetes
-status:
-  phase: Active
----
+    ```text
+    apiVersion: v1
+    kind: Namespace
+    metadata:
+      annotations:
+        linkerd.io/inject: enabled
+      name: tg-helidon
+      resourceVersion: "239255"
+      selfLink: /api/v1/namespaces/tg-helidon
+      uid: c77e0d99-e3b4-42cc-ad87-881c245aadf3
+    spec:
+      finalizers:
+      - kubernetes
+    status:
+      phase: Active
+    ---
 
-namespace "tg-helidon" injected
-```
+    namespace "tg-helidon" injected
+    ```
 
-You can see that there is now a annotations section with the annotation `linkerd.io/inject: enabled` (As before this is the output for my namespace)
+    You can see that there is now a annotations section with the annotation `linkerd.io/inject: enabled` (As before this is the output for my namespace)
 
-The text `namespace "tg-helidon" injected` is just for information, it doesn't actually appear in the output (technically it's been sent to stderr, not stdout)
+    The text `namespace "tg-helidon" injected` is just for information, it doesn't actually appear in the output (technically it's been sent to stderr, not stdout)
 
-Let's have kubectl apply the change
-
-  3. In the OCI Cloud shell type the following replacing `[ns-name]` with your namespace name
+3.  Let's have kubectl apply the change. In the OCI Cloud shell type the following replacing `[ns-name]` with your namespace name
   
-  ```bash
-  kubectl get namespace [ns-name] -o yaml | linkerd inject - | kubectl replace -f -
-  ```
+    ```bash
+    kubectl get namespace [ns-name] -o yaml | linkerd inject - | kubectl replace -f -
+    ```
+    
+    Example Output
   
-  ```
-namespace "tg-helidon" injected
+    ```text
+    namespace "tg-helidon" injected
 
-namespace/tg-helidon configured
-```
+    namespace/tg-helidon configured
+    ```
 
-The first line of the output is from the linkerd command telling us that its added the annotation, the second is from the kubectl replace command telling us that the previous configuration has been replaced with the new one.
+    The first line of the output is from the linkerd command telling us that its added the annotation, the second is from the kubectl replace command telling us that the previous configuration has been replaced with the new one.
 
-Let's have a look at the web page again, refresh the main web page in the browser
+4.  Let's have a look at the web page again, refresh the main web page in the browser
 
-![The namespaces page after adding the injectiin annotation ](images/linkerd-web-main-page-after-namespace-inject.png)
+    ![The namespaces page after adding the injectiin annotation ](images/linkerd-web-main-page-after-namespace-inject.png)
 
-It doesn't look very different, and if you looked at the Grafana page that would still report it was only be monitoring one namespace. How come ? We added the annotation!
+    It doesn't look very different, and if you looked at the Grafana page that would still report it was only be monitoring one namespace. How come ? We added the annotation!
 
-Well the reason for this is to do with the way a service mesh works. 
+    Well the reason for this is to do with the way a service mesh works. 
 
-The following diagram (from [buoyant.io](https://buoyant.io)) shows the components in the [linkerd](https://linkerd.io) service mesh
+    The [Linkerd architecture page](https://linkerd.io/2.13/reference/architecture/) shows the components in the [linkerd](https://linkerd.io) service mesh. 
 
-![Linkerd control plane](https://buoyant.io/images/manifesto/control-plane.png) 
+    If you look at the data plane you can see what a pod looks like when the service mesh is enabled. In addition to the application containers in the pods you'll see there is also a container in the pod called `linkerd-proxy` This is a container that's automatically added to the pod for you when the pod is deployed. The proxy is what does the day to day activities of the service mesh as it intercepts the network traffic, does the metric counting, connection encryption and so on.
 
-If you look at the data plane you can see what a pod looks like when the service mesh is enabled. In addition to the application containers in the pods you'll see there is also a container in the pod called `linkerd-proxy` This is a container that's automatically added to the pod for you when the pod is deployed. The proxy is what does the day to day activities of the service mesh as it intercepts the network traffic, does the metric counting, connection encryption and so on.
+    The linkerd control plane running in the cluster can intercept the request to create a pod and if the namespace has the `linkerd.io/inject` annotation set to `true` the control plane will automatically inject the proxy for to the pod configuration for us, this is good news as it means that we don't need to modify our configuration to add the proxy manually. There is of course a downside to this, because linkerd (and other service meshes) add the proxy when the pod is created then existing pods won't have that in place. If you want more details on how the injection process works there is info on the [Linkerd website automatic proxy injection page](https://linkerd.io/2/features/proxy-injection/)
 
-The linkerd control plane running in the cluster can intercept the request to create a pod and if the namespace has the `linkerd.io/inject` annotation set to `true` the control plane will automatically inject the proxy for to the pod configuration for us, this is good news as it means that we don't need to modify our configuration to add the proxy manually. There is of course a downside to this, because linkerd (and other service meshes) add the proxy when the pod is created then existing pods won't have that in place. If you want more details on how the injection process works there is info on the [Linkerd website automatic proxy injection page](https://linkerd.io/2/features/proxy-injection/)
+    We can of course delete and recreate the deployments which will restart the pods triggering the proxies to be added, but this is a bit drastic and will result in the service being unavailable for a short time, so we're going to use a different approach which is to restart the deployments as if we were doing a rolling upgrade, that way there will always be some pods running the service as it transitions (this feature was added in Kubernetes 1.15, if you have an older version you'll have to stop and restart the deployments)
 
-We can of course delete and recreate the deployments which will restart the pods triggering the proxies to be added, but this is a bit drastic and will result in the service being unavailable for a short time, so we're going to use a different approach which is to restart the deployments as if we were doing a rolling upgrade, that way there will always be some pods running the service as it transitions (this feature was added in Kubernetes 1.15, if you have an older version you'll have to stop and restart the deployments)
-
-Let's get the list of deplpyments
-
-  4. In the OCI Cloud shell type 
+5.  Let's get the list of deplpyments. In the OCI Cloud shell type 
   
-  ```bash
-  <copy>kubectl get deployments</copy>
-  ```
+    ```bash
+    <copy>kubectl get deployments</copy>
+    ```
+    
+    Example Output
 
-  ```
-NAME           READY   UP-TO-DATE   AVAILABLE   AGE
-stockmanager   1/1     1            1           14d
-storefront     1/1     1            1           14d
-zipkin         1/1     1            1           14d
-```
+    ```text
+    NAME           READY   UP-TO-DATE   AVAILABLE   AGE
+    stockmanager   1/1     1            1           14d
+    storefront     1/1     1            1           14d
+    zipkin         1/1     1            1           14d
+    ```
 
-We can see in this case we have deployments for stockmanager, storefront and zipkin. Depending on which other optional modules you've done there may be additional deployments in the list.
+    We can see in this case we have deployments for stockmanager, storefront and zipkin. Depending on which other optional modules you've done there may be additional deployments in the list.
 
-Sadly there doesn't seem to be a way to restart all of the deployments in a namespace (maybe that will be added in a future Kubernetes release) so we have to restart each one individually.
+6. Sadly there doesn't seem to be a way to restart all of the deployments in a namespace (maybe that will be added in a future Kubernetes release) so we have to restart each one individually. In the OCI Cloud shell type the following, if you have additional deployments from other optional modules in these labs add them to the list or re-run with the namespace for those deployments
 
-  5. In the OCI Cloud shell type the following, if you have additional deployments from other optional modules in these labs add them to the list or re-run with the namespace for those deployments
+    ```bash
+    <copy>kubectl rollout restart deployments storefront stockmanager zipkin</copy>
+    ```
+    
+    Example Output
 
-  ```bash
-  <copy>kubectl rollout restart deployments storefront stockmanager zipkin</copy>
-  ```
-
-  ```
-deployment.apps/storefront restarted
-deployment.apps/stockmanager restarted
-deployment.apps/zipkin restarted
-```
+    ```text
+    deployment.apps/storefront restarted
+    deployment.apps/stockmanager restarted
+    deployment.apps/zipkin restarted
+    ```
 
 <details><summary><b>What has actually been done to my pod ?</b></summary>
 
@@ -1350,51 +1353,50 @@ Of course we also want to have the traffic from the ingress controller protected
 
 Let's do the same process for that namespace
 
-First update the ingress-nginix namespace
+7.  First update the ingress-nginix namespace. In the OCI Cloud shell type :
 
-  6. In the OCI Cloud shell type :
+    ```bash
+    <copy>kubectl get namespace ingress-nginx -o yaml | linkerd inject - | kubectl replace -f -</copy>
+    ```
+    
+    Exampke Output
 
-  ```bash
-  <copy>kubectl get namespace ingress-nginx -o yaml | linkerd inject - | kubectl replace -f -</copy>
-  ```
+    ```text
+    namespace "ingress-nginx" injected
 
-  ```
-namespace "ingress-nginx" injected
+    namespace/ingress-nginx replaced
+    ```
 
-namespace/ingress-nginx replaced
-```
+8. Now get the list of deployments in the ingress-nginx namespace. In the OCI Cloud shell type :
 
-Now get the list of deployments in the ingress-nginx namespace
+    ```bash
+    <copy>kubectl get deployments -n ingress-nginx</copy>
+    ```
+    
+    Example Output
 
-  7. In the OCI Cloud shell type :
+    ```text
+    NAME                       READY   UP-TO-DATE   AVAILABLE   AGE
+    ingress-nginx-controller   1/1     1            1           20h
+    ```
 
-  ```bash
-  <copy>kubectl get deployments -n ingress-nginx</copy>
-  ```
+9. And next update them so the proxy will be added. In the OCI Cloud shell type :
 
-  ```
-NAME                       READY   UP-TO-DATE   AVAILABLE   AGE
-ingress-nginx-controller   1/1     1            1           20h
-```
+    ```bash
+    <copy>kubectl rollout restart deployments -n ingress-nginx ingress-nginx-controller</copy>
+    ```
+    
+    Example Output
 
-And next update them so the proxy will be added.
+    ```text
+    deployment.apps/ingress-nginx-nginx-ingress-controller restarted
+    ```
 
+    Now let's make a few calls to the service to check it's all working fine (you may want to wait a few mins for the ingress controller to restart)
 
-  8. In the OCI Cloud shell type :
+    Let's do some requests to the stock manager service which will generate log data
 
-  ```bash
-  <copy>kubectl rollout restart deployments -n ingress-nginx ingress-nginx-controller</copy>
-  ```
-
-  ```
-deployment.apps/ingress-nginx-nginx-ingress-controller restarted
-```
-
-Now let's make a few calls to the service to check it's all working fine (you may want to wait a few mins for the ingress controller to restart)
-
-Let's do some requests to the stock manager service which will generate log data
-
-If your cloud shell session is new or has been restarted then the shell variable `$EXTERNAL_IP` may be invalid, expand this section if you think this may be the case to check and reset it if needed.
+    If your cloud shell session is new or has been restarted then the shell variable `$EXTERNAL_IP` may be invalid, expand this section if you think this may be the case to check and reset it if needed.
 
 <details><summary><b>How to check if $EXTERNAL_IP is set, and re-set it if it's not</b></summary>
 
@@ -1427,65 +1429,65 @@ The External IP of the Load Balancer connected to the ingresss controller is sho
 
 </details>
 
-  9. In the OCI Cloud Shell terminal type the following, be prepared for an error (the services are doing their on-demand restart process so you may have a timeout while that happens and the database connection is reestablished)
+10. In the OCI Cloud Shell terminal type the following, be prepared for an error (the services are doing their on-demand restart process so you may have a timeout while that happens and the database connection is reestablished)
   
-  ```bash
-  <copy>curl -i -k -X GET -u jack:password https://store.$EXTERNAL_IP.nip.io/store/stocklevel</copy>
-  ```
+    ```bash
+    <copy>curl -i -k -X GET -u jack:password https://store.$EXTERNAL_IP.nip.io/store/stocklevel</copy>
+    ```
+    
+    Example Output
   
-  ```
-HTTP/1.1 200 OK
-Server: nginx/1.17.8
-Date: Thu, 23 Apr 2020 18:38:50 GMT
-Content-Type: application/json
-Content-Length: 149
-Connection: keep-alive
-Strict-Transport-Security: max-age=15724800; includeSubDomains
+    ```text
+    HTTP/1.1 200 OK
+    Server: nginx/1.17.8
+    Date: Thu, 23 Apr 2020 18:38:50 GMT
+    Content-Type: application/json
+    Content-Length: 149
+    Connection: keep-alive
+    Strict-Transport-Security: max-age=15724800; includeSubDomains
 
-[{"itemCount":100,"itemName":"Book"},{"itemCount":50,"itemName":"Eraser"},{"itemCount":500,"itemName":"Pencil"},{"itemCount":5000,"itemName":"Pins"}]
-```
+    [{"itemCount":100,"itemName":"Book"},{"itemCount":50,"itemName":"Eraser"},{"itemCount":500,"itemName":"Pencil"},{"itemCount":5000,"itemName":"Pins"}]
+    ```
 
-As you have restarted the services you may get 424 failed dependency errors as the services start up. If you do simply retry the request.
+    As you have restarted the services you may get 424 failed dependency errors as the services start up. If you do simply retry the request.
 
-Let's go and look at the Linkerd dashboards again
+11. Let's go and look at the Linkerd dashboards again. In your laptop web browser go to `https://linklerd.<external IP>.nip.io` (replace `<external IP>` with the IP address of your ingress controller)
 
-  10. In your laptop web browser go to `https://linklerd.<external IP>.nip.io` (replace `<external IP>` with the IP address of your ingress controller)
+    You may get a certificate warning again, in which case follow the procedures for your browser to accept the self signed certificate
 
-You may get a certificate warning again, in which case follow the procedures for your browser to accept the self signed certificate
+    If you are asked to login use `admin` as the user name and the password you setup earlier in this module when you created the ingress for linkerd
 
-If you are asked to login use `admin` as the user name and the password you setup earlier in this module when you created the ingress for linkerd
+    You can now see the main page of the linkerd UI
 
-You can now see the main page of the linkerd UI
+    ![Linked main page after restarting the services with the linkerd sidecar container](images/linkerd-web-main-page-after-enablement.png)
 
-![Linked main page after restarting the services with the linkerd sidecar container](images/linkerd-web-main-page-after-enablement.png)
+    Good news! We can see that there is http traffic in the ingress-ngnix namespace and TCP traffic in the tg-helidon namespace (your namespace will of course be different)
 
-Good news! We can see that there is http traffic in the ingress-ngnix namespace and TCP traffic in the tg-helidon namespace (your namespace will of course be different)
-
-  11. If we go to the Grafana page in your laptop web browser go to 
+12. If we go to the Grafana page in your laptop web browser go to 
   
-  ```
-  https://linkerd.<external IP>.nip.io/grafana
-  ```
+    ```
+    https://linkerd.<external IP>.nip.io/grafana
+    ```
 
-  ![Grafana page showing data from linkerd enabled services](images/linkerd-grafana-topline-after-services-enabled.png)
+    ![Grafana page showing data from linkerd enabled services](images/linkerd-grafana-topline-after-services-enabled.png)
 
-In some rare situations Grafana may not show all of the namespaces and services, I'm not sure exactly why, but I think it gets occasionally gets confused by times and timezones. And it will only show information (including summaries) of the display range.
+    In some rare situations Grafana may not show all of the namespaces and services, I'm not sure exactly why, but I think it gets occasionally gets confused by times and timezones. And it will only show information (including summaries) of the display range.
 
-  12. Let's adjust the visualization range to cover the last 12 hours. In the upper right you will see the time range selection
+13. Let's adjust the visualization range to cover the last 12 hours. In the upper right you will see the time range selection
 
-  ![The current grafana time window](images/linkerd-grafana-time-range-selected.png)
+    ![The current grafana time window](images/linkerd-grafana-time-range-selected.png)
 
-In this case it's showing `May 20,2020,12:00:00 to May 22,2020 11:59:59` but it might also be showing a relative time range like `Last 5 minutes`
+    In this case it's showing `May 20,2020,12:00:00 to May 22,2020 11:59:59` but it might also be showing a relative time range like `Last 5 minutes`
 
-  13. Click time range to get the selection choice 
+14. Click time range to get the selection choice 
 
-  ![Accessing new time window selection](images/linkerd-grafana-time-range-selection.png)
+    ![Accessing new time window selection](images/linkerd-grafana-time-range-selection.png)
 
-  14. Click the **Last 12 hours** option
+15. Click the **Last 12 hours** option
 
-  ![Changing the time window to 12 hours](images/linkerd-grafana-topline-after-services-enabled-last-12-hours.png)
+    ![Changing the time window to 12 hours](images/linkerd-grafana-topline-after-services-enabled-last-12-hours.png)
 
-We can see that there are three namespaces being monitored and 14 deployments. You may need to play around a bit with the time range in the UI to get the proper details.
+    We can see that there are three namespaces being monitored and 14 deployments. You may need to play around a bit with the time range in the UI to get the proper details.
 
 ## Acknowledgements
 

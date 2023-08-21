@@ -490,13 +490,14 @@ The External IP of the Load Balancer connected to the ingresss controller is sho
 
 Of course this looks pretty basic, It's good to see how many requests we're getting, but let's add an additional panel to give us a history of how many requests we've had . 
 
-1.  Click on the  **Add Panel** icon on the upper right ![grafana-add-panel-icon](images/grafana-add-panel-icon.png) 
+1.  Click on the  **Add Panel** icon on the upper right 
 
-    ![Adding a second panel](images/grafana-dashboard-add-second-panel.png)
+    ![grafana-add-panel-icon](images/grafana-add-panel-icon.png) 
 
 2.  Click the **Add a new panel** button
 
- 
+    ![Adding a second panel](images/grafana-dashboard-add-second-panel.png)
+
 3.  In the metrics field, enter following (you can copy and paste if you wish) then click in the graph area
 
     ```
@@ -521,23 +522,23 @@ Of course this looks pretty basic, It's good to see how many requests we're gett
   
     ![The dashboard after adding the second panel](images/grafana-dashboard-added-second-panel.png)
   
-### Task 3D: Adding a different type of visualisation
+### Task 3C: Adding a different type of visualisation
 
 We're going to add a 3rd panel with a different visualization type, using a dial graph that gives us a view of the most recent data.
 
-  ![Adding the third panel](images/grafana-dashboard-add-third-panel.png)
-
 1.  Click the **Add panel** icon then the **Add a New Panel** 
 
-    ![Choosing the mean data for the timer](images/grafana-dashboard-add-third-panel-timer-seconds.png)
+    ![Adding the third panel](images/grafana-dashboard-add-third-panel.png)
 
 2.  In the **Metrics browser** set it to `application_com_oracle_labs_helidon_storefront_resources_StorefrontResource_listAllStockTimer_mean_seconds` then click in the graph area to get the data
 
-    We're going for a different visualization type. 
+    ![Choosing the mean data for the timer](images/grafana-dashboard-add-third-panel-timer-seconds.png)
+    
+3.  We're going for a different visualization type. 
 
-    ![Chosing the graph type for the third panel](images/grafana-dashboard-add-third-panel-select-graph-type.png)
+    ![Choosing the graph type for the third panel](images/grafana-dashboard-add-third-panel-select-graph-type.png)
   
-3.  In the graph selection on the right hand menu  (in this image this is set to **Time Series** )
+    In the graph selection on the right hand menu  (in this image this is set to **Time Series** )
   
     ![Selecting the gage visualisation type for the third panel](images/grafana-dashboard-add-third-panel-select-gauage-type.png)
   

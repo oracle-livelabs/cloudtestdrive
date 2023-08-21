@@ -345,15 +345,15 @@ in the `env:` section we see the name of the environment variable (`SWITCH_LOG_F
   
     Remember to keep the values in double quotes.
 
-    - ACCESS_KEY - This is the OCI access key
+    - `ACCESS_KEY` - This is the OCI access key
 
-    - ACCESS_SECRET - This is the OCI secret key
+    - `ACCESS_SECRET` - This is the OCI secret key
 
-    - REGION - The OCI Region
+    - `REGION` - The OCI Region
 
-    - STORAGE_END_POINT - The object storage endpoint
+    - `STORAGE_END_POINT` - The object storage endpoint
 
-    - BUCKET_NAME - The name of the bucket you created
+    - `BUCKET_NAME` - The name of the bucket you created
 
     Do not change the ROTATION_INTERVAL setting, leave that set to 60
 
@@ -374,7 +374,7 @@ in the `env:` section we see the name of the environment variable (`SWITCH_LOG_F
       SWITCH_LOG_FILE_INTERVAL: "60"
     ```
 
-<details><summary><b>What's the SWITCH_LOG_FILE_INTERVAL for?</b></summary>
+<details><summary><b>What's the SWITCH\_LOG\_FILE\_INTERVAL for?</b></summary>
 
 The `SWITCH_LOG_FILE_INTERVAL` tells fluentd how often to switch to a new output file.
 

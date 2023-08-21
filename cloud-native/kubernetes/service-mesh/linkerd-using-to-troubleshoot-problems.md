@@ -49,15 +49,13 @@ Well fortunately for us I have built a version of the Stock Manager that can be 
 
 The first thing we need is some load so we can see what the service mesh is doing, there is a load generator script we can use to do this
 
-Change to the directory for the service mesh scripts
-
-    1. In the OCI Cloud shell type
+1.  Change to the directory for the service mesh scripts. In the OCI Cloud shell type
   
      ```bash
      <copy>cd $HOME/helidon-kubernetes/service-mesh</copy>
      ```
 
-    Once you are in the directory start the load generator
+    
 
 If your cloud shell session is new or has been restarted then the shell variable `$EXTERNAL_IP` may be invalid, expand this section if you think this may be the case to check and reset it if needed.
 
@@ -109,7 +107,7 @@ ingress-nginx-controller-admission   ClusterIP      10.96.216.33    <none>      
 
   - Look for the `ingress-nginx-controller` line and note the IP address in the `EXTERNAL-IP` column, in this case that's `130.162.40.121` but it's almost certain that the IP address you have will differ. IMPORTANT, be sure to use the IP in the `EXTERNAL-IP` column, ignore anything that looks like an IP address in any other column as those are internal to the OKE cluster and not used externally. 
 
-  - IN the OCI CLoud shell type the following, replacing `[external ip]` with the IP address you retrieved above.
+  - In the OCI CLoud shell type the following, replacing `[external ip]` with the IP address you retrieved above.
   
   ```bash
   export EXTERNAL_IP=[external ip]
@@ -122,13 +120,13 @@ ingress-nginx-controller-admission   ClusterIP      10.96.216.33    <none>      
 </details>
 
 
-    2. In the OCI Cloud shell type
+2.  Once you are in the directory start the load generator. In the OCI Cloud shell type
     
     ```bash
-     <copy>bash generate-service-mesh-load.sh $EXTERNAL_IP 2</copy>
-     ```
+    <copy>bash generate-service-mesh-load.sh $EXTERNAL_IP 2</copy>
+    ```
      
-     Example Output
+    Example Output
   
     ```text
     Iteration 1

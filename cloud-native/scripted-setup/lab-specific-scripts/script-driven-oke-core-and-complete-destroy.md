@@ -47,52 +47,46 @@ In some situations the compartment cannot be deleted, this is because some resou
 
 </details>
 
-  First you will need to be in the right directory to run the scripts.
+1.  You will need to be in the right directory to run the scripts. In the OCI Cloud shell type :
   
-  - In the OCI Cloud shell type :
+    ```bash
+    <copy>cd $HOME/helidon-kubernetes/setup/lab-specific</copy>
+    ```
+   
+2.  Run the main script (this will call the other scripts for you in the right order). In the OCI Cloud shell type
   
-  ```bash
-  <copy>cd $HOME/helidon-kubernetes/setup/lab-specific</copy>
-  ```
+    ```bash
+    <copy>bash ./optional-kubernetes-lab-destroy.sh</copy>
+    ```
   
+    The script will ask for a few core bits of information before continuing.
   
-  To run the main script (this will call the other scripts for you in the right order)
+3.  It asks if you are in a free trial or and administrator of your tenancy, this is to make sure you have the appropriate permissions. Assuming you are in a free trial or are and admin using enter `y` and press enter to continue.
+
+    ```text
+    Configuring location information
+    Welcome the the Core Kubernrtes specific lab destroy script.
+    Checking region
+    You are in your home region and this script will continue
+    Are you running in a free trial account, or in an account where you have full administrator rights ?
+    ```
+    
+4.  The script now asks for your confirmation that you want to destroy these resources, assuming you do enter `y`, but of course if you enter `n` the script will stop and nothing will have been destroyed.
   
-  - In the OCI Cloud shell type
-  
-  ```bash
-  <copy>bash ./optional-kubernetes-lab-destroy.sh</copy>
-  ```
-  
-  The script will ask for a few core bits of information before continuing.
-  
-  ```
-  
-Configuring location information
-Welcome the the Core Kubernrtes specific lab destroy script.
-Checking region
-You are in your home region and this script will continue
-Are you running in a free trial account, or in an account where you have full administrator rights ?
-```
-  
-  First it asks if you are in a free trial or and administrator of your tenancy, this is to make sure you have the appropriate permissions. Assuming you are in a free trial or are and admin using enter `y` and press enter to continue.
-  
-  ```
-At completion this will have removed the resources created by the setup scripts, however any resources that
+     ```text
+     At completion this will have removed the resources created by the setup scripts, however any resources that
 you configured manually (for example your devops project) will remain
 
-Do you want to proceed ?
-```
+     Do you want to proceed ?
+     ```
+    
+5.  Next the script asks you if you want to use the automatic defaults, if you do so the case the script will automatically assume the answer to any yes / no question is `y` Unless you have specific reasons to retain resources enter `y` as this will significantly speed up the setup process as the script will not have to wait for your inputs.
 
-  The script now asks for your confirmation that you want to destroy these resources, assuming you do enter `y`, but of course if you enter `n` the script will stop and nothing will have been destroyed.
+    ```text
+    Do you want to use the automatic defaults ?
+    ```
 
-```
-Do you want to use the automatic defaults ?
-```
-
-  Next the script asks you if you want to use the automatic defaults, if you do so the case the script will automatically assume the answer to any yes / no question is `y` Unless you have specific reasons to retain resources enter `y` as this will significantly speed up the setup process as the script will not have to wait for your inputs.
-  
-  Assuming you have entered `y` (the recommended choice for free trial users) the script will now run to completion, if you have chosen the automatic defaults you will not need to provide further input (if you chose not to use the automatic defaults please read the various prompts and answer accordingly, in general you should be able to answer `y` to every yes  no question if you are running in a free trial). If there is a problem then the script will stop at that point.
+    Assuming you have entered `y` (the recommended choice for free trial users) the script will now run to completion, if you have chosen the automatic defaults you will not need to provide further input (if you chose not to use the automatic defaults please read the various prompts and answer accordingly, in general you should be able to answer `y` to every yes  no question if you are running in a free trial). If there is a problem then the script will stop at that point.
   
 ## What next ?
 
@@ -101,4 +95,4 @@ The script should have run to completion. It will have reset the environment cre
 ## Acknowledgements
 
 * **Author** - Tim Graves, Cloud Native Solutions Architect, Oracle EMEA Cloud Native Application Development specialists Team
-* **Last Updated By** - Tim Graves, April 2022
+* **Last Updated By** - Tim Graves, August 2023
