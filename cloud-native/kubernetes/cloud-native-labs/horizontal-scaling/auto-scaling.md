@@ -68,14 +68,14 @@ For now we are going to use the simplest approach of the metrics server.
 3.  In the OCI Cloud Shell install the metrics server by typing
   
     ```bash
-    <copy>helm install metrics-server metrics-server/metrics-server --version 3.10.0</copy>
+    <copy>helm install metrics-server metrics-server/metrics-server --version 3.12.0</copy>
     ```
     
     Example Output
 
     ```
     NAME: metrics-server
-    LAST DEPLOYED: Fri Jul  8 19:11:45 2022
+    LAST DEPLOYED: Fri Jul  8 19:11:45 2023
     NAMESPACE: kube-system
     STATUS: deployed
     REVISION: 1
@@ -84,9 +84,9 @@ For now we are going to use the simplest approach of the metrics server.
     ***********************************************************************
     * Metrics Server                                                      *
     ***********************************************************************
-      Chart version: 3.8.2
-      App version:   0.6.1
-      Image tag:     k8s.gcr.io/metrics-server/metrics-server:v0.6.1
+      Chart version: 3.12.0
+      App version:   0.8.2
+      Image tag:     k8s.gcr.io/metrics-server/metrics-server:v0.8.2
     ***********************************************************************
     ```
 

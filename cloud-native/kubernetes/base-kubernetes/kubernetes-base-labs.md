@@ -275,7 +275,7 @@ Firstly we need to create a namespace for the ingress controller.
 2.  Run the following command to install **ingress-nginx** using Helm 3:
   
     ```bash
-    <copy>helm install ingress-nginx ingress-nginx/ingress-nginx --namespace ingress-nginx --version 4.6.1 --set rbac.create=true  --set controller.service.annotations."service\.beta\.kubernetes\.io/oci-load-balancer-protocol"=TCP --set controller.service.annotations."service\.beta\.kubernetes\.io/oci-load-balancer-shape"=flexible --set controller.service.annotations."service\.beta\.kubernetes\.io/oci-load-balancer-shape-flex-min"=10  --set controller.service.annotations."service\.beta\.kubernetes\.io/oci-load-balancer-shape-flex-max"=10</copy>
+    <copy>helm install ingress-nginx ingress-nginx/ingress-nginx --namespace ingress-nginx --version 4.10.0 --set rbac.create=true  --set controller.service.annotations."service\.beta\.kubernetes\.io/oci-load-balancer-protocol"=TCP --set controller.service.annotations."service\.beta\.kubernetes\.io/oci-load-balancer-shape"=flexible --set controller.service.annotations."service\.beta\.kubernetes\.io/oci-load-balancer-shape-flex-min"=10  --set controller.service.annotations."service\.beta\.kubernetes\.io/oci-load-balancer-shape-flex-max"=10</copy>
     ```
   
     Example Output
@@ -308,7 +308,7 @@ The helm options are :
 
 - `--namespace ingress-nginx`  The kubernetes namespace to install the software into
 
-- `--version 4.6.1` The version of the helm chart to use to specify the install (the software version is defined in the chart, so is indirectly specified for you)
+- `--version 4.10.0` The version of the helm chart to use to specify the install (the software version is defined in the chart, so is indirectly specified for you)
 
 - `--set rbac.create=true` Tells the helm chart to specifiy the role based access control features, we're not really using these in this lab, but they make this a lot more secure in a production env ironment.
 
@@ -412,7 +412,7 @@ export EXTERNAL_IP=[External IP]
 1.  To install the dashboard we will be using the environment variable `EXTERNAL_IP` which we earlier set to the IP address of the Load balancer of the Ingress controller service. The variable `$EXTERNAL_IP` in the test below will be replaced by the value you set it to when the command is run. **IMPORTANT** if you have for any reason had to create a new cloud shell that variable will need to be setup again. 
   
     ```bash
-    <copy>helm install kubernetes-dashboard  kubernetes-dashboard/kubernetes-dashboard --namespace kube-system --set ingress.enabled=true  --set ingress.annotations."kubernetes\.io/ingress\.class"=nginx --set ingress.hosts="{dashboard.kube-system.$EXTERNAL_IP.nip.io}" --version 6.0.7</copy>
+    <copy>helm upgrade --install kubernetes-dashboard kubernetes-dashboard/kubernetes-dashboard  --namespace kube-system --set app.ingress.enabled=true --set app.ingress.ingressClassName=nginx --set app.ingress.hosts="{dashboard.kube-system.$EXTERNAL_IP.nip.io}" --version 7.1.2</copy>
     ```
     
     Example Output
@@ -502,9 +502,9 @@ The helm options are :
 
 - `--namespace kube-system` This tells helm to install the dashboard into the kube-system namespace. Namespaces are ways of partitioning the physical cluster into a virtual cluster to help you manage related resources, they are similar to the way you organize files using folders on your computer, but can also restrict resource usage like memory and cpu and future versions of Kubernetes plan to support role based access controls based on namespaces.
 
-- `--set ingress.enabled=true`, `--set ingress.annotations."kubernetes\.io/ingress\.class"=nginx` and `--set ingress.hosts='{dashboard.kube-system.158.101.210.253.nip.io}'` These tell helm to configure an ingress rule, this basically tells the nginx ingress controller we installed earlier how to identify requests to the dashboard, and send them to the dashboard service.
+- `--set app.ingress.enabled=true`,  `--set app.ingress.ingressClassName=nginx` and ` --set app.ingress.hosts="{dashboard.kube-system.$EXTERNAL_IP.nip.io}"` These tell helm to configure an ingress rule. This rule (we'll see more in ingress rules in a bit) basically tells the nginx ingress controller we installed earlier how to identify requests to the dashboard, and send them to the dashboard service.
 
-- `--version 6.0.7` This tells helm to use a specific version of the helm chart.
+- `--version 7.1.2` This tells helm to use a specific version of the helm chart.
 
 ---
 
