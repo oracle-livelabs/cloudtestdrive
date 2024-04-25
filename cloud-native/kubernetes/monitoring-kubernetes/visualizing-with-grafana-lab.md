@@ -146,8 +146,22 @@ ingress-nginx-controller-admission   ClusterIP      10.96.216.33    <none>      
 4.  Create a certificate to protect the connection, we'll use step which we installed in the cloud shell setup section of the lab.
   
     ```bash
-    <copy>$HOME/keys/step certificate create grafana.monitoring.$EXTERNAL_IP.nip.io tls-grafana-$EXTERNAL_IP.crt tls-grafana-$EXTERNAL_IP.key --profile leaf  --not-after 8760h --no-password --insecure --kty=RSA --ca $HOME/keys/root.crt --ca-key $HOME/keys/root.key</copy>
+    <copy>$HOME/smallstep/step certificate create grafana.monitoring.$EXTERNAL_IP.nip.io tls-grafana-$EXTERNAL_IP.crt tls-grafana-$EXTERNAL_IP.key --profile leaf  --not-after 8760h --no-password --insecure --kty=RSA --ca $HOME/smallstep/root.crt --ca-key $HOME/smallstep/root.key</copy>
     ```
+    
+    <details><summary><b>If the step command is not found</b></summary>
+
+    Due to some recent changes in the scripts which changes directory locations is is possible that the `step` command was not found (basically the script downloaded to one location, but the lab instructions have been changed to point to the new location)
+    
+    If this is the case you can move the `step` directory to the new location by executing the following command.
+   
+    ```bash
+    <copy>mv $HOME/keys $HOME/smallstep</copy>
+    ```
+   
+    Once you have done this run the certificate generation command again and it should work.
+    
+    </details>
     
     Example Output
   

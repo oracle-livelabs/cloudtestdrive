@@ -213,13 +213,13 @@ To make this a little easier we're going to use `step` this is a much easier to 
   1. To set up these certificates let's first of all create a working directory
 
   ```bash
-  <copy>mkdir $HOME/keys</copy>
+  <copy>mkdir $HOME/smallstep</copy>
   ```
 
   2. Now let's switch to it
 
   ```bash
-  <copy>cd $HOME/keys</copy>
+  <copy>cd $HOME/smallstep</copy>
   ```
   
 ### b: Locating the step executable

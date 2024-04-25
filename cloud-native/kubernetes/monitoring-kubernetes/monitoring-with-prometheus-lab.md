@@ -195,9 +195,23 @@ export EXTERNAL_IP=[external ip]
 5.  To provide secure access for the ingress we will set this up with a TLS connection , that requires that we create a certificate for the ingress rule. In production you would of course use a proper certificate, but for this lab we're going to use the self-signed root certificate we created in the cloud shell setup.
   
     ```bash
-    <copy>$HOME/keys/step certificate create prometheus.monitoring.$EXTERNAL_IP.nip.io tls-prometheus-$EXTERNAL_IP.crt tls-prometheus-$EXTERNAL_IP.key --profile leaf  --not-after 8760h --no-password --insecure --kty=RSA --ca $HOME/keys/root.crt --ca-key $HOME/keys/root.key</copy>
+    <copy>$HOME/smallstep/step certificate create prometheus.monitoring.$EXTERNAL_IP.nip.io tls-prometheus-$EXTERNAL_IP.crt tls-prometheus-$EXTERNAL_IP.key --profile leaf  --not-after 8760h --no-password --insecure --kty=RSA --ca $HOME/smallstep/root.crt --ca-key $HOME/smallstep/root.key</copy>
     ```
     
+    <details><summary><b>If the step command is not found</b></summary>
+
+    Due to some recent changes in the scripts which changes directory locations is is possible that the `step` command was not found (basically the script downloaded to one location, but the lab instructions have been changed to point to the new location)
+    
+    If this is the case you can move the `step` directory to the new location by executing the following command.
+   
+    ```bash
+    <copy>mv $HOME/keys $HOME/smallstep</copy>
+    ```
+   
+    Once you have done this run the certificate generation command again and it should work.
+    
+    </details>
+
     Example Output
   
     ```

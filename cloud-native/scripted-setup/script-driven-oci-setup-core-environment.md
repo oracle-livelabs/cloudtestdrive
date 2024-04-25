@@ -12,7 +12,20 @@ To speed things up for people who are just starting with this set of labs (or de
 
 If you have done some of the other Helidon and Kubernetes labs connected to the one you are currently doing you will have setup the core OCI environment in those labs and perhaps retained it, as long as you have the following setup you're fine (if all of the following are missing it's easiest to just proceed with running the module below from Task 1.)
 
-Step installed - The `$HOME/keys directory` exists and contains the `step` command and `root.crt` `root.key` files).
+Step installed - The `$HOME/smallstep directory` exists and contains the `step` command and `root.crt` `root.key` files).
+
+    
+    <details><summary><b>If the smallstep directory is not found</b></summary>
+
+    Due to some recent changes in the scripts which changes directory locations is is possible that the `step` command was not found (basically the script downloaded to one location, but the lab instructions have been changed to point to the new location)
+    
+    If this is the case and the `step` command is installed in $HOME/keys you can move the directory to the new location by executing the following command.
+   
+    ```bash
+    <copy>mv $HOME/keys $HOME/smallstep</copy>
+    ```
+    
+    </details>
 
 Note that if you have only done the Helidon VM based labs you will not have installed Step.
 
@@ -169,7 +182,7 @@ If you do not know if you have downloaded `step` then you can check
  - In the OCI CLoud shell type
  
  ```bash
-  <copy>ls $HOME/keys</copy>
+  <copy>ls $HOME/smallstep</copy>
   ```
 
 If you get output like this then you have setup both the `step` command and the root certificate, in this case go to **Task 3**, do not continue with any other steps in task 2
@@ -182,7 +195,7 @@ root.crt  root.key  step
 If you get output like this then you need to download `step` and create the root certificate, follow the process in **Task 2a**, do not do any of the steps in task 2b
 
 ```
-ls: cannot access /home/tim_graves/key: No such file or directory
+ls: cannot access /home/tim_graves/smallstep: No such file or directory
 ```
 
 If you get output like this then you have the `step` command you just need to setup the root certificate, please go to **Task 2b**, do not do any of the steps in Task 2a
@@ -245,7 +258,7 @@ Assuming you have `step` you can easily create the self signed root certificate
   1. Open the OCI Cloud shell and type
     
   ```bash
-  <copy>$HOME/keys/step certificate create root.cluster.local $HOME/keys/root.crt $HOME/keys/root.key --kty=RSA --profile root-ca --no-password --insecure</copy>
+  <copy>$HOME/smallstep/step certificate create root.cluster.local $HOME/smallstep/root.crt $HOME/smallstep/root.key --kty=RSA --profile root-ca --no-password --insecure</copy>
   ```
   
   ```
