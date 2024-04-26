@@ -182,10 +182,17 @@ We need to configure the stockmanager-config.yaml file. You need to do this even
   ```bash
   <copy>cd $HOME/helidon-kubernetes/configurations/stockmanagerconf/conf</copy>
   ```
+
+    
+  2.  Copy the template config file
+
+  ```bash
+  <copy>cp stockmanager-config-template.yaml stockmanager-config.yaml</copy>
+  ```  
   
-  2. Open the file **stockmanager-config.yaml**
+  3. Open the file **stockmanager-config.yaml**
   
-  3. In the `app:` section, add a property **department** with **your** your name, initials or something that's going to be **unique**
+  4. In the `app:` section, add a property **department** with **your** your name, initials or something that's going to be **unique**
   
   ```yaml
   department: "your_name"
@@ -199,7 +206,7 @@ app:
   department: "timsDepartment"
 ```
  
-  4. Save the changes to the file
+  5. Save the changes to the file
   
 
 ## Task 5: Preparing to create certificates and keys
