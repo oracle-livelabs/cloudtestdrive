@@ -2,9 +2,43 @@
 
 # Setting up the OKE optional lab environment using scripts for free trial accounts
 
+## Introduction
+
+### Objectives
+
 This module walks you through the process of setting up the core OCI features needed to run a lab that just looks at the optional Kubernetes features.
 
 To speed things up for people who are just starting with this set of labs (or deleted their previously created environment) we have provided some scripts that you can use to set things up quickly, consistently and with less opportunity for typos.
+
+Estimated time to complete this module 20 minutes
+
+
+### Prerequisites
+
+You have an OCI tenancy setup.
+
+**IMORTANT** This lab uses the OCI Cloud shell. While the OCI cloud shell supports the creation of cloud shell instances using both ARM and X64 based architectures, however these scripts are currently setup to download only x64 based executables, to build x64 based containers and create x64 based clusters.
+
+Work is currently underway to make the scripts a more processor architecture independent (or at least to work against both ARM and x64 based processor architectures) however this involved updating the download process, the build process, the cluster setup process and also ensuring that both x64 and ARM based versions of all of the containers that are used as available. This means that the work will take some time to complete.
+
+As such currently the scripts will test to see if the cloud shall instance is running on an ARM or x64 architecture, if it detects an ARM based architecture the script will stop. You will then need to switch to an x64 based architecture. Use the Actions menu for the cloud shell (the upper left menu of the cloud shell window) then chose architecture, then chose an x64 based architecture. The cloud shell will restart (the downloads and home directory will remain). Note that not all tenancies support thos option (the `Always Free` tenancies do not, but they don't have the resources to run Kubernetes clusters either) and unfortunately for those tenancies this lab is currently now available.
+
+### Copy tags
+
+In many cases in this lab you will find text in a box with a `Copy` label which is text you may need to execute in the cloud shell or enter into a file.
+
+```bash
+<copy>echo "For example like this echo command"</copy>
+```
+
+Clicking the `Copy` will copy the text to the clip board, this will make it easier for you to simply paste it into the shell to do the lab.
+
+However... in some cases the commands you'd need to type will vary from the commands shown (for example a different identifier). Obviously in this case just pasting text that has been copied will not work as these need to be changed. Usually in those cases though the command will be given as an example there will not be a `Copy` box present - this indicates that you will need to modify the command to make it work.
+
+```text
+Of course in some cases what you will see is example output from a program or a file, from the context it should be clear that this is not something you will need to enter into a shell.
+```
+
 
 ## Task 1: Downloading the latest scripts
 
