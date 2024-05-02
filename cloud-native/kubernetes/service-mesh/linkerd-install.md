@@ -689,8 +689,22 @@ We will use step to help us here, it was installed when you did the cloud shell 
 2.  Create the cretificate. In the OCI Cloud shell run the following.
   
     ```bash
-    <copy>$HOME/keys/step certificate create linkerd.$EXTERNAL_IP.nip.io tls-linkerd-$EXTERNAL_IP.crt tls-linkerd-$EXTERNAL_IP.key --profile leaf  --not-after 8760h --no-password --insecure --kty=RSA --ca $HOME/keys/root.crt --ca-key $HOME/keys/root.key</copy>
+    <copy>$HOME/smallstep/step certificate create linkerd.$EXTERNAL_IP.nip.io tls-linkerd-$EXTERNAL_IP.crt tls-linkerd-$EXTERNAL_IP.key --profile leaf  --not-after 8760h --no-password --insecure --kty=RSA --ca $HOME/smallstep/root.crt --ca-key $HOME/smallstep/root.key</copy>
     ```
+    
+    <details><summary><b>If the step command is not found</b></summary>
+
+    Due to some recent changes in the scripts which changes directory locations is is possible that the `step` command was not found (basically the script downloaded to one location, but the lab instructions have been changed to point to the new location)
+    
+    If this is the case you can move the `step` directory to the new location by executing the following command.
+   
+    ```bash
+    <copy>mv $HOME/keys $HOME/smallstep</copy>
+    ```
+   
+    Once you have done this run the certificate generation command again and it should work.
+    
+    </details>
     
     Example Output
 

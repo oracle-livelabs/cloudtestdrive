@@ -14,7 +14,13 @@ To speed things up for people who are just starting with this set of labs (or de
 
 ### Prerequisites
 
-You have an OCI tenancy setup
+You have an OCI tenancy setup.
+
+**IMORTANT** This lab uses the OCI Cloud shell. While the OCI cloud shell supports the creation of cloud shell instances using both ARM and X64 based architectures, however these scripts are currently setup to download only x64 based executables, to build x64 based containers and create x64 based clusters.
+
+Work is currently underway to make the scripts a more processor architecture independent (or at least to work against both ARM and x64 based processor architectures) however this involved updating the download process, the build process, the cluster setup process and also ensuring that both x64 and ARM based versions of all of the containers that are used as available. This means that the work will take some time to complete.
+
+As such currently the scripts will test to see if the cloud shall instance is running on an ARM or x64 architecture, if it detects an ARM based architecture the script will stop. You will then need to switch to an x64 based architecture. Use the Actions menu for the cloud shell (the upper left menu of the cloud shell window) then chose architecture, then chose an x64 based architecture. The cloud shell will restart (the downloads and home directory will remain). Note that not all tenancies support thos option (the `Always Free` tenancies do not, but they don't have the resources to run Kubernetes clusters either) and unfortunately for those tenancies this lab is currently now available.
 
 ### Copy tags
 

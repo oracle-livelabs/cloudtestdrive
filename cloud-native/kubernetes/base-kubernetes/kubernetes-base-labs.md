@@ -1197,8 +1197,22 @@ To enable the lab to complete in a reasonable time we will therefore be generati
 3.  Run the following command to generate a certificate (you installed the step command in the cloud shell setup). The value of the IP address of the Ingress controllers load balancer is in `$EXTERNAL_IP` and will be replaced in the command below automatically.
 
     ```bash
-    <copy>$HOME/keys/step certificate create store.$EXTERNAL_IP.nip.io tls-store-$EXTERNAL_IP.crt tls-store-$EXTERNAL_IP.key --profile leaf  --not-after 8760h --no-password --insecure --kty=RSA --ca $HOME/keys/root.crt --ca-key $HOME/keys/root.key</copy>
+    <copy>$HOME/smallstep/step certificate create store.$EXTERNAL_IP.nip.io tls-store-$EXTERNAL_IP.crt tls-store-$EXTERNAL_IP.key --profile leaf  --not-after 8760h --no-password --insecure --kty=RSA --ca $HOME/smallstep/root.crt --ca-key $HOME/smallstep/root.key</copy>
     ```
+    
+    <details><summary><b>If the step command is not found</b></summary>
+
+    Due to some recent changes in the scripts which changes directory locations is is possible that the `step` command was not found (basically the script downloaded to one location, but the lab instructions have been changed to point to the new location)
+    
+    If this is the case you can move the `step` directory to the new location by executing the following command.
+   
+    ```bash
+    <copy>mv $HOME/keys $HOME/smallstep</copy>
+    ```
+   
+    Once you have done this run the certificate generation command again and it should work.
+    
+    </details>
     
     Example Output (your files will use the the actual IP address of your ingress controllers load balancer.
 
@@ -1604,15 +1618,21 @@ l_server_cert_dn="CN=adwc.eucom-central-1.oraclecloud.com,OU=Oracle BMCS FRANKFU
     <copy>cd $HOME/helidon-kubernetes/configurations/stockmanagerconf</copy>
     ```
 
-7.  **Edit** the file `databaseConnectionSecret.yaml`
+7. Copy the template file
 
-8.  Locate the `url` (in the `stringData` section)
+   ```bash
+   <copy>cp databaseConnectionSecret-template.yaml databaseConnectionSecret.yaml</copy>
+   ```
+
+8.  **Edit** the file `databaseConnectionSecret.yaml`
+
+9.  Locate the `url` (in the `stringData` section)
 
     ```yaml
     url: jdbc:oracle:thin:@<database connection name>?TNS_ADMIN=./Wallet_ATP
     ```
 
-9.  Replace `<database connection name>` with the connection name for **your** database you got from the `tnsnames.ora` file earlier. In my case that was `jleoow_high`, **but yours will be different**
+10.  Replace `<database connection name>` with the connection name for **your** database you got from the `tnsnames.ora` file earlier. In my case that was `jleoow_high`, **but yours will be different**
 
     For **me** the line looked like this, **YOURS WILL BE DIFFERENT**
 
@@ -1622,7 +1642,7 @@ l_server_cert_dn="CN=adwc.eucom-central-1.oraclecloud.com,OU=Oracle BMCS FRANKFU
 
     If you used a different username or password then you will need to update those fields as well.
 
-10. Save the changes to the file and exit the editor
+11. Save the changes to the file and exit the editor
 
 We will create the secret that contain this information using a script later.
 
@@ -1806,10 +1826,16 @@ We need to configure the stockmanager-config.yaml file. You need to do this even
     ```bash
     <copy>cd $HOME/helidon-kubernetes/configurations/stockmanagerconf/conf</copy>
     ```
+    
+2.  Copy the template config file
+
+	```bash
+	<copy>cp stockmanager-config-template.yaml stockmanager-config.yaml</copy>
+	```
   
-2.  Open the file **stockmanager-config.yaml**
+3.  Open the file **stockmanager-config.yaml**
   
-3.  In the `app:` section, add a property **department** with **your** your name, initials or something that's going to be **unique**
+4.  In the `app:` section, add a property **department** with **your** your name, initials or something that's going to be **unique**
   
     ```text
     department: "your_name"
@@ -1823,10 +1849,10 @@ We need to configure the stockmanager-config.yaml file. You need to do this even
       department: "timsDepartment"
     ```
  
-4.  Save the changes to the file
+5.  Save the changes to the file
   
   
-5.  Switch back to the scripts directory
+6.  Switch back to the scripts directory
   
     ```bash
     <copy>cd $HOME/helidon-kubernetes/base-kubernetes</copy>

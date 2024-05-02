@@ -121,26 +121,26 @@ EOF
   Make sure you are in the top level directory
 
         cd $HOME          
-        mkdir keys;cd keys
+        mkdir smallstep;cd smallstep
         wget -O step.tar.gz https://dl.step.sm/gh-release/cli/docs-ca-install/v0.20.0/step_linux_0.20.0_amd64.tar.gz
         tar -xf step.tar.gz
         cp step_0.20.0/bin/step .
 
   Generate root certificate
 
-        cd $HOME/keys
-        $HOME/keys/step certificate create root.cluster.local root.crt root.key --profile root-ca --no-password --insecure --kty=RSA
+        cd $HOME/smallstep
+        $HOME/smallstep/step certificate create root.cluster.local root.crt root.key --profile root-ca --no-password --insecure --kty=RSA
 
   Get Ingress IP to generate certificate
   
         External_IP=$(kubectl get svc istio-ingressgateway -n istio-system -o=jsonpath="{.status.loadBalancer.ingress[0].ip}")
 
-        cd $HOME/keys
-        $HOME/keys/step certificate create $External_IP.nip.io tls-$External_IP.crt tls-$External_IP.key --profile leaf  --not-after 8760h --no-password --insecure --kty=RSA --ca $HOME/keys/root.crt --ca-key $HOME/keys/root.key
+        cd $HOME/smallstep
+        $HOME/smallstep/step certificate create $External_IP.nip.io tls-$External_IP.crt tls-$External_IP.key --profile leaf  --not-after 8760h --no-password --insecure --kty=RSA --ca $HOME/smallstep/root.crt --ca-key $HOME/smallstep/root.key
 
   2. Create Kubernetes Secret TLS Certificate
 
-        cd $HOME/keys
+        cd $HOME/smallstep
         kubectl create secret tls kubeflow-tls-cert --key=tls-$External_IP.key --cert=tls-$External_IP.crt -n istio-system    
 
   3. Update Kubeflow API Gateway
